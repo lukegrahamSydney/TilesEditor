@@ -37,15 +37,15 @@ namespace TilesEditor
 		}
 
 
-		QModelIndex QAbstractItemModel::index(int row, int column, const QModelIndex& parent = QModelIndex()) const
+		[[nodiscard]] QModelIndex index(int row, int column, const QModelIndex& parent) const override
 		{
 			return createIndex(row, column);
 		}
 
-		QModelIndex QAbstractItemModel::parent(const QModelIndex& index) const {
-			return QModelIndex();
+		[[nodiscard]] QModelIndex parent(const QModelIndex& index) const override {
+			return {};
 		}
-		
+
 		void addTileObject(TileObject* item) {
 			auto index = this->count();
 			this->beginInsertRows(QModelIndex(), index, index);

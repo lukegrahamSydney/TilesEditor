@@ -1,6 +1,10 @@
 world/
 x64/
+.idea/
 .vs/
+.qmake.stash
+build/
+cmake-*/
 release/
 settings.ini
 tileObjects.json
