@@ -309,7 +309,7 @@ namespace TilesEditor
             stream << "GLEVNW01" << Qt::endl;
 
             auto writeTileLayer = [](QTextStream& stream, Tilemap* tilemap)
-            {
+            { 
                 for (int top = 0; top < 64; ++top)
                 {
                     for(int left = 0; left < 64; ++left)

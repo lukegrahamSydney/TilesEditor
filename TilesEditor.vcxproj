@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{173B1197-A80A-470E-A998-3E489F207F22}</ProjectGuid>
+    <Keyword>QtVS_v304</Keyword>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">10.0.19041.0</WindowsTargetPlatformVersion>
+    <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
+    <Import Project="$(QtMsBuild)\qt_defaults.props" />
+  </ImportGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
+    <QtInstall>6.4</QtInstall>
+    <QtModules>core;gui;widgets</QtModules>
+    <QtBuildConfig>debug</QtBuildConfig>
+    <QtHeaderSearchPath>$(QtHeaderSearchPath)</QtHeaderSearchPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
+    <QtInstall>6.4</QtInstall>
+    <QtModules>core;gui;widgets</QtModules>
+    <QtBuildConfig>release</QtBuildConfig>
+    <QtHeaderSearchPath>$(QtHeaderSearchPath)</QtHeaderSearchPath>
+  </PropertyGroup>
+  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
+    <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
+  </Target>
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(QtMsBuild)\Qt.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(QtMsBuild)\Qt.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <IncludePath>.\;.\QCodeEditor\include;.\QCodeEditor\include\KGL\Widgets;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <IncludePath>.\;.\QCodeEditor\include;.\QCodeEditor\include\KGL\Widgets;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>KGL_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>KGL_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
+    <ClCompile>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
+    <ClCompile>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <Optimization>MaxSpeed</Optimization>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\ZeldaOnline\cJSON\cJSON.c" />
+    <ClCompile Include="AboutDialog.cpp" />
+    <ClCompile Include="AbstractLevelEntity.cpp" />
+    <ClCompile Include="AbstractSelection.cpp" />
+    <ClCompile Include="EditAnonymousNPC.cpp" />
+    <ClCompile Include="EditLinkDialog.cpp" />
+    <ClCompile Include="EditorTabWidget.cpp" />
+    <ClCompile Include="EditSignsDialog.cpp" />
+    <ClCompile Include="GraphicsView.cpp" />
+    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="ImageDimensions.cpp" />
+    <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LevelLink.cpp" />
+    <ClCompile Include="LevelNPC.cpp" />
+    <ClCompile Include="LevelSign.cpp" />
+    <ClCompile Include="ListLinksDialog.cpp" />
+    <ClCompile Include="MainFileSystem.cpp" />
+    <ClCompile Include="ObjectListModel.cpp" />
+    <ClCompile Include="ObjectSelection.cpp" />
+    <ClCompile Include="ObjectsWidget.cpp" />
+    <ClCompile Include="Overworld.cpp" />
+    <ClCompile Include="QCodeEditor\src\Design\QCodeEditorDesign.cpp" />
+    <ClCompile Include="QCodeEditor\src\Design\QCodeEditorSheets.cpp" />
+    <ClCompile Include="QCodeEditor\src\Design\QLineColumnPadding.cpp" />
+    <ClCompile Include="QCodeEditor\src\Design\QSyntaxRule.cpp" />
+    <ClCompile Include="QCodeEditor\src\Design\XmlHelper.cpp" />
+    <ClCompile Include="QCodeEditor\src\Widgets\QCodeEditor.cpp" />
+    <ClCompile Include="QCodeEditor\src\Widgets\QCodeEditorEvents.cpp" />
+    <ClCompile Include="QCodeEditor\src\Widgets\QCodeEditorHighlighter.cpp" />
+    <ClCompile Include="QCodeEditor\src\Widgets\QCodeEditorLineWidget.cpp" />
+    <ClCompile Include="QCodeEditor\src\Widgets\QCodeEditorPopup.cpp" />
+    <ClCompile Include="QCodeEditor\src\Widgets\QCodeEditorSlots.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="SaveOverworldDialog.cpp" />
+    <ClCompile Include="TileGroupListModel.cpp" />
+    <ClCompile Include="TileGroupModel.cpp" />
+    <ClCompile Include="Tilemap.cpp" />
+    <ClCompile Include="TileObject.cpp" />
+    <ClCompile Include="TileObjectsWidget.cpp" />
+    <ClCompile Include="TileSelection.cpp" />
+    <ClCompile Include="Tileset.cpp" />
+    <ClCompile Include="TilesetsWidget.cpp" />
+    <QtRcc Include="MainWindow.qrc" />
+    <QtUic Include="AboutDialog.ui" />
+    <QtUic Include="EditAnonymousNPC.ui" />
+    <QtUic Include="EditLinkDialog.ui" />
+    <QtUic Include="EditorTabWidget.ui" />
+    <QtUic Include="EditSignsDialog.ui" />
+    <QtUic Include="ListLinksDialog.ui" />
+    <QtUic Include="MainWindow.ui" />
+    <QtMoc Include="MainWindow.h" />
+    <ClCompile Include="EntitySpatialGrid.cpp" />
+    <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="main.cpp" />
+    <QtUic Include="ObjectsWidget.ui" />
+    <QtUic Include="SaveOverworldDialog.ui" />
+    <QtUic Include="TileObjectsWidget.ui" />
+    <QtUic Include="TilesetsWidget.ui" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\ZeldaOnline\cJSON\cJSON.h" />
+    <ClInclude Include="..\ZeldaOnline\cJSON\JsonHelper.h" />
+    <QtMoc Include="AboutDialog.h" />
+    <ClInclude Include="AbstractFileSystem.h" />
+    <ClInclude Include="AbstractLevelEntity.h" />
+    <ClInclude Include="AbstractSelection.h" />
+    <QtMoc Include="TilesetsWidget.h" />
+    <QtMoc Include="EditAnonymousNPC.h" />
+    <QtMoc Include="EditLinkDialog.h" />
+    <QtMoc Include="EditSignsDialog.h" />
+    <QtMoc Include="CustomPaintWidget.h" />
+    <ClInclude Include="LevelLink.h" />
+    <ClInclude Include="LevelNPC.h" />
+    <ClInclude Include="LevelSign.h" />
+    <QtMoc Include="ListLinksDialog.h" />
+    <ClInclude Include="ObjectListModel.h" />
+    <ClInclude Include="ObjectSelection.h" />
+    <QtMoc Include="QCodeEditor\include\KGL\Design\QCodeEditorDesign.hpp" />
+    <QtMoc Include="QCodeEditor\include\KGL\Design\QCodeEditorSheets.hpp" />
+    <QtMoc Include="QCodeEditor\include\KGL\Design\QLineColumnPadding.hpp" />
+    <QtMoc Include="QCodeEditor\include\KGL\Design\QSyntaxRule.hpp" />
+    <QtMoc Include="QCodeEditor\include\KGL\Design\XmlHelper.hpp" />
+    <QtMoc Include="QCodeEditor\include\KGL\KGLConfig.hpp" />
+    <QtMoc Include="QCodeEditor\include\KGL\Widgets\QCodeEditor.hpp" />
+    <QtMoc Include="QCodeEditor\include\KGL\Widgets\QCodeEditorHighlighter.hpp" />
+    <QtMoc Include="QCodeEditor\include\KGL\Widgets\QCodeEditorLineWidget.hpp" />
+    <QtMoc Include="QCodeEditor\include\KGL\Widgets\QCodeEditorPopup.hpp" />
+    <QtMoc Include="SaveOverworldDialog.h" />
+    <QtMoc Include="ObjectsWidget.h" />
+    <ClInclude Include="SelectionType.h" />
+    <ClInclude Include="Selector.h" />
+    <QtMoc Include="TileObjectsWidget.h" />
+    <ClInclude Include="TileGroupListModel.h" />
+    <ClInclude Include="TileGroupModel.h" />
+    <ClInclude Include="TileObject.h" />
+    <ClInclude Include="TileSelection.h" />
+    <ClInclude Include="IWorld.h" />
+    <QtMoc Include="GraphicsView.h" />
+    <ClInclude Include="ImageDimensions.h" />
+    <ClInclude Include="Level.h" />
+    <ClInclude Include="Overworld.h" />
+    <ClInclude Include="StringTools.h" />
+    <ClInclude Include="Tilemap.h" />
+    <ClInclude Include="Tileset.h" />
+    <QtMoc Include="EditorTabWidget.h" />
+    <ClInclude Include="EntitySpatialGrid.h" />
+    <ClInclude Include="IEntitySpatialMap.h" />
+    <ClInclude Include="Image.h" />
+    <ClInclude Include="ISpatialMapItem.h" />
+    <ClInclude Include="LevelEntityType.h" />
+    <ClInclude Include="MainFileSystem.h" />
+    <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="RefCounter.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="ResourceType.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
+    <Import Project="$(QtMsBuild)\qt.targets" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

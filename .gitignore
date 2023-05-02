@@ -1,9 +1,8 @@
 world/
 x64/
 .vs/
+release/
 settings.ini
 tileObjects.json
-TilesEditor.sln
-TilesEditor.vcxproj
 TilesEditor.vcxproj.filters
 TilesEditor.vcxproj.user
