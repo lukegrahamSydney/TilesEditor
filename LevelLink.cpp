@@ -7,7 +7,7 @@ namespace TilesEditor
 {
 	LevelLink::LevelLink(Level* level, double x, double y, int width, int height):
 		AbstractLevelEntity(level, x, y)
-	{
+	{ 
 		m_width = width;
 		m_height = height;
 	}

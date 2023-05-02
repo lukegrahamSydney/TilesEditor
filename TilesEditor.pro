@@ -16,4 +16,5 @@ MOC_DIR += .
 OBJECTS_DIR += release
 UI_DIR += .
 RCC_DIR += .
+QT += widgets core gui
 include(TilesEditor.pri)
