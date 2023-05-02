@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<design>
+    <!-- Order of declaration and character case does not matter -->
+    <editorbackcolor>#ffffff</editorbackcolor>
+    <editortextcolor>rgb(0,0,0)</editortextcolor>
+    <editorbordercolor>gray</editorbordercolor>
+    <linecolumnbackcolor>0x333333</linecolumnbackcolor>
+    <linecolumntextcolor>black</linecolumntextcolor>
+    <linecolumnseparatorcolor>transparent</linecolumnseparatorcolor>
+    <activelinecolor>0xFF0000</activelinecolor>
+    <intelliboxbackcolor>white</intelliboxbackcolor>
+    <intelliboxtextcolor>black</intelliboxtextcolor>
+    <intelliboxbordercolor>black</intelliboxbordercolor>
+    <intelliboxselectionbackcolor>blue</intelliboxselectionbackcolor>
+    <intelliboxselectionbordercolor>navy<intelliboxselectionbordercolor>
+    <intelliboxpressbackcolor>blue</intelliboxpressbackcolor>
+    <intelliboxpressbordercolor>navy</intelliboxpressbordercolor>
+    <editorfont>
+        <family>monospace</family>
+        <strikethrough>false</strikethrough>
+        <underline>false</underline>
+        <italic>false</italic>
+        <bold>false</bold>
+    </editorfont>
+    <intelliboxfont>
+        <family>monospace</family>
+        <strikethrough>false</strikethrough>
+        <underline>false</underline>
+        <italic>false</italic>
+        <bold>false</bold>
+    </intelliboxfont>
+    <editorborder>1 1 1 1</editorborder> <!-- left, top, right, bottom -->
+    <intelliboxborder>1 1 1 1</intelliboxborder>
+    <linecolumnpadding>16 16</linecolumnpadding> <!-- left, right -->
+    <popupsize>400 300</popupsize> <!-- width, height -->
+    <haslinecolumn>true</haslinecolumn>
+    <showfocusrect>false</showfocusrect>
+    <firstlineone>true</firstlineone>
+</design>

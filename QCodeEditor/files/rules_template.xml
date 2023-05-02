@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<rules>
+    <rule id="somerule" global="true">              <!-- ID and GLOBAL is optional, see appendix -->
+        <regex></regex>                             <!-- Is required OR -->
+        <keywords start="false"></keywords>         <!-- is required    -->
+        <backcolor></backcolor>                     <!-- Format: #hex - Is transparent if not specified -->
+        <forecolor></forecolor>                     <!-- Format: #hex - Is editor's default if not specified -->
+        <font>                                      <!-- Is editor's default if not specified -->
+                <family></family>                   <!-- If not existing, will be editor's default -->
+                <pointsize></pointsize>             <!-- If not existing, will be editor's default -->
+                <strikethrough></strikethrough>     <!-- true/false - false by default -->
+                <underline></underline>             <!-- true/false - false by default -->
+                <italic></italic>                   <!-- true/false - false by default -->
+                <bold></bold>                       <!-- true/false - false by default -->
+        </font>
+    </rule>
+    <rule>
+        <startRegex></startRegex>                   <!-- Starting regex for multiline matches -->
+        <closeRegex></closeRegex>                   <!-- Closing regex for multiline matches -->
+        <...></...>                                 <!-- All styling properties like forecolor, font, ... -->
+    </rule>
+</rules>
+
+<!-- Appendix to the keywords -->
+<!--
+        The keywords have an attribute called 'start' with the value 'true' or 'false'.
+        If start is true, the keyword will only be highlighted if it is the first word
+        in the entire line. (e.g. preprocessor directives). If the attribute is not specified,
+        the value is always false.
+-->
+
+<!-- Appendix to the 'id' attribute -->
+<!--
+        The ID attribute is optional, but comes with pleasant features. If a rule containing
+        an ID has a highlighted sequence, an event will be triggered that contains the highlighted
+        sequence as well as the ID of the rule that trigged it.
+        Example of a proper usage:
+        void onMatch(const QString &id, QString sequence) {
+                if (id == "include") {
+                        // some custom function
+                        addIncludeFile(sequence);
+                }
+        }
+-->
+
+<!-- Appendix to the 'global' attribute -->
+<!--
+        If the value of attribute 'global' is true, the regex search will be performed
+        in the global mode, that means that it will not abort searching after the first
+        match found. If it is false, the engine will abort searching after having found
+        the first match. By default, this value is always true.
+-->

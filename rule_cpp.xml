@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<rules>
+    <rule>
+        <!-- Styles binary, hexadecimal and decimal numbers -->
+        <regex>(\b\d+\b)|(\b0[xX][0-9a-fA-F]+\b)|(\b0[b][01]+\b)</regex>
+        <forecolor>#fc9100</forecolor>
+    </rule>
+    <rule>
+        <!-- Styles all C++ operators -->
+        <regex>(\B|\b)(::|\.|-&gt;|\[\]|\(\)|\+\+|-=|--|~|!|-|\+=|\+|&amp;&amp;|&amp;=|&amp;|\*=|\*|\/=|\/|%=|%|&lt;&lt;=|&lt;&lt;|&gt;&gt;=|&gt;&gt;|&lt;=|&lt;|&gt;=|&gt;|==|!=|\|\||\|=|\||\?|:|\^=|\^|\,)(\B|\b)</regex>
+        <font>
+            <bold>true</bold>
+        </font>
+    </rule>
+    <rule>
+        <!-- Styles strings and muli-line strings -->
+        <regex>(\&quot;|&lt;)((\\.)|[^\\&quot;])*(\&quot;|&gt;)</regex>
+        <forecolor>#fc9100</forecolor>
+    </rule>
+    <rule>
+        <!-- Styles all C++ keywords -->
+        <keywords>
+            function alignas alignof and and_eq asm auto bitand bitor bool break case catch char char16_t char32_t
+            class compl const constexpr const_cast continue decltype default delete do double dynamic_cast
+            else enum explicit export extern false float for friend goto if inline int long mutable namespace
+            new noexcept not not_eq nullptr operator or or_eq private protected public register reinterpret_cast
+            return short signed sizeof static static_assert static_cast struct switch template this thread_local
+            throw true try typedef typeid typename union unsigned using virtual void volatile wchar_t while
+            xor xor_eq override final using
+        </keywords>
+        <forecolor>#2b8f49</forecolor>
+    </rule>
+    <rule global="false">
+        <!-- Styles an enum or class type -->
+        <regex>((class\s+\K)|(enum\s+\K)|(namespace\s+\K))[A-Za-z]\w*</regex>
+        <forecolor>#3392ac</forecolor>
+    </rule>
+    <rule global="false">
+        <!-- Styles multi-line comments -->
+        <startRegex>(\/\*.*\*\/)|(\/\*.*)</startRegex>
+        <closeRegex>.*\*\/</closeRegex>
+        <forecolor>#969698</forecolor>
+    </rule>
+    <rule global="false">
+        <!-- Styles comments -->
+        <regex>(\/\*([\s\S]*?)\*\/)|(\/\/.*)</regex>
+        <forecolor>#969698</forecolor>
+    </rule>
+    <rule global="false">
+        <!-- Styles doxygen keywords -->
+        <regex>(\/(\/|\*)(\/|!|\*)\s*\K)(\\|@)(addindex|addtogroup|anchor|arg|attention|authors|author|a|brief|bug|b|callergraph|callgraph|cite|class|code|cond|copybrief|copydetails|copydoc|copyright|c|date|def|defgroup|deprecated|details|diafile|dir|docbookonly|dontinclude|dot|dotfile|e|else|elseif|em|endcode|endcond|enddocbookonly|enddot|endhtmlonly|endif|endinternal|endlatexonly|endmsc|endparblock|enduml|enum|example|exception|extends|file|fn|headerfile|hidecallergraph|hidecallgraph|htmlonly|if|ifnot|image|implements|include|includedoc|ingroup|internal|interface|invariant|latexinclude|latexonly|mainpage|manonly|memberof|msc|mscfile|name|namespace|note|overload|package|page|par|paragraph|param|parblock|post|pre|private|property|protected|protocol|public|pure|p|ref|refitem|related|remark|remarks|result|return|returns|retval|section|see|short|since|skip|snippet|startuml|struct|throw|throws|todo|typedef|union|until|var|version|warning|xmlonly)\b</regex>
+        <forecolor>#969698</forecolor>
+        <font>
+            <bold>true</bold>
+        </font>
+    </rule>
+</rules>
