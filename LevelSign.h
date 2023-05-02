@@ -35,6 +35,7 @@ namespace TilesEditor
 
 		double getDepth() const override { return 9999999.0; }
 
+		QString toString() const override { return QString("[Sign: %1, %2]").arg(getX()).arg(getY()); }
 		void setDragOffset(double x, double y, bool snap) override {
 			AbstractLevelEntity::setDragOffset(x, y, true);
 		}

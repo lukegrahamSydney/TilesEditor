@@ -17,6 +17,7 @@ namespace TilesEditor
 		virtual Level* getLevelAt(double x, double y) = 0;
 		virtual ResourceManager& getResourceManager() = 0;
 		virtual AbstractLevelEntity* getEntityAt(double x, double y) = 0;
+		virtual QList<AbstractLevelEntity*> getEntitiesAt(double x, double y) = 0;
 		virtual bool tryGetTileAt(double x, double y, int* outTile) = 0;
 		virtual void deleteEntity(AbstractLevelEntity* entity) = 0;
 		virtual bool containsLevel(const QString& levelName)const = 0;

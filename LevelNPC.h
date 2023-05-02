@@ -50,6 +50,9 @@ namespace TilesEditor
 		void setHeight(int value) override {
 			m_height = value;
 		};
+
+		QString toString() const override { return QString("[Npc: %1, %2, %3]").arg(getImageName()).arg(getX()).arg(getY()); }
+		Image* getIcon() { return m_image; }
 		AbstractLevelEntity* duplicate() override {
 			auto newNPC = new LevelNPC(this->getLevel(), getX(), getY(), getWidth(), getHeight());
 			newNPC->m_imageName = this->m_imageName;

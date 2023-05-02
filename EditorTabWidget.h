@@ -174,6 +174,8 @@ namespace TilesEditor
 		void centerLevel(const QString& levelName) override;
 		AbstractLevelEntity* getEntityAt(double x, double y) override;
 		AbstractLevelEntity* getEntityAt(double x, double y, bool checkAllowedSelect);
+		QList<AbstractLevelEntity*> getEntitiesAt(double x, double y) override;
+		QList<AbstractLevelEntity*> getEntitiesAt(double x, double y, bool checkAllowedSelect);
 		void deleteEntity(AbstractLevelEntity* entity) override;
 		void setModified(Level* level) override;
 		bool tryGetTileAt(double x, double y, int* outTile) override;

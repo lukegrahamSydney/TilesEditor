@@ -614,6 +614,41 @@ namespace TilesEditor
 		return nullptr;
 	}
 
+	QList<AbstractLevelEntity*> EditorTabWidget::getEntitiesAt(double x, double y)
+	{
+		return getEntitiesAt(x, y, false);
+	}
+
+	QList<AbstractLevelEntity*> EditorTabWidget::getEntitiesAt(double x, double y, bool checkAllowedSelect)
+	{
+		QList<AbstractLevelEntity*> entities;
+		Rectangle rect(x, y, 1, 1);
+
+		if (m_overworld)
+			m_overworld->getEntitySpatialMap()->search(rect, true, entities);
+		else if (m_level)
+			m_level->getEntitySpatialMap()->search(rect, true, entities);
+
+		//Sort found entities
+		std::sort(entities.begin(), entities.end(), AbstractLevelEntity::sortByDepthFunc);
+
+		if (checkAllowedSelect)
+		{
+			for (auto it = entities.begin(); it != entities.end();)
+			{
+				auto entity = *it;
+				if (canSelectObject(entity->getEntityType())) {
+					++it;
+				}
+				else {
+					it = entities.erase(it);
+				}
+			}
+		}
+
+		return entities;
+	}
+
 	void EditorTabWidget::deleteEntity(AbstractLevelEntity* entity)
 	{
 		auto objectListModel = static_cast<ObjectListModel*>(ui_objectClass.objectsTable->model());
@@ -1028,11 +1063,7 @@ namespace TilesEditor
 		}
 		else if (event->button() == Qt::MouseButton::RightButton)
 		{
-			int tile = 0;
-			if (tryGetTileAt(pos.x(), pos.y(), &tile) && !Tilemap::IsInvisibleTile(tile))
-			{
-				setDefaultTile(tile);
-			}
+
 
 			if (m_selector.visible())
 				m_selector.setVisible(false);
@@ -1040,6 +1071,54 @@ namespace TilesEditor
 
 			setSelection(nullptr);
 					
+			auto entities = getEntitiesAt(pos.x(), pos.y(), true);
+			if (entities.size() > 0)
+			{
+				QMenu contextMenu;
+
+				class EntityAction:
+					public QAction
+				{
+				private:
+					AbstractLevelEntity* m_entity;
+				
+				public:
+					EntityAction(AbstractLevelEntity* entity, const QString& text):
+						QAction(text), m_entity(entity) 
+					{
+						if(entity->getIcon())
+							this->setIcon(entity->getIcon()->pixmap());
+					
+					}
+
+					AbstractLevelEntity* getEntity() { return m_entity; }
+				};
+
+				for (auto entity : entities)
+				{
+					contextMenu.addAction(new EntityAction(entity, QString("Select '%1'").arg(entity->toString())));
+				}
+
+				auto action = static_cast<EntityAction*>(contextMenu.exec(event->globalPos()));
+				if (action) {
+					auto selection = new ObjectSelection(action->getEntity()->getX(), action->getEntity()->getY());
+					selection->addObject(action->getEntity());
+
+					if (action->getEntity()->getLevel()) {
+						action->getEntity()->getLevel()->removeEntityFromSpatialMap(action->getEntity());
+					}
+					setSelection(selection);
+					m_graphicsView->redraw();
+				}
+				return;
+			}
+
+			int tile = 0;
+			if (tryGetTileAt(pos.x(), pos.y(), &tile) && !Tilemap::IsInvisibleTile(tile))
+			{
+				setDefaultTile(tile);
+			}
+
 
 			m_graphicsView->redraw();
 

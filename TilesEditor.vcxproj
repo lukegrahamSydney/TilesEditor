@@ -102,6 +102,7 @@
     <ClCompile Include="AbstractLevelEntity.cpp" />
     <ClCompile Include="AbstractSelection.cpp" />
     <ClCompile Include="EditAnonymousNPC.cpp" />
+    <ClCompile Include="EditExternalNPC.cpp" />
     <ClCompile Include="EditLinkDialog.cpp" />
     <ClCompile Include="EditorTabWidget.cpp" />
     <ClCompile Include="EditSignsDialog.cpp" />
@@ -142,6 +143,7 @@
     <QtRcc Include="MainWindow.qrc" />
     <QtUic Include="AboutDialog.ui" />
     <QtUic Include="EditAnonymousNPC.ui" />
+    <QtUic Include="EditExternalNPC.ui" />
     <QtUic Include="EditLinkDialog.ui" />
     <QtUic Include="EditorTabWidget.ui" />
     <QtUic Include="EditSignsDialog.ui" />
@@ -168,6 +170,7 @@
     <QtMoc Include="EditLinkDialog.h" />
     <QtMoc Include="EditSignsDialog.h" />
     <QtMoc Include="CustomPaintWidget.h" />
+    <QtMoc Include="EditExternalNPC.h" />
     <ClInclude Include="LevelLink.h" />
     <ClInclude Include="LevelNPC.h" />
     <ClInclude Include="LevelSign.h" />

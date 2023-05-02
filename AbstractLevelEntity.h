@@ -11,6 +11,7 @@
 #include "LevelEntityType.h"
 #include "ResourceManager.h"
 #include "IWorld.h"
+#include "Image.h"
 #include "cJSON/cJSON.h"
 
 namespace TilesEditor
@@ -93,9 +94,12 @@ namespace TilesEditor
 
 		}
 
+		virtual QString toString() const { return ""; }
+		virtual Image* getIcon() { return nullptr; }
 		virtual cJSON* serializeJSON() { return nullptr; };
 		virtual void deserializeJSON(cJSON* json, IWorld* world) {}
 
+	
 		double getUnitWidth() const;
 		double getUnitHeight() const;
 		double getRealDepth() const {
