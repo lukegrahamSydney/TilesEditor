@@ -21,6 +21,13 @@ You need Qt. Set that up then use this command line:
 
 qmake -tp vc TilesEditor.pro
 
-This will generate a visual studio project file which you can open in visual studio community and build it.
+This will generate a visual studio project file to build...or you can just use the one i included.
+
+# Compiling on other:
+Well you'll need Qt. Then do something similar like:
+qmake TilesEditor.pro
+
+I believe that will create a makefile
+
 
 ![Alt text](/screenshot1.png "Optional Title")
