@@ -1319,7 +1319,7 @@ namespace TilesEditor
 	}
 
 	void EditorTabWidget::graphicsMouseWheel(QWheelEvent* event)
-	{
+	{ 
 		if (QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier))
 		{
 			if (event->angleDelta().y() < 0)
