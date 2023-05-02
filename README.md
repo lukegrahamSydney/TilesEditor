@@ -14,6 +14,7 @@ A level editor that will support multiple level formats
 10. Import tile objects from the folder "tileobjects" from graal.
 11. When you choose to edit signs/links on an overworld, you can then select which level to edit.
 12. Supports tile layers
+13. Move objects around with accuracy by holding "Control" while dragging.
 
 # Compiling on windows:
 You need Qt. Set that up then use this command line:
