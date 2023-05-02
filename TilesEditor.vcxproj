@@ -97,10 +97,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\ZeldaOnline\cJSON\cJSON.c" />
     <ClCompile Include="AboutDialog.cpp" />
     <ClCompile Include="AbstractLevelEntity.cpp" />
     <ClCompile Include="AbstractSelection.cpp" />
+    <ClCompile Include="cJSON\cJSON.c" />
     <ClCompile Include="EditAnonymousNPC.cpp" />
     <ClCompile Include="EditExternalNPC.cpp" />
     <ClCompile Include="EditLinkDialog.cpp" />
@@ -159,8 +159,6 @@
     <QtUic Include="TilesetsWidget.ui" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\ZeldaOnline\cJSON\cJSON.h" />
-    <ClInclude Include="..\ZeldaOnline\cJSON\JsonHelper.h" />
     <QtMoc Include="AboutDialog.h" />
     <ClInclude Include="AbstractFileSystem.h" />
     <ClInclude Include="AbstractLevelEntity.h" />
@@ -171,6 +169,8 @@
     <QtMoc Include="EditSignsDialog.h" />
     <QtMoc Include="CustomPaintWidget.h" />
     <QtMoc Include="EditExternalNPC.h" />
+    <ClInclude Include="cJSON\cJSON.h" />
+    <ClInclude Include="cJSON\JsonHelper.h" />
     <ClInclude Include="LevelLink.h" />
     <ClInclude Include="LevelNPC.h" />
     <ClInclude Include="LevelSign.h" />

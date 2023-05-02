@@ -52,8 +52,8 @@ HEADERS += ./AbstractFileSystem.h \
     ./TileObjectsWidget.h \
     ./GraphicsView.h \
     ./EditorTabWidget.h \
-    ./cJSON/cJSON.h \
     ./cJSON/JsonHelper.h \
+    ./cJSON/cJSON.h \
     ./QCodeEditor/include/KGL/Design/QCodeEditorDesign.hpp \
     ./QCodeEditor/include/KGL/Design/QCodeEditorSheets.hpp \
     ./QCodeEditor/include/KGL/Design/QLineColumnPadding.hpp \
@@ -63,7 +63,8 @@ HEADERS += ./AbstractFileSystem.h \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditor.hpp \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorHighlighter.hpp \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorLineWidget.hpp \
-    ./QCodeEditor/include/KGL/Widgets/QCodeEditorPopup.hpp
+    ./QCodeEditor/include/KGL/Widgets/QCodeEditorPopup.hpp \
+    ./EditExternalNPC.h
 SOURCES += ./AboutDialog.cpp \
     ./AbstractLevelEntity.cpp \
     ./AbstractSelection.cpp \
@@ -108,7 +109,8 @@ SOURCES += ./AboutDialog.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorHighlighter.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorLineWidget.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorPopup.cpp \
-    ./QCodeEditor/src/Widgets/QCodeEditorSlots.cpp
+    ./QCodeEditor/src/Widgets/QCodeEditorSlots.cpp \
+    ./EditExternalNPC.cpp
 FORMS += ./AboutDialog.ui \
     ./EditAnonymousNPC.ui \
     ./EditLinkDialog.ui \
@@ -119,5 +121,6 @@ FORMS += ./AboutDialog.ui \
     ./ObjectsWidget.ui \
     ./SaveOverworldDialog.ui \
     ./TileObjectsWidget.ui \
-    ./TilesetsWidget.ui
+    ./TilesetsWidget.ui \
+    ./EditExternalNPC.ui
 RESOURCES += MainWindow.qrc
