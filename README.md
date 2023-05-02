@@ -1,7 +1,7 @@
 # TilesEditor
 A level editor that will support multiple level formats
 
-#Features
+# Features
 1. Supports .gmap and .nw file formats
 2. Select multiple objects at once (hold shift key to select another object)
 3. Grab,move and resize links and signs
