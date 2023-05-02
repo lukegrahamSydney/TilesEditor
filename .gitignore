@@ -3,6 +3,7 @@ x64/
 .vs/
 settings.ini
 tileObjects.json
+TilesEditor.sln
 TilesEditor.vcxproj
 TilesEditor.vcxproj.filters
 TilesEditor.vcxproj.user
