@@ -52,8 +52,8 @@ HEADERS += ./AbstractFileSystem.h \
     ./TileObjectsWidget.h \
     ./GraphicsView.h \
     ./EditorTabWidget.h \
-    ../ZeldaOnline/cJSON/cJSON.h \
-    ../ZeldaOnline/cJSON/JsonHelper.h \
+    ./cJSON/cJSON.h \
+    ./cJSON/JsonHelper.h \
     ./QCodeEditor/include/KGL/Design/QCodeEditorDesign.hpp \
     ./QCodeEditor/include/KGL/Design/QCodeEditorSheets.hpp \
     ./QCodeEditor/include/KGL/Design/QLineColumnPadding.hpp \
@@ -97,7 +97,7 @@ SOURCES += ./AboutDialog.cpp \
     ./EntitySpatialGrid.cpp \
     ./MainWindow.cpp \
     ./main.cpp \
-    ../ZeldaOnline/cJSON/cJSON.c \
+    ./cJSON/cJSON.c \
     ./QCodeEditor/src/Design/QCodeEditorDesign.cpp \
     ./QCodeEditor/src/Design/QCodeEditorSheets.cpp \
     ./QCodeEditor/src/Design/QLineColumnPadding.cpp \
