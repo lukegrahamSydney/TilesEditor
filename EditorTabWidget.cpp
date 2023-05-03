@@ -87,14 +87,14 @@ namespace TilesEditor
 
 		connect(ui_tileObjectsClass.graphicsView, &GraphicsView::renderView, this, &EditorTabWidget::renderTileObjects);
 		connect(ui_tileObjectsClass.graphicsView, &GraphicsView::mousePress, this, &EditorTabWidget::tileObjectsMousePress);
-		
+
 		connect(ui_tileObjectsClass.newGroupButton, &QAbstractButton::clicked, this, &EditorTabWidget::tileGroupNewClicked);
 		connect(ui_tileObjectsClass.deleteGroupButton, &QAbstractButton::clicked, this, &EditorTabWidget::tileGroupDeleteClicked);
-		
+
 
 		connect(ui_tileObjectsClass.newObjectButton, &QAbstractButton::clicked, this, &EditorTabWidget::tileObjectNewClicked);
 		connect(ui_tileObjectsClass.deleteObjectButton, &QAbstractButton::clicked, this, &EditorTabWidget::tileObjectDeleteClicked);
-		
+
 		connect(ui_tileObjectsClass.importButton, &QAbstractButton::clicked, this, &EditorTabWidget::tileGroupImportClicked);
 		connect(ui_tileObjectsClass.groupCombo, &QComboBox::currentIndexChanged, this, &EditorTabWidget::tileGroupIndexChanged);
 		connect(ui_tileObjectsClass.objectsCombo, &QComboBox::currentIndexChanged, this, &EditorTabWidget::tileObjectIndexChanged);
@@ -128,7 +128,7 @@ namespace TilesEditor
 		connect(ui.copyButton, &QToolButton::pressed, this, &EditorTabWidget::copyPressed);
 		connect(ui.pasteButton, &QToolButton::pressed, this, &EditorTabWidget::pastePressed);
 		connect(ui.deleteButton, &QToolButton::clicked, this, &EditorTabWidget::deleteClicked);
-	
+
 		auto menu = new QMenu();
 		m_selectNPCs = menu->addAction("Npcs");
 		m_selectNPCs->setCheckable(true);
@@ -137,7 +137,7 @@ namespace TilesEditor
 		m_selectLinks = menu->addAction("Links");
 		m_selectLinks->setCheckable(true);
 		m_selectLinks->setChecked(true);
-		
+
 		m_selectSigns = menu->addAction("Signs");
 		m_selectSigns->setCheckable(true);
 		m_selectSigns->setChecked(true);
@@ -355,7 +355,7 @@ namespace TilesEditor
 			emit changeTabText(m_overworld->getName());
 		else if (m_level)
 			emit changeTabText(m_level->getName());
-		
+
 	}
 
 	void EditorTabWidget::setDefaultTile(int tile)
@@ -422,11 +422,11 @@ namespace TilesEditor
 									//else tilemap->setTile(x + sourceTileX, y + sourceTileY, Tilemap::MakeInvisibleTile(0));
 
 									setModified(level);
-			
+
 
 									tileSelection->setTile(x, y, tile);
 								}
-								
+
 							}
 						}
 
@@ -465,7 +465,7 @@ namespace TilesEditor
 
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -527,7 +527,7 @@ namespace TilesEditor
 		ui_tilesetsClass.tilesetsCombo->setModel(tilesetList);
 
 		ui_tileObjectsClass.groupCombo->setModel(tileGroupList);
-		
+
 	}
 
 	void EditorTabWidget::addUndoCommand(QUndoCommand* command)
@@ -642,7 +642,7 @@ namespace TilesEditor
 			if (!checkAllowedSelect || canSelectObject(entity->getEntityType()))
 				return entity;
 		}
-		
+
 		return nullptr;
 	}
 
@@ -753,13 +753,13 @@ namespace TilesEditor
 		setTileset("pics1.png");
 
 		ui.preloadButton->setEnabled(true);
-		
+
 	}
 
-	void EditorTabWidget::setModified(Level* level) 
+	void EditorTabWidget::setModified(Level* level)
 	{
 
-		
+
 		if (level)
 			level->setModified(true);
 		if (!m_modified)
@@ -948,7 +948,7 @@ namespace TilesEditor
 					m_graphicsView->redraw();
 					return;
 				}
-				
+
 
 			}
 
@@ -959,7 +959,7 @@ namespace TilesEditor
 			auto maxHeight = (int)ui_tilesetsClass.graphicsView->sceneRect().height();
 			m_tilesSelector.beginSelection(
 				std::min(maxWidth, std::max(0, (int)pos.x())),
-				std::min(maxHeight, std::max(0, (int)pos.y())), 
+				std::min(maxHeight, std::max(0, (int)pos.y())),
 				16, 16);
 			ui_tilesetsClass.graphicsView->redraw();
 		}
@@ -968,7 +968,7 @@ namespace TilesEditor
 			m_tilesSelector.setVisible(false);
 			setDefaultTile(Tilemap::MakeTile(int(pos.x() / 16), int(pos.y() / 16), 0));
 			ui_tilesetsClass.graphicsView->redraw();
-			
+
 
 		}
 
@@ -986,14 +986,14 @@ namespace TilesEditor
 				auto maxHeight = (int)ui_tilesetsClass.graphicsView->sceneRect().height();
 
 				m_tilesSelector.endSelection(
-					std::min(maxWidth, std::max(0, (int)pos.x())), 
+					std::min(maxWidth, std::max(0, (int)pos.x())),
 					std::min(maxHeight, std::max(0, (int)pos.y()))
 				);
 			}
 
-			
+
 			ui_tilesetsClass.graphicsView->redraw();
-			
+
 		}
 	}
 
@@ -1004,7 +1004,7 @@ namespace TilesEditor
 		if (m_tilesSelector.selecting())
 		{
 			m_tilesSelector.setVisible(true);
-	
+
 			auto maxWidth = (int)ui_tilesetsClass.graphicsView->sceneRect().width();
 			auto maxHeight  = (int)ui_tilesetsClass.graphicsView->sceneRect().height();
 
@@ -1013,7 +1013,7 @@ namespace TilesEditor
 		}
 		else if (m_tilesSelector.visible())
 		{
-			
+
 		}
 
 	}
@@ -1084,7 +1084,7 @@ namespace TilesEditor
 			}
 			return;
 		}
-		
+
 		if(m_selector.visible())
 			selectorGone();
 
@@ -1138,17 +1138,17 @@ namespace TilesEditor
 				else {
 					//insert
 
-					//If tiles then only insert the tiles and continue 
+					//If tiles then only insert the tiles and continue
 					if (m_selection->getSelectionType() == SelectionType::SELECTION_TILES)
 						m_selection->reinsertIntoWorld(this, m_selectedTilesLayer);
 					//Otherwise switch back to normal selection method (for objects)
 					else m_selection->setAlternateSelectionMethod(false);
-				
+
 					m_graphicsView->redraw();
 					return;
 				}
 			}
-	
+
 			if (m_selector.visible())
 			{
 				auto rect = m_selector.getSelection();
@@ -1166,7 +1166,7 @@ namespace TilesEditor
 			{
 				if (m_selection && m_selection->getSelectionType() == SelectionType::SELECTION_OBJECTS)
 				{
-					auto objectSelection = static_cast<ObjectSelection*>(m_selection);
+					auto objectSelection = dynamic_cast<ObjectSelection*>(m_selection);
 
 					if(objectSelection->getEntityType() == LevelEntityType::ENTITY_NPC)
 						setStatusBar("Hint: Hold 'Shift' to select multiple objects", 1, 20000);
@@ -1178,9 +1178,6 @@ namespace TilesEditor
 				return;
 			}
 
-
-
-			
 			m_selector.setVisible(false);
 			m_selector.beginSelection(pos.x(), pos.y(), 16, 16);
 			m_graphicsView->redraw();
@@ -1195,9 +1192,9 @@ namespace TilesEditor
 
 			ui.floodFillButton->setChecked(false);
 			setSelection(nullptr);
-					
+
 			auto entities = getEntitiesAt(pos.x(), pos.y(), true);
-			if (entities.size() > 0)
+			if (!entities.empty())
 			{
 				QMenu contextMenu;
 
@@ -1206,14 +1203,14 @@ namespace TilesEditor
 				{
 				private:
 					AbstractLevelEntity* m_entity;
-				
+
 				public:
 					EntityAction(AbstractLevelEntity* entity, const QString& text):
-						QAction(text), m_entity(entity) 
+						QAction(text), m_entity(entity)
 					{
 						if(entity->getIcon())
 							this->setIcon(entity->getIcon()->pixmap());
-					
+
 					}
 
 					AbstractLevelEntity* getEntity() { return m_entity; }
@@ -1224,7 +1221,7 @@ namespace TilesEditor
 					contextMenu.addAction(new EntityAction(entity, QString("Select '%1'").arg(entity->toString())));
 				}
 
-				auto action = static_cast<EntityAction*>(contextMenu.exec(event->globalPos()));
+				auto action = dynamic_cast<EntityAction*>(contextMenu.exec(event->globalPosition().toPoint()));
 				if (action) {
 					auto selection = new ObjectSelection(action->getEntity()->getX(), action->getEntity()->getY());
 					selection->addObject(action->getEntity());
@@ -1335,7 +1332,7 @@ namespace TilesEditor
 			{
 				if (m_selection->getAlternateSelectionMethod())
 				{
-					
+
 
 					if (m_selection->getSelectionType() == SelectionType::SELECTION_TILES)
 					{
@@ -1367,7 +1364,7 @@ namespace TilesEditor
 			{
 				//m_selection->setX(std::floor((pos.x() - m_selection->getWidth() / 2) / 16.0) * 16.0);
 				//m_selection->setY(std::floor((pos.y() - m_selection->getHeight() / 2) / 16.0) * 16.0);
-				
+
 				m_selection->drag(
 					std::floor((pos.x() - m_selection->getWidth() / 2) / 16.0) * 16.0,
 					std::floor((pos.y() - m_selection->getHeight() / 2) / 16.0) * 16.0,
@@ -1375,7 +1372,7 @@ namespace TilesEditor
 
 				m_graphicsView->redraw();
 
-			
+
 			}
 			else {
 				//Set the correct cursor when it is on the edge of a selection object that can be resized
@@ -1572,7 +1569,7 @@ namespace TilesEditor
 	}
 
 	void EditorTabWidget::graphicsMouseWheel(QWheelEvent* event)
-	{ 
+	{
 		if (QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier))
 		{
 			if (event->angleDelta().y() < 0)
@@ -1623,10 +1620,10 @@ namespace TilesEditor
 		auto it = m_visibleLayers.find(m_selectedTilesLayer);
 		if (it == m_visibleLayers.end())
 			m_visibleLayers[m_selectedTilesLayer] = true;
-		
+
 		m_selectedLayerVisible = m_visibleLayers[m_selectedTilesLayer];
 
-		
+
 		if(m_selectedLayerVisible)
 			ui.showLayerButton->setIcon(m_eyeOpen);
 		else ui.showLayerButton->setIcon(m_eyeClosed);
@@ -1671,7 +1668,7 @@ namespace TilesEditor
 				ListLinksDialog frm(level, this);
 				frm.exec();
 
-				
+
 			}
 		}
 		else {
@@ -1689,7 +1686,7 @@ namespace TilesEditor
 		if (rootLinkLevel)
 		{
 			auto link = new LevelLink(rootLinkLevel, rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
-			
+
 			EditLinkDialog frm(link);
 			if (frm.exec() == QDialog::Accepted)
 			{
@@ -1818,7 +1815,7 @@ namespace TilesEditor
 				auto vcount = jsonGetChildInt(json, "vcount");
 
 
-		
+
 				auto tileSelection = new TileSelection(std::floor((viewRect.getCenterX() - (hcount * 16) / 2) / 16.0) * 16.0, std::floor((viewRect.getCenterY() - (vcount * 16) / 2) / 16.0) * 16.0, hcount, vcount);
 
 				auto tileArray = cJSON_GetObjectItem(json, "tiles");
@@ -1847,14 +1844,14 @@ namespace TilesEditor
 				setSelection(tileSelection);
 
 				m_graphicsView->redraw();
-				
+
 			}
 			else if (type == "objectSelection")
 			{
 				auto selection = new ObjectSelection(viewRect.getCenterX(), viewRect.getCenterY());
 				selection->deserializeJSON(json, this);
 
-				
+
 				setSelection(selection);
 
 				m_graphicsView->redraw();
@@ -1894,7 +1891,7 @@ namespace TilesEditor
 
 						if (m_resourceManager.locateFile(level->getName(), &fullPath))
 							level->setFileName(fullPath);
-						
+
 
 					}
 
@@ -1960,7 +1957,7 @@ namespace TilesEditor
 	void EditorTabWidget::tilesetsIndexChanged(int index)
 	{
 		auto imageName = ui_tilesetsClass.tilesetsCombo->currentText();
-		
+
 		setTileset(imageName);
 
 		m_graphicsView->redraw();
@@ -1995,7 +1992,7 @@ namespace TilesEditor
 
 			ui_tilesetsClass.tilesetsCombo->model()->insertRow(ui_tilesetsClass.tilesetsCombo->model()->rowCount());
 			ui_tilesetsClass.tilesetsCombo->model()->setData(ui_tilesetsClass.tilesetsCombo->model()->index(ui_tilesetsClass.tilesetsCombo->model()->rowCount() - 1, 0), imageName);
-			
+
 			if(ui_tilesetsClass.tilesetsCombo->model()->rowCount() == 1)
 				tilesetsIndexChanged(0);
 		}
@@ -2177,7 +2174,7 @@ namespace TilesEditor
 		npc->setImageName("", m_resourceManager);
 		selection->addObject(npc);
 		selection->setAlternateSelectionMethod(true);
-	
+
 		setSelection(selection);
 
 	}
@@ -2222,9 +2219,9 @@ namespace TilesEditor
 			setSelection(selection);
 			m_graphicsView->centerOn(entity->getCenterX(), entity->getCenterY());
 			m_graphicsView->redraw();
-			
+
 		}
-		
+
 	}
 
 	void EditorTabWidget::selectorGone()

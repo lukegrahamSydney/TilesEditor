@@ -13,6 +13,7 @@ HEADERS += ./AbstractFileSystem.h \
     ./LevelLink.h \
     ./LevelNPC.h \
     ./LevelSign.h \
+    ./LevelCommands.h \
     ./ObjectListModel.h \
     ./ObjectSelection.h \
     ./SelectionType.h \
@@ -79,6 +80,7 @@ SOURCES += ./AboutDialog.cpp \
     ./LevelLink.cpp \
     ./LevelNPC.cpp \
     ./LevelSign.cpp \
+    ./LevelCommands.cpp \
     ./ListLinksDialog.cpp \
     ./MainFileSystem.cpp \
     ./ObjectListModel.cpp \

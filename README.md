@@ -16,8 +16,12 @@ A level editor that will support multiple level formats
 12. Supports tile layers
 13. Move objects around with accuracy by holding "Control" while dragging.
 
+# Requirements
+* QT6
+* python3 + pip3 (Linux)
+
 # Compiling on windows:
-You need Qt. Set that up then use this command line:
+You need Qt6. Set that up then use this command line:
 
 qmake -tp vc TilesEditor.pro
 
@@ -29,5 +33,12 @@ qmake TilesEditor.pro
 
 I believe that will create a makefile
 
+OR generate CMakeLists.txt:
+```bash
+pip3 install qmake2cmake
+qmake2cmake_all --min-qt-version 6 ./
+cmake -S. -Bbuild/
+cmake --build build/ -j $(nproc)
+```
 
 ![Alt text](/screenshot1.png "Optional Title")
