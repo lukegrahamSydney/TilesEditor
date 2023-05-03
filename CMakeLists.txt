@@ -105,6 +105,9 @@ target_link_libraries(TilesEditor PRIVATE
 
 # Resources:
 set(MainWindow_resource_files
+    "icons/fugue/arrow-circle-315.png"
+    "icons/fugue/arrow-curve-180-left.png"
+    "icons/fugue/arrow-curve.png"
     "icons/fugue/chain--pencil.png"
     "icons/fugue/chain--plus.png"
     "icons/fugue/clipboard-paste.png"
@@ -123,6 +126,7 @@ set(MainWindow_resource_files
     "icons/fugue/information-octagon.png"
     "icons/fugue/layers.png"
     "icons/fugue/magnifier.png"
+    "icons/fugue/paint-can.png"
     "icons/fugue/scissors.png"
     "icons/fugue/script--pencil.png"
     "icons/fugue/script--plus.png"
