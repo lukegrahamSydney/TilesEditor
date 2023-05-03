@@ -895,7 +895,7 @@ namespace TilesEditor
 					{
 						int tile = input->getTile(x, y);
 
-						if (!Tilemap::IsInvisibleTile(tile))
+						if (!Tilemap::IsInvisibleTile(tile) || layer != 0)
 						{
 							modified = true;
 							tilemap->setTile(destTileX + x, destTileY + y, tile);

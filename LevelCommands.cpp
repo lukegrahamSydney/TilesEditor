@@ -26,7 +26,7 @@ namespace TilesEditor
 	void CommandDeleteTiles::redo()
 	{
 		Tilemap tiles(nullptr, 0.0, 0.0, m_oldTiles->getHCount(), m_oldTiles->getVCount(), 0);
-		tiles.clear(m_replaceTile);
+		tiles.clear(m_layer == 0 ? m_replaceTile : Tilemap::MakeInvisibleTile(0));
 
 		m_world->putTiles(m_x, m_y, m_layer, &tiles);
 	}
