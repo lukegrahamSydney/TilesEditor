@@ -3,7 +3,10 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QPair>
+#include <QStack>
 #include <algorithm>
+
 #include "EditorTabWidget.h"
 #include "GraphicsView.h"
 #include "TileSelection.h"
@@ -235,6 +238,19 @@ namespace TilesEditor
 			}
 		}
 
+		if (ui.floodFillButton->isChecked())
+		{
+			auto pos1 = m_graphicsView->mapFromGlobal(QCursor::pos());
+			auto pos = m_graphicsView->mapToScene(pos1);
+
+			auto tileX = std::floor(pos.x() / 16.0) * 16.0;
+			auto tileY = std::floor(pos.y() / 16.0) * 16.0;
+
+			auto rect = QRectF(tileX, tileY, 16, 16);
+			painter->fillRect(rect, QColor(255, 0, 255, 128));
+
+		}
+
 		if (m_overworld)
 		{
 			QFontMetrics fm(m_font1);
@@ -464,6 +480,7 @@ namespace TilesEditor
 		m_selection = newSelection;
 		if (m_selection != nullptr)
 		{
+			ui.floodFillButton->setChecked(false);
 			if (m_selector.visible())
 			{
 				m_selector.setVisible(false);
@@ -800,6 +817,7 @@ namespace TilesEditor
 			return QList<Level*>({ m_level });
 		return QList<Level*>();
 	}
+
 	void EditorTabWidget::tilesetMousePress(QMouseEvent* event)
 	{
 		auto pos = ui_tilesetsClass.graphicsView->mapToScene(event->pos());
@@ -981,6 +999,14 @@ namespace TilesEditor
 
 		if (event->button() == Qt::MouseButton::LeftButton)
 		{
+			if (ui.floodFillButton->isChecked())
+			{
+
+				floodFill(pos.x(), pos.y(), m_defaultTile);
+
+				m_graphicsView->redraw();
+				return;
+			}
 			if (m_selection != nullptr)
 			{
 				if (!m_selection->getAlternateSelectionMethod())
@@ -1071,6 +1097,7 @@ namespace TilesEditor
 				m_selector.setVisible(false);
 
 
+			ui.floodFillButton->setChecked(false);
 			setSelection(nullptr);
 					
 			auto entities = getEntitiesAt(pos.x(), pos.y(), true);
@@ -1164,7 +1191,7 @@ namespace TilesEditor
 
 	void EditorTabWidget::graphicsMouseMove(QMouseEvent* event)
 	{
-		if (selectingLevel())
+		if (selectingLevel() || ui.floodFillButton->isChecked())
 		{
 			m_graphicsView->redraw();
 			return;
@@ -1394,49 +1421,58 @@ namespace TilesEditor
 				}
 			}
 
-			auto tile = 0;
-			auto tileX = std::floor(pos.x() / 16.0) * 16.0;
-			auto tileY = std::floor(pos.y() / 16.0) * 16.0;
 
-			if (tryGetTileAt(tileX, tileY, &tile))
-			{
-				floodFill(tileX, tileY, tile, m_defaultTile);
-			}
-			m_graphicsView->redraw();
 			
 		}
 	}
 
-	void EditorTabWidget::floodFill(double x, double y, int oldTile, int newTile, int counter)
+	void EditorTabWidget::floodFill(double x, double y,int newTile)
 	{
-		if (counter > 1000)
-			return;
-		auto level = getLevelAt(x, y);
-		if (level != nullptr)
+		auto startX = std::floor(x / 16.0) * 16.0;
+		auto startY = std::floor(y / 16.0) * 16.0;
+		auto startTile = 0;
+
+
+		if (tryGetTileAt(startX, startY, &startTile))
 		{
-			auto tilemap = level->getTilemap(m_selectedTilesLayer);
-			if (tilemap != nullptr)
+			QStack<QPair<double, double> > nodes;
+
+			nodes.push(QPair<double, double>(startX, startY));
+
+			while (nodes.count() > 0)
 			{
-				auto tileX = int((x - tilemap->getX()) / 16.0);
-				auto tileY = int((y - tilemap->getY()) / 16.0);
+				auto node = nodes.pop();
 
-				int tile = 0;
-				if (tilemap->tryGetTile(tileX, tileY, &tile) && !Tilemap::IsInvisibleTile(tile))
+				auto level = getLevelAt(node.first, node.second);
+				if (level != nullptr)
 				{
-					if (tile == oldTile)
+					auto tilemap = level->getTilemap(m_selectedTilesLayer);
+					if (tilemap != nullptr)
 					{
-						setModified(level);
+						auto tileX = int((node.first - tilemap->getX()) / 16.0);
+						auto tileY = int((node.second - tilemap->getY()) / 16.0);
 
-						tilemap->setTile(tileX, tileY, newTile);
+						int tile = 0;
+						if (tilemap->tryGetTile(tileX, tileY, &tile) && !Tilemap::IsInvisibleTile(tile) && tile != newTile)
+						{
+							if (tile == startTile)
+							{
+								setModified(level);
 
-						floodFill(x - 16, y, oldTile, newTile, counter + 1);
-						floodFill(x, y - 16, oldTile, newTile, counter + 1);
-						floodFill(x + 16, y, oldTile, newTile, counter + 1);
-						floodFill(x, y + 16, oldTile, newTile, counter + 1);
+								tilemap->setTile(tileX, tileY, newTile);
+
+								nodes.push(QPair<double, double>(node.first - 16, node.second));
+								nodes.push(QPair<double, double>(node.first, node.second - 16));
+								nodes.push(QPair<double, double>(node.first + 16, node.second));
+								nodes.push(QPair<double, double>(node.first, node.second + 16));
+							}
+						}
 					}
 				}
 			}
 		}
+
+		
 	}
 
 	void EditorTabWidget::graphicsMouseWheel(QWheelEvent* event)

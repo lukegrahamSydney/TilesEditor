@@ -150,6 +150,26 @@
        </widget>
       </item>
       <item>
+       <widget class="QToolButton" name="floodFillButton">
+        <property name="toolTip">
+         <string>Flood Fill</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="MainWindow.qrc">
+          <normaloff>:/MainWindow/icons/fugue/paint-can.png</normaloff>:/MainWindow/icons/fugue/paint-can.png</iconset>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QWidget" name="widget_8" native="true">
         <property name="minimumSize">
          <size>

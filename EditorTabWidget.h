@@ -184,7 +184,7 @@ namespace TilesEditor
 		void updateMovedEntity(AbstractLevelEntity* entity) override;
 		QList<Level*> getModifiedLevels() override;
 
-		void floodFill(double x, double y, int oldTile, int newTile, int counter = 0);
+		void floodFill(double x, double y, int newTile);
 		void newLevel(int hcount, int vcount);
 		void loadGMap(const QString& name, const QString& fileName);
 		void loadLevel(const QString& name, const QString& fileName);
