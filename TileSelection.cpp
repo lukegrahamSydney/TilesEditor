@@ -92,7 +92,7 @@ namespace TilesEditor
 							modified = true;
 							
 							int oldTile = 0;
-							if (tilemap->tryGetTile(destTileX + x, destTileY + y, &oldTile))
+							if (tilemap->tryGetTile(destTileX + x, destTileY + y, &oldTile) && !Tilemap::IsInvisibleTile(oldTile))
 								oldTiles.setTile(x, y, oldTile);
 
 							//tilemap->setTile(destTileX + x, destTileY + y, tile);

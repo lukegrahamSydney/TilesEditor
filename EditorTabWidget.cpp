@@ -881,7 +881,7 @@ namespace TilesEditor
 		auto levels = this->getLevelsInRect(rect);
 
 		for (auto level : levels)
-		{
+		{ 
 			auto tilemap = level->getOrMakeTilemap(layer, this->getResourceManager());
 			if (tilemap != nullptr)
 			{
@@ -894,6 +894,7 @@ namespace TilesEditor
 					for (int x = 0; x < input->getHCount(); ++x)
 					{
 						int tile = input->getTile(x, y);
+
 
 						if (!Tilemap::IsInvisibleTile(tile) || layer != 0)
 						{
