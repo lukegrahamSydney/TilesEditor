@@ -4,6 +4,7 @@ x64/
 .vs/
 .qmake.stash
 build/
+dist/
 cmake-*/
 release/
 settings.ini
