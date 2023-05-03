@@ -6,6 +6,7 @@
 #include <QMap>
 #include <QFont>
 #include <QStringListModel>
+#include <QUndoStack>
 #include "ui_EditorTabWidget.h"
 #include "ui_TilesetsWidget.h"
 #include "ui_TileObjectsWidget.h"
@@ -41,7 +42,7 @@ namespace TilesEditor
 		void tilesetMousePress(QMouseEvent* event);
 		void tilesetMouseRelease(QMouseEvent* event);
 		void tilesetMouseMove(QMouseEvent* event);
-
+	
 		void tileObjectsMousePress(QMouseEvent* event);
 
 		void graphicsMousePress(QMouseEvent* event);
@@ -58,6 +59,8 @@ namespace TilesEditor
 		void newLinkClicked(bool checked);
 		void newSignClicked(bool checked);
 		void editSignsClicked(bool checked);
+		void undoClicked(bool checked);
+		void redoClicked(bool checked);
 		void cutPressed();
 		void copyPressed();
 		void pastePressed();
@@ -66,6 +69,7 @@ namespace TilesEditor
 		void saveAsClicked(bool checked);
 		void tilesetsIndexChanged(int index);
 		void tilesetDeleteClicked(bool checked);
+		void tilesetRefreshClicked(bool checked);
 		void tilesetNewClicked(bool checked);
 		void tileGroupNewClicked(bool checked);
 		void tileGroupDeleteClicked(bool checked);
@@ -131,6 +135,7 @@ namespace TilesEditor
 
 		AbstractSelection* m_selection;
 
+		QUndoStack m_undoStack;
 
 		void doTileSelection();
 		bool doObjectSelection(int x, int y, bool allowAppend);
@@ -166,6 +171,7 @@ namespace TilesEditor
 
 		bool getModified() const { return m_modified; }
 
+		void addUndoCommand(QUndoCommand* command) override;
 		QString getName() const;
 		QSet<Level*> getLevelsInRect(const IRectangle& rect) override;
 		Level* getLevelAt(double x, double y) override;
@@ -179,11 +185,20 @@ namespace TilesEditor
 		void deleteEntity(AbstractLevelEntity* entity) override;
 		void setModified(Level* level) override;
 		bool tryGetTileAt(double x, double y, int* outTile) override;
+
 		void updateMovedEntity(AbstractLevelEntity* entity) override;
 		QList<Level*> getModifiedLevels() override;
 
+
+		void getTiles(double x, double y, int layer, Tilemap* output, bool deleteTiles = false) override;
+		void putTiles(double x, double y, int layer, Tilemap* input) override;
+
+
+		int floodFill(double x, double y, int newTile) override;
 		void newLevel(int hcount, int vcount);
 		void loadGMap(const QString& name, const QString& fileName);
 		void loadLevel(const QString& name, const QString& fileName);
+
+		
 	};
 };

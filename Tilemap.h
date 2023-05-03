@@ -22,6 +22,8 @@ namespace TilesEditor
 		int* m_tiles;
 
 	public:
+		Tilemap(const Tilemap& source);
+
 		Tilemap(Level* level, double x, double y, int hcount, int vcount, int layerIndex);
 
 		~Tilemap() {

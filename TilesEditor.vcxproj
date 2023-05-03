@@ -110,6 +110,7 @@
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImageDimensions.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LevelCommands.cpp" />
     <ClCompile Include="LevelLink.cpp" />
     <ClCompile Include="LevelNPC.cpp" />
     <ClCompile Include="LevelSign.cpp" />
@@ -171,6 +172,7 @@
     <QtMoc Include="EditExternalNPC.h" />
     <ClInclude Include="cJSON\cJSON.h" />
     <ClInclude Include="cJSON\JsonHelper.h" />
+    <ClInclude Include="LevelCommands.h" />
     <ClInclude Include="LevelLink.h" />
     <ClInclude Include="LevelNPC.h" />
     <ClInclude Include="LevelSign.h" />

@@ -16,19 +16,24 @@ namespace TilesEditor
 		int m_width;
 		int m_height;
 
-		int* m_tiles;
-		int m_hcount;
-		int m_vcount;
+		bool m_hasInserted;
+		double m_lastInsertX;
+		double m_lastInsertY;
+		Tilemap* m_tilemap;
+
+		//int* m_tiles;
+		//int m_hcount;
+		//int m_vcount;
 
 		int m_selectionStartHCount;
 		int m_selectionStartVCount;
 
-		void resize(int hcount, int vcount);
 
 	public:
 		TileSelection(double x, double y, int hcount, int vcount);
 		~TileSelection();
 
+		Tilemap* getTilemap() { return m_tilemap; }
 		int getWidth() const override { return m_width; }
 		int getHeight() const override { return m_height; }
 		double getRight() const { return getX() + m_width; }
@@ -43,8 +48,8 @@ namespace TilesEditor
 		int getTile(unsigned int x, unsigned int y);
 		void setTile(unsigned int x, unsigned int y, int tile);
 
-		int getHCount() const { return m_hcount; }
-		int getVCount() const { return m_vcount; }
+		int getHCount() const;
+		int getVCount() const;
 		bool clipboardCopy() override;
 		void clearSelection(IWorld* world) override;
 		bool canResize() const override { return true; }

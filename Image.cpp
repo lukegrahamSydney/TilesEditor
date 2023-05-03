@@ -9,6 +9,16 @@ namespace TilesEditor
         m_pixmap = pixmap;
     }
 
+    void Image::replace(const QString& fileName)
+    {
+        QPixmap pixmap;
+
+        if (pixmap.load(fileName))
+        {
+            m_pixmap = pixmap;
+        }
+    }
+
     void Image::draw(QPainter* painter, double x, double y)
     {
         painter->drawPixmap((int)x, (int)y, this->pixmap());

@@ -151,6 +151,7 @@ namespace TilesEditor
 
 			if (res != nullptr)
 			{
+				res->setFileName(fileName);
 				res->incrementRef();
 				m_resources[resourceName] = res;
 			}
@@ -177,6 +178,19 @@ namespace TilesEditor
 				delete resource;
 				m_resources.erase(it);
 			}
+		}
+	}
+
+	void ResourceManager::updateResource(const QString& name)
+	{
+		auto it = m_resources.find(name);
+		if (it != m_resources.end())
+		{
+			auto resource = it.value();
+
+			auto fileName = resource->getFileName();
+			qDebug() << "F: " << fileName;
+			resource->replace(fileName);
 		}
 	}
 

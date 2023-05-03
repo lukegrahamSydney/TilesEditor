@@ -3,7 +3,10 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QPair>
+#include <QStack>
 #include <algorithm>
+
 #include "EditorTabWidget.h"
 #include "GraphicsView.h"
 #include "TileSelection.h"
@@ -15,6 +18,7 @@
 #include "SaveOverworldDialog.h"
 #include "EditSignsDialog.h"
 #include "ObjectListModel.h"
+#include "LevelCommands.h"
 
 namespace TilesEditor
 {
@@ -78,6 +82,7 @@ namespace TilesEditor
 		connect(ui_tilesetsClass.graphicsView, &GraphicsView::mouseMove, this, &EditorTabWidget::tilesetMouseMove);
 		connect(ui_tilesetsClass.tilesetsCombo, &QComboBox::currentIndexChanged, this, &EditorTabWidget::tilesetsIndexChanged);
 		connect(ui_tilesetsClass.deleteButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetDeleteClicked);
+		connect(ui_tilesetsClass.refreshButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetRefreshClicked);
 		connect(ui_tilesetsClass.newButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetNewClicked);
 
 		connect(ui_tileObjectsClass.graphicsView, &GraphicsView::renderView, this, &EditorTabWidget::renderTileObjects);
@@ -117,6 +122,8 @@ namespace TilesEditor
 		connect(ui.editLinksButton, &QToolButton::clicked, this, &EditorTabWidget::editLinksClicked);
 
 		connect(ui.editSignsButton, &QToolButton::clicked, this, &EditorTabWidget::editSignsClicked);
+		connect(ui.undoButton, &QToolButton::clicked, this, &EditorTabWidget::undoClicked);
+		connect(ui.redoButton, &QToolButton::clicked, this, &EditorTabWidget::redoClicked);
 		connect(ui.cutButton, &QToolButton::pressed, this, &EditorTabWidget::cutPressed);
 		connect(ui.copyButton, &QToolButton::pressed, this, &EditorTabWidget::copyPressed);
 		connect(ui.pasteButton, &QToolButton::pressed, this, &EditorTabWidget::pastePressed);
@@ -234,6 +241,19 @@ namespace TilesEditor
 			}
 		}
 
+		if (ui.floodFillButton->isChecked())
+		{
+			auto pos1 = m_graphicsView->mapFromGlobal(QCursor::pos());
+			auto pos = m_graphicsView->mapToScene(pos1);
+
+			auto tileX = std::floor(pos.x() / 16.0) * 16.0;
+			auto tileY = std::floor(pos.y() / 16.0) * 16.0;
+
+			auto rect = QRectF(tileX, tileY, 16, 16);
+			painter->fillRect(rect, QColor(255, 0, 255, 128));
+
+		}
+
 		if (m_overworld)
 		{
 			QFontMetrics fm(m_font1);
@@ -329,7 +349,6 @@ namespace TilesEditor
 
 	void EditorTabWidget::setUnmodified()
 	{
-
 		m_modified = false;
 
 		if (m_overworld)
@@ -398,9 +417,9 @@ namespace TilesEditor
 
 								if (tilemap->tryGetTile(x + sourceTileX, y + sourceTileY, &tile) && !Tilemap::IsInvisibleTile(tile))
 								{
-									if(m_selectedTilesLayer == 0)
-										tilemap->setTile(x + sourceTileX, y + sourceTileY, m_defaultTile);
-									else tilemap->setTile(x + sourceTileX, y + sourceTileY, Tilemap::MakeInvisibleTile(0));
+									//if(m_selectedTilesLayer == 0)
+									//	tilemap->setTile(x + sourceTileX, y + sourceTileY, m_defaultTile);
+									//else tilemap->setTile(x + sourceTileX, y + sourceTileY, Tilemap::MakeInvisibleTile(0));
 
 									setModified(level);
 
@@ -417,6 +436,8 @@ namespace TilesEditor
 				tileSelection->setTilesetImage(m_tilesetImage);
 
 				setSelection(tileSelection);
+
+				addUndoCommand(new CommandDeleteTiles(this, selectionRect.getX(), selectionRect.getY(), m_selectedTilesLayer, tileSelection->getTilemap(), m_defaultTile));
 			}
 		}
 	}
@@ -463,6 +484,7 @@ namespace TilesEditor
 		m_selection = newSelection;
 		if (m_selection != nullptr)
 		{
+			ui.floodFillButton->setChecked(false);
 			if (m_selector.visible())
 			{
 				m_selector.setVisible(false);
@@ -499,12 +521,22 @@ namespace TilesEditor
 		}
 		return m_level;
 	}
+
 	void EditorTabWidget::init(QStringListModel* tilesetList, TileGroupListModel* tileGroupList)
 	{
 		ui_tilesetsClass.tilesetsCombo->setModel(tilesetList);
 
 		ui_tileObjectsClass.groupCombo->setModel(tileGroupList);
 
+	}
+
+	void EditorTabWidget::addUndoCommand(QUndoCommand* command)
+	{
+		m_undoStack.push(command);
+
+		ui.redoButton->setEnabled(m_undoStack.canRedo());
+		ui.undoButton->setEnabled(m_undoStack.canUndo());
+		//if()
 	}
 
 	QString EditorTabWidget::getName() const
@@ -667,6 +699,7 @@ namespace TilesEditor
 		delete entity;
 	}
 
+
 	void EditorTabWidget::newLevel(int hcount, int vcount)
 	{
 		m_level = new Level(0, 0, hcount * 16, vcount * 16, nullptr, "");
@@ -798,6 +831,88 @@ namespace TilesEditor
 			return QList<Level*>({ m_level });
 		return QList<Level*>();
 	}
+
+	void EditorTabWidget::getTiles(double x, double y, int layer, Tilemap* output, bool deleteTiles)
+	{
+		Rectangle rect(x, y, output->getWidth(), output->getHeight());
+
+		auto levels = getLevelsInRect(rect);
+
+		for (auto level : levels)
+		{
+			auto tilemap = level->getTilemap(layer);
+			if (tilemap != nullptr)
+			{
+				int sourceTileX = int((rect.getX() - tilemap->getX()) / 16.0);
+				int sourceTileY = int((rect.getY() - tilemap->getY()) / 16.0);
+
+				for (int y = 0; y < output->getVCount(); ++y)
+				{
+					for (int x = 0; x < output->getHCount(); ++x)
+					{
+						int tile = 0;
+
+						if (tilemap->tryGetTile(x + sourceTileX, y + sourceTileY, &tile) && !Tilemap::IsInvisibleTile(tile))
+						{
+							if (deleteTiles)
+							{
+								if (layer == 0)
+									tilemap->setTile(x + sourceTileX, y + sourceTileY, m_defaultTile);
+								else tilemap->setTile(x + sourceTileX, y + sourceTileY, Tilemap::MakeInvisibleTile(0));
+
+								setModified(level);
+							}
+
+							output->setTile(x, y, tile);
+						}
+
+					}
+				}
+
+			}
+		}
+
+	}
+
+	void EditorTabWidget::putTiles(double x, double y, int layer, Tilemap* input)
+	{
+		Rectangle rect(x, y, input->getWidth(), input->getHeight());
+
+		auto levels = this->getLevelsInRect(rect);
+
+		for (auto level : levels)
+		{ 
+			auto tilemap = level->getOrMakeTilemap(layer, this->getResourceManager());
+			if (tilemap != nullptr)
+			{
+				int destTileX = int((x - tilemap->getX()) / 16.0);
+				int destTileY = int((y - tilemap->getY()) / 16.0);
+
+				bool modified = false;
+				for (int y = 0; y < input->getVCount(); ++y)
+				{
+					for (int x = 0; x < input->getHCount(); ++x)
+					{
+						int tile = input->getTile(x, y);
+
+
+						if (!Tilemap::IsInvisibleTile(tile) || layer != 0)
+						{
+							modified = true;
+							tilemap->setTile(destTileX + x, destTileY + y, tile);
+						}
+					}
+				}
+
+				if (modified)
+					this->setModified(level);
+
+			}
+		}
+	}
+
+
+
 	void EditorTabWidget::tilesetMousePress(QMouseEvent* event)
 	{
 		auto pos = ui_tilesetsClass.graphicsView->mapToScene(event->pos());
@@ -979,6 +1094,15 @@ namespace TilesEditor
 
 		if (event->button() == Qt::MouseButton::LeftButton)
 		{
+			if (ui.floodFillButton->isChecked())
+			{
+
+				//int oldTile = floodFill(pos.x(), pos.y(), m_defaultTile);
+
+				addUndoCommand(new CommandFloodFill(this, pos.x(), pos.y(), m_selectedTilesLayer, m_defaultTile));
+				m_graphicsView->redraw();
+				return;
+			}
 			if (m_selection != nullptr)
 			{
 				if (!m_selection->getAlternateSelectionMethod())
@@ -1066,6 +1190,7 @@ namespace TilesEditor
 				m_selector.setVisible(false);
 
 
+			ui.floodFillButton->setChecked(false);
 			setSelection(nullptr);
 
 			auto entities = getEntitiesAt(pos.x(), pos.y(), true);
@@ -1159,7 +1284,7 @@ namespace TilesEditor
 
 	void EditorTabWidget::graphicsMouseMove(QMouseEvent* event)
 	{
-		if (selectingLevel())
+		if (selectingLevel() || ui.floodFillButton->isChecked())
 		{
 			m_graphicsView->redraw();
 			return;
@@ -1306,92 +1431,141 @@ namespace TilesEditor
 
 		if (event->button() == Qt::MouseButton::LeftButton)
 		{
-			//Release any selection
-			if (m_selection)
+			if (m_selection && m_selection->getSelectionType() == SelectionType::SELECTION_OBJECTS)
+			{
+				auto objectSelection = static_cast<ObjectSelection*>(m_selection);
+
+				auto entity = objectSelection->getEntityAtPoint(pos.x(), pos.y());
 				setSelection(nullptr);
 
-			auto entity = getEntityAt(pos.x(), pos.y(), true);
-			if (entity != nullptr)
+				if(entity)
+				{
+					if (entity->getEntityType() == LevelEntityType::ENTITY_NPC)
+					{
+
+						EditAnonymousNPC frm(static_cast<LevelNPC*>(entity), m_resourceManager);
+						if (frm.exec() == QDialog::Accepted)
+						{
+							if (frm.getModified())
+							{
+								setModified(entity->getLevel());
+
+								updateMovedEntity(entity);
+							}
+						}
+						else if (frm.result() == -1)
+						{
+							deleteEntity(entity);
+
+							m_graphicsView->setCursor(Qt::CursorShape::ArrowCursor);
+							m_graphicsView->redraw();
+							return;
+						}
+
+					}
+
+					else if (entity->getEntityType() == LevelEntityType::ENTITY_LINK)
+					{
+						auto link = static_cast<LevelLink*>(entity);
+						if (QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ShiftModifier))
+						{
+							emit openLevel(link->getNextLevel());
+
+							return;
+						}
+
+						EditLinkDialog frm(link);
+						if (frm.exec() == QDialog::Accepted)
+						{
+							if (frm.getModified())
+							{
+								setModified(entity->getLevel());
+								updateMovedEntity(entity);
+							}
+						}
+						else if (frm.result() == -1)
+						{
+							//setModified(entity->getLevel());
+							deleteEntity(entity);
+
+							m_graphicsView->setCursor(Qt::CursorShape::ArrowCursor);
+							m_graphicsView->redraw();
+							return;
+						}
+					}
+					else if (entity->getEntityType() == LevelEntityType::ENTITY_SIGN)
+					{
+						auto sign = static_cast<LevelSign*>(entity);
+
+						EditSignsDialog frm(sign->getLevel(), this, sign);
+						if (frm.exec() == QDialog::Accepted)
+						{
+						}
+						else if (frm.result() == -1)
+						{
+							deleteEntity(entity);
+							m_graphicsView->setCursor(Qt::CursorShape::ArrowCursor);
+							m_graphicsView->redraw();
+							return;
+						}
+					}
+
+
+				}
+			}
+
+
+			
+		}
+	}
+
+	int EditorTabWidget::floodFill(double x, double y, int newTile)
+	{
+		auto startX = std::floor(x / 16.0) * 16.0;
+		auto startY = std::floor(y / 16.0) * 16.0;
+		auto startTile = 0;
+
+
+		if (tryGetTileAt(startX, startY, &startTile))
+		{
+			QStack<QPair<double, double> > nodes;
+
+			nodes.push(QPair<double, double>(startX, startY));
+
+			while (nodes.count() > 0)
 			{
-				if (entity->getEntityType() == LevelEntityType::ENTITY_NPC)
+				auto node = nodes.pop();
+
+				auto level = getLevelAt(node.first, node.second);
+				if (level != nullptr)
 				{
-
-					EditAnonymousNPC frm(static_cast<LevelNPC*>(entity), m_resourceManager);
-					if (frm.exec() == QDialog::Accepted)
+					auto tilemap = level->getTilemap(m_selectedTilesLayer);
+					if (tilemap != nullptr)
 					{
-						if (frm.getModified())
-						{
-							setModified(entity->getLevel());
+						auto tileX = int((node.first - tilemap->getX()) / 16.0);
+						auto tileY = int((node.second - tilemap->getY()) / 16.0);
 
-							updateMovedEntity(entity);
+						int tile = 0;
+						if (tilemap->tryGetTile(tileX, tileY, &tile) && !Tilemap::IsInvisibleTile(tile) && tile != newTile)
+						{
+							if (tile == startTile)
+							{
+								setModified(level);
+
+								tilemap->setTile(tileX, tileY, newTile);
+
+								nodes.push(QPair<double, double>(node.first - 16, node.second));
+								nodes.push(QPair<double, double>(node.first, node.second - 16));
+								nodes.push(QPair<double, double>(node.first + 16, node.second));
+								nodes.push(QPair<double, double>(node.first, node.second + 16));
+							}
 						}
 					}
-					else if (frm.result() == -1)
-					{
-						//setModified(entity->getLevel());
-						deleteEntity(entity);
-
-						m_graphicsView->setCursor(Qt::CursorShape::ArrowCursor);
-						m_graphicsView->redraw();
-						return;
-					}
-
 				}
-
-				else if (entity->getEntityType() == LevelEntityType::ENTITY_LINK)
-				{
-					auto link = static_cast<LevelLink*>(entity);
-					if (QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ShiftModifier))
-					{
-						emit openLevel(link->getNextLevel());
-
-						return;
-					}
-
-					EditLinkDialog frm(link);
-					if (frm.exec() == QDialog::Accepted)
-					{
-						if (frm.getModified())
-						{
-							setModified(entity->getLevel());
-							updateMovedEntity(entity);
-						}
-					}
-					else if (frm.result() == -1)
-					{
-						//setModified(entity->getLevel());
-						deleteEntity(entity);
-
-						m_graphicsView->setCursor(Qt::CursorShape::ArrowCursor);
-						m_graphicsView->redraw();
-						return;
-					}
-				} else if (entity->getEntityType() == LevelEntityType::ENTITY_SIGN)
-				{
-					auto sign = static_cast<LevelSign*>(entity);
-
-					EditSignsDialog frm(sign->getLevel(), this, sign);
-					if (frm.exec() == QDialog::Accepted)
-					{
-						//if (frm->getModified())
-						//{
-						//	setModified(entity->getLevel());
-						//	updateMovedEntity(entity);
-						//}
-					}
-					else if (frm.result() == -1)
-					{
-						//setModified(entity->getLevel());
-						deleteEntity(entity);
-						m_graphicsView->setCursor(Qt::CursorShape::ArrowCursor);
-						m_graphicsView->redraw();
-						return;
-					}
-				}
-
-
 			}
 		}
+		return startTile;
+		
 	}
 
 	void EditorTabWidget::graphicsMouseWheel(QWheelEvent* event)
@@ -1423,8 +1597,14 @@ namespace TilesEditor
 
 		qreal scaleX = zoomFactors[position];
 		qreal scaleY = zoomFactors[position];
+
+		if (zoomFactors[position] > 1.0)
+			m_graphicsView->setAntiAlias(false);
+		else m_graphicsView->setAntiAlias(true);
+
 		m_graphicsView->resetTransform();
 		m_graphicsView->scale(scaleX, scaleY);
+
 
 		ui.zoomLabel->setText("x" + QString::number(zoomFactors[position]));
 	}
@@ -1574,6 +1754,23 @@ namespace TilesEditor
 			m_graphicsView->setCursor(Qt::CursorShape::ArrowCursor);
 			m_graphicsView->redraw();
 		}
+	}
+
+	void EditorTabWidget::undoClicked(bool checked)
+	{
+		m_undoStack.undo();
+		ui.redoButton->setEnabled(m_undoStack.canRedo());
+		ui.undoButton->setEnabled(m_undoStack.canUndo());
+
+		m_graphicsView->redraw();
+	}
+
+	void EditorTabWidget::redoClicked(bool checked)
+	{
+		m_undoStack.redo();
+		ui.redoButton->setEnabled(m_undoStack.canRedo());
+		ui.undoButton->setEnabled(m_undoStack.canUndo());
+		m_graphicsView->redraw();
 	}
 
 	void EditorTabWidget::cutPressed()
@@ -1775,6 +1972,15 @@ namespace TilesEditor
 		auto currentIndex = ui_tilesetsClass.tilesetsCombo->currentIndex();
 		if(currentIndex >= 0)
 			ui_tilesetsClass.tilesetsCombo->removeItem(currentIndex);
+	}
+
+	void EditorTabWidget::tilesetRefreshClicked(bool checked)
+	{
+		auto imageName = ui_tilesetsClass.tilesetsCombo->currentText();
+
+		m_resourceManager.updateResource(imageName);
+		ui_tilesetsClass.graphicsView->redraw();
+		m_graphicsView->redraw();
 	}
 
 	void EditorTabWidget::tilesetNewClicked(bool checked)

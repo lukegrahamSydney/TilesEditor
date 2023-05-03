@@ -60,6 +60,7 @@ namespace TilesEditor
 			return m_fileName;
 		}
 
+		void setFileName(const QString& name) { m_fileName = name; }
 		virtual void replace(const QString& fileName) {}
 		virtual void release(ResourceManager& resourceManager) {};
 		virtual ResourceType getResourceType() const = 0;
