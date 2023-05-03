@@ -32,6 +32,7 @@ qt_add_executable(TilesEditor WIN32 MACOSX_BUNDLE
     Image.cpp Image.h
     ImageDimensions.cpp ImageDimensions.h
     Level.cpp Level.h
+    LevelCommands.cpp LevelCommands.h
     LevelEntityType.h
     LevelLink.cpp LevelLink.h
     LevelNPC.cpp LevelNPC.h
