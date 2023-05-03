@@ -2,12 +2,14 @@
 #define IWORLDH
 
 #include <QSet>
+#include <QUndoCommand>
 #include "Rectangle.h"
 #include "ResourceManager.h"
 
 namespace TilesEditor
 {
 	class Level;
+	class Tilemap;
 	class AbstractLevelEntity;
 	class IWorld
 	{
@@ -26,6 +28,11 @@ namespace TilesEditor
 		virtual void setModified(Level* level) = 0;
 		virtual void updateMovedEntity(AbstractLevelEntity* entity) = 0;
 		virtual QList<Level*> getModifiedLevels() = 0;
+
+		virtual void getTiles(double x, double y, int layer, Tilemap* output, bool deleteTiles = false) = 0;
+		virtual void putTiles(double x, double y, int layer, Tilemap* input) = 0;
+		virtual int floodFill(double x, double y, int newTile) = 0;
+		virtual void addUndoCommand(QUndoCommand* command) = 0;
 	};
 };
 #endif

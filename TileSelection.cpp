@@ -4,13 +4,12 @@
 #include "Tilemap.h"
 #include "Selector.h"
 #include "Level.h"
+#include "LevelCommands.h"
 
 #include "cJSON/JsonHelper.h"
 
 namespace TilesEditor
 {
-
-
 	TileSelection::TileSelection(double x, double y, int hcount, int vcount):
 		AbstractSelection(x, y)
 	{
@@ -20,52 +19,27 @@ namespace TilesEditor
 		m_height = vcount * 16;
 		m_cleared = false;
 
-		m_hcount = hcount;
-		m_vcount = vcount;
-		m_tiles = new int[m_hcount * m_vcount];
+		m_tilemap = new Tilemap(nullptr, 0.0, 0.0, hcount, vcount, 0);
+		m_tilemap->clear(invisibleTile);
+
 		m_selectionStartHCount = m_selectionStartVCount = -1;
 
-		for (int y = 0; y < m_vcount; ++y)
-		{
-			for (int x = 0; x < m_hcount; ++x)
-			{
-				m_tiles[y * m_hcount + x] = invisibleTile;
-			}
-		}
+		m_hasInserted = false;
+		m_lastInsertX = 0.0;
+		m_lastInsertY = 0.0;
+
 	}
 
 	TileSelection::~TileSelection()
 	{
-		delete m_tiles;
+		delete m_tilemap;
 	}
 
 	void TileSelection::draw(QPainter* painter, const IRectangle& viewRect)
 	{
 		if (m_tilesetImage)
 		{
-			static const int tileWidth = 16;
-			static const int tileHeight = 16;
-
-			auto& pixmap = m_tilesetImage->pixmap();
-
-			if (!pixmap.isNull())
-			{
-				QRectF dstRect(0, 0, -1, -1),
-					srcRect(0, 0, tileWidth, tileHeight);
-
-				for (auto y = 0; y < m_vcount; ++y)
-				{
-					for (auto x = 0; x < m_hcount; ++x)
-					{
-						auto& tile = m_tiles[y * m_hcount + x];
-
-						dstRect.moveTo(getX() + (x * tileWidth), getY() + (y * tileHeight));
-						srcRect.moveTo(Tilemap::GetTileX(tile) * tileWidth, Tilemap::GetTileY(tile) * tileHeight);
-
-						painter->drawPixmap(dstRect, pixmap, srcRect);
-					}
-				}
-			}
+			m_tilemap->draw(painter, viewRect, m_tilesetImage, getX(), getY());
 		}
 
 		Selector::draw(painter, viewRect, getX(), getY(), m_width, m_height, QColorConstants::White, QColor(255, 255, 255, 60));
@@ -90,6 +64,12 @@ namespace TilesEditor
 		if (m_cleared)
 			return;
 
+		//If hasnt moved since last insert then ignore
+		if (m_hasInserted && getX() == m_lastInsertX && getY() == m_lastInsertY)
+			return;
+
+		Tilemap oldTiles(nullptr, 0.0, 0.0, getHCount(), getVCount(), layer);
+
 		auto levels = world->getLevelsInRect(Rectangle(getX(), getY(), m_width, m_height));
 
 		for (auto level : levels)
@@ -101,15 +81,21 @@ namespace TilesEditor
 				int destTileY = int((this->getY() - tilemap->getY()) / 16.0);
 
 				bool modified = false;
-				for (int y = 0; y < m_vcount; ++y)
+				for (int y = 0; y < m_tilemap->getVCount(); ++y)
 				{
-					for (int x = 0; x < m_hcount; ++x)
+					for (int x = 0; x < m_tilemap->getHCount(); ++x)
 					{
-						int tile = m_tiles[y * m_hcount + x];
+						int tile = m_tilemap->getTile(x, y);
+
 						if (!Tilemap::IsInvisibleTile(tile))
 						{
 							modified = true;
-							tilemap->setTile(destTileX + x, destTileY + y, tile);
+							
+							int oldTile = 0;
+							if (tilemap->tryGetTile(destTileX + x, destTileY + y, &oldTile))
+								oldTiles.setTile(x, y, oldTile);
+
+							//tilemap->setTile(destTileX + x, destTileY + y, tile);
 						}
 					}
 				}
@@ -119,6 +105,12 @@ namespace TilesEditor
 
 			}
 		}
+
+		world->addUndoCommand(new CommandPutTiles(world, this->getX(), this->getY(), layer, &oldTiles, m_tilemap));
+		m_hasInserted = true;
+		m_lastInsertX = getX();
+		m_lastInsertY = getY();
+
 	}
 
 	void TileSelection::setTilesetImage(Image* tilesetImage)
@@ -129,20 +121,17 @@ namespace TilesEditor
 
 	int TileSelection::getTile(unsigned int x, unsigned int y)
 	{
-		if (x < m_hcount && y < m_vcount)
-		{
-			return m_tiles[y * m_hcount + x];
-		}
-		return Tilemap::MakeInvisibleTile(0);
+		return m_tilemap->getTile(x, y);
 	}
 
 	void TileSelection::setTile(unsigned int x, unsigned int y, int tile)
 	{
-		if (x < m_hcount && y < m_vcount)
-		{
-			m_tiles[y * m_hcount + x] = tile;
-		}
+		m_tilemap->setTile(x, y, tile);
 	}
+
+	int TileSelection::getHCount() const { return m_tilemap->getHCount(); }
+
+	int TileSelection::getVCount() const { return m_tilemap->getVCount(); }
 
 	bool TileSelection::clipboardCopy()
 	{
@@ -150,14 +139,14 @@ namespace TilesEditor
 		auto jsonObject = cJSON_CreateObject();
 
 		cJSON_AddStringToObject(jsonObject, "type", "tileSelection");
-		cJSON_AddNumberToObject(jsonObject, "hcount", m_hcount);
-		cJSON_AddNumberToObject(jsonObject, "vcount", m_vcount);
+		cJSON_AddNumberToObject(jsonObject, "hcount", m_tilemap->getHCount());
+		cJSON_AddNumberToObject(jsonObject, "vcount", m_tilemap->getVCount());
 
 		auto tilesArray = cJSON_CreateArray();
-		for (int y = 0; y < m_vcount; ++y)
+		for (int y = 0; y < m_tilemap->getVCount(); ++y)
 		{
 			QString line = "";
-			for (int x = 0; x < m_hcount; ++x)
+			for (int x = 0; x < m_tilemap->getHCount(); ++x)
 			{
 				line += QString::number(getTile(x, y), 16) + " ";
 			}
@@ -198,9 +187,9 @@ namespace TilesEditor
 		AbstractSelection::beginResize(edges, world);
 
 		if(m_selectionStartHCount == -1)
-			m_selectionStartHCount = m_hcount;
+			m_selectionStartHCount = m_tilemap->getHCount();
 		if (m_selectionStartVCount == -1)
-			m_selectionStartVCount = m_vcount;
+			m_selectionStartVCount = m_tilemap->getVCount();
 	}
 
 	int TileSelection::getResizeEdge(int mouseX, int mouseY)
@@ -239,8 +228,8 @@ namespace TilesEditor
 	void TileSelection::updateResize(int mouseX, int mouseY, bool snap, IWorld* world)
 	{
 		auto edges = getResizeEdges();
-		auto newHCount = m_hcount;
-		auto newVCount = m_vcount;
+		auto newHCount = m_tilemap->getHCount();
+		auto newVCount = m_tilemap->getVCount();
 
 		if (edges & AbstractSelection::EDGE_LEFT)
 		{
@@ -277,24 +266,24 @@ namespace TilesEditor
 			newVCount = std::max(m_selectionStartVCount, int(std::round((height / 16.0) / m_selectionStartVCount) * m_selectionStartVCount));
 		}
 
-		if (newHCount != m_hcount || newVCount != m_vcount)
+		if (newHCount != m_tilemap->getHCount() || newVCount != m_tilemap->getVCount())
 		{
+			auto tilemap = new Tilemap(nullptr, 0.0, 0.0, newHCount, newVCount, 0);
+
 			int* tiles = new int[newHCount * newVCount];
 
 			for (int y = 0; y < newVCount; ++y)
 			{
 				for (int x = 0; x < newHCount; ++x)
 				{
-					int tile = getTile(x % m_hcount, y % m_vcount);
-					tiles[y * newHCount + x] = tile;
+					int tile = getTile(x % m_tilemap->getHCount(), y % m_tilemap->getVCount());
+					tilemap->setTile(x, y, tile);
 
 				}
 
 			}
-			delete m_tiles;
-			m_tiles = tiles;
-			m_hcount = newHCount;
-			m_vcount = newVCount;
+			delete m_tilemap;
+			m_tilemap = tilemap;
 			m_width = newHCount * 16;
 			m_height = newVCount * 16;
 

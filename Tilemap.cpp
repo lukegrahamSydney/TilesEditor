@@ -2,7 +2,18 @@
 
 namespace TilesEditor
 {
-	Tilemap::Tilemap( Level* level, double x, double y, int hcount, int vcount, int layerIndex) :
+    Tilemap::Tilemap(const Tilemap& source):
+        AbstractLevelEntity(nullptr, source.getX(), source.getY())
+    {
+        m_hcount = source.m_hcount;
+        m_vcount = source.m_vcount;
+        m_layerIndex = source.m_layerIndex;
+        m_tiles = new int[m_hcount * m_vcount];
+
+        memcpy(m_tiles, source.m_tiles, m_hcount * m_vcount * sizeof(int));
+    }
+
+    Tilemap::Tilemap( Level* level, double x, double y, int hcount, int vcount, int layerIndex) :
 		AbstractLevelEntity(level, x, y), m_hcount(hcount), m_vcount(vcount)
 	{
 
