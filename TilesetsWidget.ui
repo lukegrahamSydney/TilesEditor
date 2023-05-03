@@ -69,6 +69,23 @@
        <widget class="QComboBox" name="tilesetsCombo"/>
       </item>
       <item>
+       <widget class="QToolButton" name="refreshButton">
+        <property name="toolTip">
+         <string>Refresh selected tileset</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="MainWindow.qrc">
+          <normaloff>:/MainWindow/icons/fugue/arrow-circle-315.png</normaloff>:/MainWindow/icons/fugue/arrow-circle-315.png</iconset>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QToolButton" name="newButton">
         <property name="text">
          <string/>

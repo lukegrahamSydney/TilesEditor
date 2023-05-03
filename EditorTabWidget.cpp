@@ -78,6 +78,7 @@ namespace TilesEditor
 		connect(ui_tilesetsClass.graphicsView, &GraphicsView::mouseMove, this, &EditorTabWidget::tilesetMouseMove);
 		connect(ui_tilesetsClass.tilesetsCombo, &QComboBox::currentIndexChanged, this, &EditorTabWidget::tilesetsIndexChanged);
 		connect(ui_tilesetsClass.deleteButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetDeleteClicked);
+		connect(ui_tilesetsClass.refreshButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetRefreshClicked);
 		connect(ui_tilesetsClass.newButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetNewClicked);
 
 		connect(ui_tileObjectsClass.graphicsView, &GraphicsView::renderView, this, &EditorTabWidget::renderTileObjects);
@@ -666,6 +667,7 @@ namespace TilesEditor
 
 		delete entity;
 	}
+
 
 	void EditorTabWidget::newLevel(int hcount, int vcount)
 	{
@@ -1309,90 +1311,130 @@ namespace TilesEditor
 
 		if (event->button() == Qt::MouseButton::LeftButton)
 		{
-			//Release any selection
-			if (m_selection)
+			if (m_selection && m_selection->getSelectionType() == SelectionType::SELECTION_OBJECTS)
+			{
+				auto objectSelection = static_cast<ObjectSelection*>(m_selection);
+
+				auto entity = objectSelection->getEntityAtPoint(pos.x(), pos.y());
 				setSelection(nullptr);
 
-			auto entity = getEntityAt(pos.x(), pos.y(), true);
-			if (entity != nullptr)
+				if(entity)
+				{
+					if (entity->getEntityType() == LevelEntityType::ENTITY_NPC)
+					{
+
+						EditAnonymousNPC frm(static_cast<LevelNPC*>(entity), m_resourceManager);
+						if (frm.exec() == QDialog::Accepted)
+						{
+							if (frm.getModified())
+							{
+								setModified(entity->getLevel());
+
+								updateMovedEntity(entity);
+							}
+						}
+						else if (frm.result() == -1)
+						{
+							deleteEntity(entity);
+
+							m_graphicsView->setCursor(Qt::CursorShape::ArrowCursor);
+							m_graphicsView->redraw();
+							return;
+						}
+
+					}
+
+					else if (entity->getEntityType() == LevelEntityType::ENTITY_LINK)
+					{
+						auto link = static_cast<LevelLink*>(entity);
+						if (QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ShiftModifier))
+						{
+							emit openLevel(link->getNextLevel());
+
+							return;
+						}
+
+						EditLinkDialog frm(link);
+						if (frm.exec() == QDialog::Accepted)
+						{
+							if (frm.getModified())
+							{
+								setModified(entity->getLevel());
+								updateMovedEntity(entity);
+							}
+						}
+						else if (frm.result() == -1)
+						{
+							//setModified(entity->getLevel());
+							deleteEntity(entity);
+
+							m_graphicsView->setCursor(Qt::CursorShape::ArrowCursor);
+							m_graphicsView->redraw();
+							return;
+						}
+					}
+					else if (entity->getEntityType() == LevelEntityType::ENTITY_SIGN)
+					{
+						auto sign = static_cast<LevelSign*>(entity);
+
+						EditSignsDialog frm(sign->getLevel(), this, sign);
+						if (frm.exec() == QDialog::Accepted)
+						{
+						}
+						else if (frm.result() == -1)
+						{
+							deleteEntity(entity);
+							m_graphicsView->setCursor(Qt::CursorShape::ArrowCursor);
+							m_graphicsView->redraw();
+							return;
+						}
+					}
+
+
+				}
+			}
+
+			auto tile = 0;
+			auto tileX = std::floor(pos.x() / 16.0) * 16.0;
+			auto tileY = std::floor(pos.y() / 16.0) * 16.0;
+
+			if (tryGetTileAt(tileX, tileY, &tile))
 			{
-				if (entity->getEntityType() == LevelEntityType::ENTITY_NPC)
+				floodFill(tileX, tileY, tile, m_defaultTile);
+			}
+			m_graphicsView->redraw();
+			
+		}
+	}
+
+	void EditorTabWidget::floodFill(double x, double y, int oldTile, int newTile, int counter)
+	{
+		if (counter > 1000)
+			return;
+		auto level = getLevelAt(x, y);
+		if (level != nullptr)
+		{
+			auto tilemap = level->getTilemap(m_selectedTilesLayer);
+			if (tilemap != nullptr)
+			{
+				auto tileX = int((x - tilemap->getX()) / 16.0);
+				auto tileY = int((y - tilemap->getY()) / 16.0);
+
+				int tile = 0;
+				if (tilemap->tryGetTile(tileX, tileY, &tile) && !Tilemap::IsInvisibleTile(tile))
 				{
+					if (tile == oldTile)
+					{
+						setModified(level);
 
-					EditAnonymousNPC frm(static_cast<LevelNPC*>(entity), m_resourceManager);
-					if (frm.exec() == QDialog::Accepted)
-					{
-						if (frm.getModified())
-						{
-							setModified(entity->getLevel());
+						tilemap->setTile(tileX, tileY, newTile);
 
-							updateMovedEntity(entity);
-						}
-					}
-					else if (frm.result() == -1)
-					{
-						//setModified(entity->getLevel());
-						deleteEntity(entity);
-						
-						m_graphicsView->setCursor(Qt::CursorShape::ArrowCursor);
-						m_graphicsView->redraw();
-						return;
-					}
-					
-				}
-
-				else if (entity->getEntityType() == LevelEntityType::ENTITY_LINK)
-				{
-					auto link = static_cast<LevelLink*>(entity);
-					if (QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ShiftModifier))
-					{
-						emit openLevel(link->getNextLevel());
-						
-						return;
-					}
-
-					EditLinkDialog frm(link);
-					if (frm.exec() == QDialog::Accepted)
-					{
-						if (frm.getModified())
-						{
-							setModified(entity->getLevel());
-							updateMovedEntity(entity);
-						}
-					}
-					else if (frm.result() == -1)
-					{
-						//setModified(entity->getLevel());
-						deleteEntity(entity);
-
-						m_graphicsView->setCursor(Qt::CursorShape::ArrowCursor);
-						m_graphicsView->redraw();
-						return;
-					}
-				} else if (entity->getEntityType() == LevelEntityType::ENTITY_SIGN)
-				{
-					auto sign = static_cast<LevelSign*>(entity);
-
-					EditSignsDialog frm(sign->getLevel(), this, sign);
-					if (frm.exec() == QDialog::Accepted)
-					{
-						//if (frm->getModified())
-						//{
-						//	setModified(entity->getLevel());
-						//	updateMovedEntity(entity);
-						//}
-					}
-					else if (frm.result() == -1)
-					{
-						//setModified(entity->getLevel());
-						deleteEntity(entity);
-						m_graphicsView->setCursor(Qt::CursorShape::ArrowCursor);
-						m_graphicsView->redraw();
-						return;
+						floodFill(x - 16, y, oldTile, newTile, counter + 1);
+						floodFill(x, y - 16, oldTile, newTile, counter + 1);
+						floodFill(x + 16, y, oldTile, newTile, counter + 1);
+						floodFill(x, y + 16, oldTile, newTile, counter + 1);
 					}
 				}
-
-
 			}
 		}
 	}
@@ -1426,8 +1468,14 @@ namespace TilesEditor
 
 		qreal scaleX = zoomFactors[position];
 		qreal scaleY = zoomFactors[position];
+
+		if (zoomFactors[position] > 1.0)
+			m_graphicsView->setAntiAlias(false);
+		else m_graphicsView->setAntiAlias(true);
+
 		m_graphicsView->resetTransform();
 		m_graphicsView->scale(scaleX, scaleY);
+
 
 		ui.zoomLabel->setText("x" + QString::number(zoomFactors[position]));
 	}
@@ -1778,6 +1826,15 @@ namespace TilesEditor
 		auto currentIndex = ui_tilesetsClass.tilesetsCombo->currentIndex();
 		if(currentIndex >= 0)
 			ui_tilesetsClass.tilesetsCombo->removeItem(currentIndex);
+	}
+
+	void EditorTabWidget::tilesetRefreshClicked(bool checked)
+	{
+		auto imageName = ui_tilesetsClass.tilesetsCombo->currentText();
+
+		m_resourceManager.updateResource(imageName);
+		ui_tilesetsClass.graphicsView->redraw();
+		m_graphicsView->redraw();
 	}
 
 	void EditorTabWidget::tilesetNewClicked(bool checked)

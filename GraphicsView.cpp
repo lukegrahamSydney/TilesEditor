@@ -4,7 +4,8 @@ namespace TilesEditor
 {
 	void GraphicsView::drawBackground(QPainter* painter, const QRectF& rect)
 	{
-		painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+		//if(m_antialias)
+		painter->setRenderHint(QPainter::SmoothPixmapTransform, m_antialias);
 		emit renderView(painter, rect);
 	}
 

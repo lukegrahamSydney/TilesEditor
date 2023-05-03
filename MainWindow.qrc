@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="/MainWindow">
+    <file>icons/fugue/arrow-circle-315.png</file>
+    <file>icons/fugue/arrow-curve.png</file>
+    <file>icons/fugue/arrow-curve-180-left.png</file>
     <file>icons/fugue/cursor.png</file>
     <file>icons/fugue/ui-progress-bar.png</file>
     <file>icons/npc.png</file>

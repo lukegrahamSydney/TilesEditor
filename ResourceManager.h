@@ -59,6 +59,7 @@ namespace TilesEditor
 		MainFileSystem& getFileSystem() { return m_fileSystem; }
 		Resource* loadResource(const QString& name, ResourceType type);
 		void freeResource(Resource* resource);
+		void updateResource(const QString& name);
 
 		static QString formatResName(const QString& resName)
 		{

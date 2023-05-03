@@ -21,10 +21,14 @@ namespace TilesEditor
         void mouseWheelEvent(QWheelEvent* event);
 
 
+    private:
+        bool m_antialias;
+
     public:
         GraphicsView(QWidget* parent = nullptr) :
             QGraphicsView(parent)
         {
+            m_antialias = false;
             this->setScene(new QGraphicsScene());
 
 
@@ -37,6 +41,7 @@ namespace TilesEditor
             this->scene()->update();
         }
 
+        void setAntiAlias(bool value) { m_antialias = value; }
 
     protected:
         void mouseMoveEvent(QMouseEvent* event) override;

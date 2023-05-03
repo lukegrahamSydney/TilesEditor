@@ -260,6 +260,43 @@
        </widget>
       </item>
       <item>
+       <widget class="QToolButton" name="undoButton">
+        <property name="toolTip">
+         <string>Undo</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="MainWindow.qrc">
+          <normaloff>:/MainWindow/icons/fugue/arrow-curve-180-left.png</normaloff>:/MainWindow/icons/fugue/arrow-curve-180-left.png</iconset>
+        </property>
+        <property name="shortcut">
+         <string>Ctrl+Z</string>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="redoButton">
+        <property name="toolTip">
+         <string>Redo</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="MainWindow.qrc">
+          <normaloff>:/MainWindow/icons/fugue/arrow-curve.png</normaloff>:/MainWindow/icons/fugue/arrow-curve.png</iconset>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QToolButton" name="cutButton">
         <property name="enabled">
          <bool>false</bool>
