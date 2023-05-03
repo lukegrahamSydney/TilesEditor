@@ -30,7 +30,8 @@ namespace TilesEditor
 		virtual QList<Level*> getModifiedLevels() = 0;
 
 		virtual void getTiles(double x, double y, int layer, Tilemap* output, bool deleteTiles = false) = 0;
-		virtual void putTiles(double x, double y, int layer, Tilemap* input) = 0;
+		virtual void putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible) = 0;
+		virtual void deleteTiles(double x, double y, int layer, int hcount, int vcount, int replacementTile) = 0;
 		virtual int floodFill(double x, double y, int newTile) = 0;
 		virtual void addUndoCommand(QUndoCommand* command) = 0;
 	};

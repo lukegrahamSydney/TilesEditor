@@ -20,15 +20,18 @@ namespace TilesEditor
 
 	void CommandDeleteTiles::undo()
 	{
-		m_world->putTiles(m_x, m_y, m_layer, m_oldTiles);
+		m_world->putTiles(m_x, m_y, m_layer, m_oldTiles, true);
 	}
 
 	void CommandDeleteTiles::redo()
 	{
+		m_world->deleteTiles(m_x, m_y, m_layer, m_oldTiles->getHCount(), m_oldTiles->getVCount(), m_replaceTile);
+
+		/*
 		Tilemap tiles(nullptr, 0.0, 0.0, m_oldTiles->getHCount(), m_oldTiles->getVCount(), 0);
 		tiles.clear(m_layer == 0 ? m_replaceTile : Tilemap::MakeInvisibleTile(0));
 
-		m_world->putTiles(m_x, m_y, m_layer, &tiles);
+		m_world->putTiles(m_x, m_y, m_layer, &tiles);*/
 	}
 
 
@@ -51,12 +54,12 @@ namespace TilesEditor
 
 	void CommandPutTiles::undo()
 	{
-		m_world->putTiles(m_x, m_y, m_layer, m_oldTiles);
+		m_world->putTiles(m_x, m_y, m_layer, m_oldTiles, false);
 	}
 
 	void CommandPutTiles::redo()
 	{
-		m_world->putTiles(m_x, m_y, m_layer, m_newTiles);
+		m_world->putTiles(m_x, m_y, m_layer, m_newTiles, true);
 	}
 
 	//Flood fill
@@ -67,6 +70,7 @@ namespace TilesEditor
 		m_y = y;
 		m_layer = layer;
 		m_newTile = newTile;
+		m_oldTile = 0;
 	}
 
 	void CommandFloodFill::undo()

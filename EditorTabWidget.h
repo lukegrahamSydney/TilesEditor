@@ -191,8 +191,8 @@ namespace TilesEditor
 
 
 		void getTiles(double x, double y, int layer, Tilemap* output, bool deleteTiles = false) override;
-		void putTiles(double x, double y, int layer, Tilemap* input) override;
-
+		void putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible) override;
+		void deleteTiles(double x, double y, int layer, int hcount, int vcount, int replacementTile) override;
 
 		int floodFill(double x, double y, int newTile) override;
 		void newLevel(int hcount, int vcount);

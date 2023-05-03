@@ -68,7 +68,8 @@ namespace TilesEditor
 		if (m_hasInserted && getX() == m_lastInsertX && getY() == m_lastInsertY)
 			return;
 
-		Tilemap oldTiles(nullptr, 0.0, 0.0, getHCount(), getVCount(), layer);
+		Tilemap oldTiles(nullptr, 0.0, 0.0, getHCount(), getVCount(), 0);
+		oldTiles.clear(Tilemap::MakeInvisibleTile(0));
 
 		auto levels = world->getLevelsInRect(Rectangle(getX(), getY(), m_width, m_height));
 
@@ -85,23 +86,16 @@ namespace TilesEditor
 				{
 					for (int x = 0; x < m_tilemap->getHCount(); ++x)
 					{
-						int tile = m_tilemap->getTile(x, y);
-
-						if (!Tilemap::IsInvisibleTile(tile))
+						int oldTile = 0;
+						if (tilemap->tryGetTile(destTileX + x, destTileY + y, &oldTile))
 						{
-							modified = true;
-							
-							int oldTile = 0;
-							if (tilemap->tryGetTile(destTileX + x, destTileY + y, &oldTile) && !Tilemap::IsInvisibleTile(oldTile))
-								oldTiles.setTile(x, y, oldTile);
 
-							//tilemap->setTile(destTileX + x, destTileY + y, tile);
+							oldTiles.setTile(x, y, oldTile);
 						}
+						
 					}
 				}
 
-				if(modified)
-					world->setModified(level);
 
 			}
 		}

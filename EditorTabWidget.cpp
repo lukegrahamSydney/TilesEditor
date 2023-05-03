@@ -874,7 +874,7 @@ namespace TilesEditor
 
 	}
 
-	void EditorTabWidget::putTiles(double x, double y, int layer, Tilemap* input)
+	void EditorTabWidget::putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible)
 	{
 		Rectangle rect(x, y, input->getWidth(), input->getHeight());
 
@@ -896,7 +896,7 @@ namespace TilesEditor
 						int tile = input->getTile(x, y);
 
 
-						if (!Tilemap::IsInvisibleTile(tile) || layer != 0)
+						if (!ignoreInvisible || !Tilemap::IsInvisibleTile(tile))
 						{
 							modified = true;
 							tilemap->setTile(destTileX + x, destTileY + y, tile);
@@ -909,6 +909,47 @@ namespace TilesEditor
 
 			}
 		}
+	}
+
+	void EditorTabWidget::deleteTiles(double x, double y, int layer, int hcount, int vcount, int replacementTile)
+	{
+		static int invisibleTile = Tilemap::MakeInvisibleTile(0);
+
+		Rectangle rect(x, y, hcount * 16, vcount * 16);
+
+		auto levels = this->getLevelsInRect(rect);
+
+		for (auto level : levels)
+		{
+			auto tilemap = level->getTilemap(layer);
+			if (tilemap != nullptr)
+			{
+				int destTileX = int((x - tilemap->getX()) / 16.0);
+				int destTileY = int((y - tilemap->getY()) / 16.0);
+
+				bool modified = false;
+				for (int y = 0; y < vcount; ++y)
+				{
+					for (int x = 0; x < hcount; ++x)
+					{
+						if (layer != 0) {
+							tilemap->setTile(destTileX + x, destTileY + y, invisibleTile);
+							modified = true;
+						}
+						else if(!Tilemap::IsInvisibleTile(replacementTile))
+						{
+							modified = true;
+							tilemap->setTile(destTileX + x, destTileY + y, replacementTile);
+						}
+					}
+				}
+
+				if (modified)
+					this->setModified(level);
+
+			}
+		}
+
 	}
 
 
