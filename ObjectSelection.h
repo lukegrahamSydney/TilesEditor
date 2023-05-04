@@ -43,7 +43,6 @@ namespace TilesEditor
 		SelectMode getMoveMode() const { return m_selectMode; }
 		void addObject(AbstractLevelEntity* entity);
 
-		void deleteObject(AbstractLevelEntity* entity);
 		size_t objectCount() { return m_selectedObjects.size(); }
 		void updateResize(int mouseX, int mouseY, bool snap, IWorld* world) override;
 		void endResize(IWorld* world) override;

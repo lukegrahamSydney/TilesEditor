@@ -678,7 +678,7 @@ namespace TilesEditor
 		return entities;
 	}
 
-	void EditorTabWidget::deleteEntity(AbstractLevelEntity* entity)
+	void EditorTabWidget::deleteEntity(AbstractLevelEntity* entity, QUndoCommand* parent)
 	{
 		auto objectListModel = static_cast<ObjectListModel*>(ui_objectClass.objectsTable->model());
 
@@ -686,14 +686,16 @@ namespace TilesEditor
 		if(entity->getEntityType() == LevelEntityType::ENTITY_NPC)
 			objectListModel->removeEntity(static_cast<LevelNPC*>(entity));
 
-		addUndoCommand(new CommandDeleteEntity(this, entity, nullptr));
+		if (parent == nullptr)
+			addUndoCommand(new CommandDeleteEntity(this, entity, nullptr));
+		else new CommandDeleteEntity(this, entity, parent);
 	}
 
-	void EditorTabWidget::deleteEntities(const QList<AbstractLevelEntity*>& entities)
+	void EditorTabWidget::deleteEntities(const QList<AbstractLevelEntity*>& entities, QUndoCommand* parent)
 	{
 		auto objectListModel = static_cast<ObjectListModel*>(ui_objectClass.objectsTable->model());
 
-		auto undoCommand = new QUndoCommand();
+		auto undoCommand = new QUndoCommand(parent);
 		for (auto entity : entities)
 		{
 			//Remove this entity from the npc search
@@ -702,7 +704,9 @@ namespace TilesEditor
 
 			new CommandDeleteEntity(this, entity, undoCommand);
 		}
-		addUndoCommand(undoCommand);
+
+		if(parent == nullptr)
+			addUndoCommand(undoCommand);
 	}
 
 
@@ -838,7 +842,7 @@ namespace TilesEditor
 		return QList<Level*>();
 	}
 
-	void EditorTabWidget::getTiles(double x, double y, int layer, Tilemap* output, bool deleteTiles)
+	void EditorTabWidget::getTiles(double x, double y, int layer, Tilemap* output)
 	{
 		Rectangle rect(x, y, output->getWidth(), output->getHeight());
 
@@ -860,15 +864,6 @@ namespace TilesEditor
 
 						if (tilemap->tryGetTile(x + sourceTileX, y + sourceTileY, &tile) && !Tilemap::IsInvisibleTile(tile))
 						{
-							if (deleteTiles)
-							{
-								if (layer == 0)
-									tilemap->setTile(x + sourceTileX, y + sourceTileY, m_defaultTile);
-								else tilemap->setTile(x + sourceTileX, y + sourceTileY, Tilemap::MakeInvisibleTile(0));
-
-								setModified(level);
-							}
-
 							output->setTile(x, y, tile);
 						}
 

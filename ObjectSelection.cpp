@@ -60,91 +60,93 @@ namespace TilesEditor
 
     void ObjectSelection::reinsertIntoWorld(IWorld* world, int layer)
     {
-
-        if (m_selectMode == SelectMode::MODE_INSERT)
+        if (m_selectedObjects.count() > 0)
         {
-            auto undoCommand = new QUndoCommand();
-            for (auto object : m_selectedObjects)
+            if (m_selectMode == SelectMode::MODE_INSERT)
             {
-                if (object->getEntityType() == LevelEntityType::ENTITY_NPC)
+                auto undoCommand = new QUndoCommand();
+                for (auto object : m_selectedObjects)
                 {
-                    auto level = world->getLevelAt(object->getCenterX(), object->getCenterY());
-
-                    if (level != nullptr)
+                    if (object->getEntityType() == LevelEntityType::ENTITY_NPC)
                     {
-                        object->setLevel(level);
-                        new CommandAddEntity(world, object, undoCommand);
+                        auto level = world->getLevelAt(object->getCenterX(), object->getCenterY());
+
+                        if (level != nullptr)
+                        {
+                            object->setLevel(level);
+                            new CommandAddEntity(world, object, undoCommand);
+                        }
                     }
                 }
+
+
+                world->addUndoCommand(undoCommand);
             }
-               
-
-            world->addUndoCommand(undoCommand);
-        }
-        else if(m_selectMode == SelectMode::MODE_MOVE)
-        {
-            auto undoCommand = new QUndoCommand();
-            for (auto object : m_selectedObjects)
+            else if (m_selectMode == SelectMode::MODE_MOVE)
             {
-                if (object->getEntityType() == LevelEntityType::ENTITY_NPC)
+                auto undoCommand = new QUndoCommand();
+                for (auto object : m_selectedObjects)
                 {
-                    new CommandMoveEntity(world, object->getStartRect(), *object, object, undoCommand);
-
-                }
-                else if (object->getEntityType() == LevelEntityType::ENTITY_LINK || object->getEntityType() == LevelEntityType::ENTITY_SIGN) {
-
-                    //Links and signs will be split up across overlapping levels
-
-                    //Get a list of all the levels our object intersects
-                    bool deleteOriginal = true;
-                    auto levels = world->getLevelsInRect(*object);
-                    for (auto level : levels)
+                    if (object->getEntityType() == LevelEntityType::ENTITY_NPC)
                     {
-                        if (level == object->getLevel())
+                        new CommandMoveEntity(world, object->getStartRect(), *object, object, undoCommand);
+
+                    }
+                    else if (object->getEntityType() == LevelEntityType::ENTITY_LINK || object->getEntityType() == LevelEntityType::ENTITY_SIGN) {
+
+                        //Links and signs will be split up across overlapping levels
+
+                        //Get a list of all the levels our object intersects
+                        bool deleteOriginal = true;
+                        auto levels = world->getLevelsInRect(*object);
+                        for (auto level : levels)
                         {
-                            Rectangle oldRect = object->getStartRect();
-                            auto newRect = level->clampEntity(object);
-                            if (object->getEntityType() == LevelEntityType::ENTITY_SIGN)
-                                newRect.setWidth(32);
-
-                            new CommandReshapeEntity(world, oldRect, newRect, object, undoCommand);
-
-                            
-                            deleteOriginal = false;
-                        }
-                        else {
-                            //Duplicate our object
-                            auto newObject = object->duplicate();
-                            if (newObject)
+                            if (level == object->getLevel())
                             {
-                                newObject->setLevel(level);
-                                auto rect = level->clampEntity(newObject);
-                                newObject->setX(rect.getX());
-                                newObject->setY(rect.getY());
-                                newObject->setWidth(rect.getWidth());
-                                newObject->setHeight(rect.getHeight());
+                                Rectangle oldRect = object->getStartRect();
+                                auto newRect = level->clampEntity(object);
+                                if (object->getEntityType() == LevelEntityType::ENTITY_SIGN)
+                                    newRect.setWidth(32);
 
-                                //Special case for graal signs. They're always 2 blocks wide (32 pixels)
-                                if (newObject->getEntityType() == LevelEntityType::ENTITY_SIGN)
-                                    newObject->setWidth(32);
+                                new CommandReshapeEntity(world, oldRect, newRect, object, undoCommand);
 
-                                new CommandAddEntity(world, newObject, undoCommand);
+
+                                deleteOriginal = false;
+                            }
+                            else {
+                                //Duplicate our object
+                                auto newObject = object->duplicate();
+                                if (newObject)
+                                {
+                                    newObject->setLevel(level);
+                                    auto rect = level->clampEntity(newObject);
+                                    newObject->setX(rect.getX());
+                                    newObject->setY(rect.getY());
+                                    newObject->setWidth(rect.getWidth());
+                                    newObject->setHeight(rect.getHeight());
+
+                                    //Special case for graal signs. They're always 2 blocks wide (32 pixels)
+                                    if (newObject->getEntityType() == LevelEntityType::ENTITY_SIGN)
+                                        newObject->setWidth(32);
+
+                                    new CommandAddEntity(world, newObject, undoCommand);
+                                }
                             }
                         }
-                    }
 
-                    if (deleteOriginal)
-                    {
-                        new CommandReshapeEntity(world, object->getStartRect(), *object, object, undoCommand);
-                        new CommandDeleteEntity(world, object, undoCommand);
-                    }
+                        if (deleteOriginal)
+                        {
+                            //Before we delete it, add the undo command that will revert it back to its start position before we dragged it
+                            new CommandReshapeEntity(world, object->getStartRect(), *object, object, undoCommand);
+                            new CommandDeleteEntity(world, object, undoCommand);
+                        }
 
+                    }
                 }
+
+                world->addUndoCommand(undoCommand);
             }
-
-            world->addUndoCommand(undoCommand);
         }
-
         m_selectedObjects.clear();
     }
 
@@ -157,9 +159,11 @@ namespace TilesEditor
             {
                 new CommandReshapeEntity(world, entity->getStartRect(), *entity, entity, undoCommand);
             }
+
+            world->deleteEntities(m_selectedObjects, undoCommand);
             world->addUndoCommand(undoCommand);
-        }
-        world->deleteEntities(m_selectedObjects);
+        }else world->deleteEntities(m_selectedObjects);
+
         m_selectedObjects.clear();
     }
 
@@ -275,18 +279,6 @@ namespace TilesEditor
     void ObjectSelection::addObject(AbstractLevelEntity* entity)
     {
         m_selectedObjects.push_back(entity);
-    }
-
-    void ObjectSelection::deleteObject(AbstractLevelEntity* entity)
-    {
-        auto it = std::find(m_selectedObjects.begin(), m_selectedObjects.end(), entity);
-        if (it != m_selectedObjects.end())
-        {
-            entity->getLevel()->removeObject(entity);
-            delete entity;
-
-            m_selectedObjects.erase(it);
-        }
     }
 
 

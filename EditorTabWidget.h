@@ -184,8 +184,8 @@ namespace TilesEditor
 		QList<AbstractLevelEntity*> getEntitiesAt(double x, double y, bool checkAllowedSelect);
 
 		
-		void deleteEntity(AbstractLevelEntity* entity) override;
-		void deleteEntities(const QList<AbstractLevelEntity*>& entities) override;
+		void deleteEntity(AbstractLevelEntity* entity, QUndoCommand* parent = nullptr) override;
+		void deleteEntities(const QList<AbstractLevelEntity*>& entities, QUndoCommand* parent = nullptr) override;
 		void setModified(Level* level) override;
 		bool tryGetTileAt(double x, double y, int* outTile) override;
 
@@ -193,7 +193,7 @@ namespace TilesEditor
 		QList<Level*> getModifiedLevels() override;
 
 
-		void getTiles(double x, double y, int layer, Tilemap* output, bool deleteTiles = false) override;
+		void getTiles(double x, double y, int layer, Tilemap* output) override;
 		void putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible) override;
 		void deleteTiles(double x, double y, int layer, int hcount, int vcount, int replacementTile) override;
 
