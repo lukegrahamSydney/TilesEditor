@@ -66,7 +66,11 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QComboBox" name="tilesetsCombo"/>
+       <widget class="QComboBox" name="tilesetsCombo">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QToolButton" name="refreshButton">

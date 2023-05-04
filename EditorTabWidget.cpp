@@ -1633,6 +1633,7 @@ namespace TilesEditor
 
 	void EditorTabWidget::zoomMoved(int position)
 	{
+
 		qreal zoomFactors[] = {
 			0.25,
 			0.5,
@@ -1650,9 +1651,9 @@ namespace TilesEditor
 			m_graphicsView->setAntiAlias(false);
 		else m_graphicsView->setAntiAlias(true);
 
+		
 		m_graphicsView->resetTransform();
 		m_graphicsView->scale(scaleX, scaleY);
-
 
 		ui.zoomLabel->setText("x" + QString::number(zoomFactors[position]));
 	}
@@ -1738,21 +1739,27 @@ namespace TilesEditor
 			EditLinkDialog frm(link);
 			if (frm.exec() == QDialog::Accepted)
 			{
+				auto undoCommand = new QUndoCommand();
 				auto levels = getLevelsInRect(*link);
 
 				for (auto level : levels)
 				{
 					auto newLink = link->duplicate();
-
-					level->clampEntity(newLink);
-
-					setModified(level);
-					level->addObject(newLink);
 					newLink->setLevel(level);
+
+					auto rect = level->clampEntity(newLink);
+					newLink->setX(rect.getX());
+					newLink->setY(rect.getY());
+					newLink->setWidth(rect.getWidth());
+					newLink->setHeight(rect.getHeight());
+
+					new CommandAddEntity(this, newLink, undoCommand);
+
 				}
 
-				delete link;
+				addUndoCommand(undoCommand);
 			}
+			delete link;
 		}
 
 
@@ -1767,8 +1774,8 @@ namespace TilesEditor
 		if (rootSignLevel)
 		{
 			auto sign = new LevelSign(rootSignLevel, rect.getX(), rect.getY(), 32, 16);
-
-			rootSignLevel->addObject(sign);
+			
+			addUndoCommand(new CommandAddEntity(this, sign));
 
 			EditSignsDialog frm(rootSignLevel, this, sign);
 			if (frm.exec() == QDialog::Accepted)

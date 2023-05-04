@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>662</width>
+    <width>665</width>
     <height>448</height>
    </rect>
   </property>
@@ -73,6 +73,9 @@
         <property name="icon">
          <iconset resource="MainWindow.qrc">
           <normaloff>:/MainWindow/icons/fugue/disk.png</normaloff>:/MainWindow/icons/fugue/disk.png</iconset>
+        </property>
+        <property name="shortcut">
+         <string>Ctrl+S</string>
         </property>
         <property name="autoRaise">
          <bool>true</bool>
