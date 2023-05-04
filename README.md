@@ -15,6 +15,9 @@ A level editor that will support multiple level formats
 11. When you choose to edit signs/links on an overworld, you can then select which level to edit.
 12. Supports tile layers
 13. Move objects around with accuracy by holding "Control" while dragging.
+14. Tile flood fill
+15. undo/redo
+
 
 # Requirements
 * QT6
@@ -41,4 +44,4 @@ cmake -S. -Bbuild/
 cmake --build build/ -j $(nproc)
 ```
 
-![Alt text](./screenshot1.png "Optional Title")
+![Alt text](https://user-images.githubusercontent.com/132313681/236118575-99d12ea4-4cad-411a-bee6-71d694e72abc.png "Optional Title")
