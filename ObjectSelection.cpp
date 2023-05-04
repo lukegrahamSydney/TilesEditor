@@ -4,7 +4,7 @@
 #include "cJSON/JsonHelper.h"
 
 #include "ObjectSelection.h"
-
+#include "LevelCommands.h"
 #include "Selector.h"
 
 namespace TilesEditor
@@ -12,7 +12,9 @@ namespace TilesEditor
     ObjectSelection::ObjectSelection(double x, double y) :
         AbstractSelection(x, y)
     {
+        m_selectMode = SelectMode::MODE_MOVE;
     }
+
     void ObjectSelection::draw(QPainter* painter, const IRectangle& viewRect)
     {
         for (auto object : m_selectedObjects)
@@ -58,78 +60,89 @@ namespace TilesEditor
 
     void ObjectSelection::reinsertIntoWorld(IWorld* world, int layer)
     {
-        for (auto object : m_selectedObjects)
+
+        if (m_selectMode == SelectMode::MODE_INSERT)
         {
-            if (object->getEntityType() == LevelEntityType::ENTITY_NPC)
+            auto undoCommand = new QUndoCommand();
+            for (auto object : m_selectedObjects)
             {
-                
-                auto level = world->getLevelAt(object->getCenterX(), object->getCenterY());
-
-                if (level != nullptr)
+                if (object->getEntityType() == LevelEntityType::ENTITY_NPC)
                 {
-                    if (level != object->getLevel()) {
+                    auto level = world->getLevelAt(object->getCenterX(), object->getCenterY());
 
-                        //If they've changed level, remove it from the old level, and it to the new one
-                        if(object->getLevel())
-                            object->getLevel()->removeObject(object);
-
-                        level->addObject(object);
+                    if (level != nullptr)
+                    {
                         object->setLevel(level);
-                        world->setModified(level);
+                        new CommandAddEntity(world, object, undoCommand);
                     }
-                    //ONLY add it to the spatial map
-                    else level->addEntityToSpatialMap(object);
-
                 }
             }
-            else if (object->getEntityType() == LevelEntityType::ENTITY_LINK || object->getEntityType() == LevelEntityType::ENTITY_SIGN) {
+               
 
-                //Links and signs will be split up across overlapping levels
-
-                //Get a list of all the levels our object intersects
-                bool deleteOriginal = true;
-                auto levels = world->getLevelsInRect(*object);
-                for (auto level : levels)
+            world->addUndoCommand(undoCommand);
+        }
+        else if(m_selectMode == SelectMode::MODE_MOVE)
+        {
+            auto undoCommand = new QUndoCommand();
+            for (auto object : m_selectedObjects)
+            {
+                if (object->getEntityType() == LevelEntityType::ENTITY_NPC)
                 {
-                    if (level == object->getLevel())
+                    new CommandMoveEntity(world, object->getStartRect(), *object, object, undoCommand);
+
+                }
+                else if (object->getEntityType() == LevelEntityType::ENTITY_LINK || object->getEntityType() == LevelEntityType::ENTITY_SIGN) {
+
+                    //Links and signs will be split up across overlapping levels
+
+                    //Get a list of all the levels our object intersects
+                    bool deleteOriginal = true;
+                    auto levels = world->getLevelsInRect(*object);
+                    for (auto level : levels)
                     {
-                        level->clampEntity(object);
-                        //Special case for graal signs. They're always 2 blocks wide (32 pixels)
-                        if (object->getEntityType() == LevelEntityType::ENTITY_SIGN)
-                            object->setWidth(32);
-
-                        level->updateSpatialEntity(object);
-                        deleteOriginal = false;
-                    }
-                    else {
-                        //Duplicate our object
-                        auto newObject = object->duplicate();
-                        if (newObject)
+                        if (level == object->getLevel())
                         {
+                            Rectangle oldRect = object->getStartRect();
+                            auto newRect = level->clampEntity(object);
+                            if (object->getEntityType() == LevelEntityType::ENTITY_SIGN)
+                                newRect.setWidth(32);
 
-                            level->clampEntity(newObject);
-                            //Special case for graal signs. They're always 2 blocks wide (32 pixels)
-                            if (newObject->getEntityType() == LevelEntityType::ENTITY_SIGN)
-                                newObject->setWidth(32);
+                            new CommandReshapeEntity(world, oldRect, newRect, object, undoCommand);
 
-                            if (level != object->getLevel())
-                                world->setModified(level);
+                            
+                            deleteOriginal = false;
+                        }
+                        else {
+                            //Duplicate our object
+                            auto newObject = object->duplicate();
+                            if (newObject)
+                            {
+                                newObject->setLevel(level);
+                                auto rect = level->clampEntity(newObject);
+                                newObject->setX(rect.getX());
+                                newObject->setY(rect.getY());
+                                newObject->setWidth(rect.getWidth());
+                                newObject->setHeight(rect.getHeight());
 
-                            level->addObject(newObject);
-                            newObject->setLevel(level);
+                                //Special case for graal signs. They're always 2 blocks wide (32 pixels)
+                                if (newObject->getEntityType() == LevelEntityType::ENTITY_SIGN)
+                                    newObject->setWidth(32);
+
+                                new CommandAddEntity(world, newObject, undoCommand);
+                            }
                         }
                     }
-                }
 
-                if (deleteOriginal)
-                {
-                    //Delete the original
-                    if (object->getLevel())
-                        object->getLevel()->removeObject(object);
-                    delete object;
-                }
+                    if (deleteOriginal)
+                    {
+                        new CommandReshapeEntity(world, object->getStartRect(), *object, object, undoCommand);
+                        new CommandDeleteEntity(world, object, undoCommand);
+                    }
 
+                }
             }
+
+            world->addUndoCommand(undoCommand);
         }
 
         m_selectedObjects.clear();
@@ -137,18 +150,16 @@ namespace TilesEditor
 
     void ObjectSelection::clearSelection(IWorld* world)
     {
-        for (auto object : m_selectedObjects)
+        if (m_selectMode == SelectMode::MODE_MOVE)
         {
-            world->deleteEntity(object);
-            /*
-            if (object->getLevel())
+            auto undoCommand = new QUndoCommand();
+            for (auto entity : m_selectedObjects)
             {
-                object->getLevel()->removeObject(object);
-                world->setModified(object->getLevel());
-                
+                new CommandReshapeEntity(world, entity->getStartRect(), *entity, entity, undoCommand);
             }
-            delete object;*/
+            world->addUndoCommand(undoCommand);
         }
+        world->deleteEntities(m_selectedObjects);
         m_selectedObjects.clear();
     }
 

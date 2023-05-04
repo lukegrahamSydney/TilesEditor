@@ -10,8 +10,14 @@ namespace TilesEditor
 	class ObjectSelection:
 		public AbstractSelection
 	{
+	public:
+		enum SelectMode {
+			MODE_MOVE,
+			MODE_INSERT
+		};
 	private:
 		QList<AbstractLevelEntity*>	m_selectedObjects;
+		SelectMode m_selectMode;
 
 	public:
 
@@ -32,6 +38,9 @@ namespace TilesEditor
 		SelectionType getSelectionType() const override { return SelectionType::SELECTION_OBJECTS; };
 
 		LevelEntityType getEntityType() const;
+
+		void setSelectMode(SelectMode val) { m_selectMode = val; }
+		SelectMode getMoveMode() const { return m_selectMode; }
 		void addObject(AbstractLevelEntity* entity);
 
 		void deleteObject(AbstractLevelEntity* entity);

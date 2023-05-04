@@ -3,7 +3,10 @@
 
 #include <QUndoCommand>
 #include <IWorld.h>
+#include <QList>
+#include <QPair>
 #include "Tilemap.h"
+#include "Rectangle.h"
 
 namespace TilesEditor
 {
@@ -53,6 +56,7 @@ namespace TilesEditor
 		int m_layer;
 		int m_oldTile;
 		int m_newTile;
+		QList<QPair<unsigned short, unsigned short> > m_nodes;
 
 	public:
 		CommandFloodFill(IWorld* world, double x, double y, int layer, int newTile);
@@ -60,5 +64,70 @@ namespace TilesEditor
 		void undo() override;
 		void redo() override;
 	};
+
+	class CommandAddEntity :
+		public QUndoCommand
+	{
+	private:
+		IWorld* m_world;
+		AbstractLevelEntity* m_entity;
+		bool m_doDelete;
+
+	public:
+		CommandAddEntity(IWorld* world, AbstractLevelEntity* entity, QUndoCommand* parent = nullptr);
+		~CommandAddEntity();
+		void undo() override;
+		void redo() override;
+	};
+
+	class CommandDeleteEntity :
+		public QUndoCommand
+	{
+	private:
+		IWorld* m_world;
+		AbstractLevelEntity* m_entity;
+		bool m_doDelete;
+
+	public:
+		CommandDeleteEntity(IWorld* world, AbstractLevelEntity* entity, QUndoCommand* parent = nullptr);
+		~CommandDeleteEntity();
+		void undo() override;
+		void redo() override;
+	};
+
+	class CommandMoveEntity :
+		public QUndoCommand
+	{
+	private:
+		IWorld* m_world;
+		Rectangle m_oldRect;
+		Rectangle m_newRect;
+
+		AbstractLevelEntity* m_entity;
+
+	public:
+		CommandMoveEntity(IWorld* world, const IRectangle& oldRect, const IRectangle& newRect, AbstractLevelEntity* entity, QUndoCommand* parent = nullptr);
+
+		int id() const override { return 1; }
+		void undo() override;
+		void redo() override;
+	};
+
+	class CommandReshapeEntity :
+		public QUndoCommand
+	{
+	private:
+		IWorld* m_world;
+		Rectangle m_oldRect;
+		Rectangle m_newRect;
+		AbstractLevelEntity* m_entity;
+
+	public:
+		CommandReshapeEntity(IWorld* world, const IRectangle& oldRect, const IRectangle& newRect, AbstractLevelEntity* entity, QUndoCommand* parent = nullptr);
+
+		void undo() override;
+		void redo() override;
+	};
+
 };
 #endif

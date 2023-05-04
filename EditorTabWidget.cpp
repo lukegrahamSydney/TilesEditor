@@ -417,10 +417,6 @@ namespace TilesEditor
 
 								if (tilemap->tryGetTile(x + sourceTileX, y + sourceTileY, &tile) && !Tilemap::IsInvisibleTile(tile))
 								{
-									//if(m_selectedTilesLayer == 0)
-									//	tilemap->setTile(x + sourceTileX, y + sourceTileY, m_defaultTile);
-									//else tilemap->setTile(x + sourceTileX, y + sourceTileY, Tilemap::MakeInvisibleTile(0));
-
 									setModified(level);
 
 
@@ -458,6 +454,7 @@ namespace TilesEditor
 			entity->getLevel()->removeEntityFromSpatialMap(entity);
 
 			selection->addObject(entity);
+			entity->setStartRect(*entity);
 
 			if (!append)
 				setSelection(selection);
@@ -689,14 +686,23 @@ namespace TilesEditor
 		if(entity->getEntityType() == LevelEntityType::ENTITY_NPC)
 			objectListModel->removeEntity(static_cast<LevelNPC*>(entity));
 
-		if (entity->getLevel())
+		addUndoCommand(new CommandDeleteEntity(this, entity, nullptr));
+	}
+
+	void EditorTabWidget::deleteEntities(const QList<AbstractLevelEntity*>& entities)
+	{
+		auto objectListModel = static_cast<ObjectListModel*>(ui_objectClass.objectsTable->model());
+
+		auto undoCommand = new QUndoCommand();
+		for (auto entity : entities)
 		{
-			entity->getLevel()->removeObject(entity);
+			//Remove this entity from the npc search
+			if (entity->getEntityType() == LevelEntityType::ENTITY_NPC)
+				objectListModel->removeEntity(static_cast<LevelNPC*>(entity));
 
-			setModified(entity->getLevel());
+			new CommandDeleteEntity(this, entity, undoCommand);
 		}
-
-		delete entity;
+		addUndoCommand(undoCommand);
 	}
 
 
@@ -1560,7 +1566,7 @@ namespace TilesEditor
 		}
 	}
 
-	int EditorTabWidget::floodFill(double x, double y, int newTile)
+	int EditorTabWidget::floodFill(double x, double y, int layer, int newTile, QList<QPair<unsigned short, unsigned short> >* outputNodes)
 	{
 		auto startX = std::floor(x / 16.0) * 16.0;
 		auto startY = std::floor(y / 16.0) * 16.0;
@@ -1580,7 +1586,7 @@ namespace TilesEditor
 				auto level = getLevelAt(node.first, node.second);
 				if (level != nullptr)
 				{
-					auto tilemap = level->getTilemap(m_selectedTilesLayer);
+					auto tilemap = level->getTilemap(layer);
 					if (tilemap != nullptr)
 					{
 						auto tileX = int((node.first - tilemap->getX()) / 16.0);
@@ -1592,6 +1598,9 @@ namespace TilesEditor
 							if (tile == startTile)
 							{
 								setModified(level);
+
+								if(outputNodes)
+									outputNodes->push_back(QPair<unsigned short, unsigned short>((unsigned short)std::floor(node.first / 16.0), (unsigned short)std::floor(node.second / 16.0)));
 
 								tilemap->setTile(tileX, tileY, newTile);
 
@@ -1799,6 +1808,7 @@ namespace TilesEditor
 
 	void EditorTabWidget::undoClicked(bool checked)
 	{
+		setSelection(nullptr);
 		m_undoStack.undo();
 		ui.redoButton->setEnabled(m_undoStack.canRedo());
 		ui.undoButton->setEnabled(m_undoStack.canUndo());
@@ -1808,6 +1818,7 @@ namespace TilesEditor
 
 	void EditorTabWidget::redoClicked(bool checked)
 	{
+		setSelection(nullptr);
 		m_undoStack.redo();
 		ui.redoButton->setEnabled(m_undoStack.canRedo());
 		ui.undoButton->setEnabled(m_undoStack.canUndo());
@@ -2215,6 +2226,7 @@ namespace TilesEditor
 		npc->setImageName("", m_resourceManager);
 		selection->addObject(npc);
 		selection->setAlternateSelectionMethod(true);
+		selection->setSelectMode(ObjectSelection::SelectMode::MODE_INSERT);
 
 		setSelection(selection);
 

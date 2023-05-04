@@ -529,7 +529,7 @@ namespace TilesEditor
         else m_entitySpatialMap->remove(object);
     }
 
-    void Level::clampEntity(AbstractLevelEntity* entity)
+    Rectangle Level::clampEntity(AbstractLevelEntity* entity)
     {
         auto left = entity->getX();
         auto top = entity->getY();
@@ -542,12 +542,7 @@ namespace TilesEditor
         right = std::min(right, this->getRight());
         bottom = std::min(bottom, this->getBottom());
 
-
-        //Position it
-        entity->setX(left);
-        entity->setY(top);
-        entity->setWidth(int(right - left));
-        entity->setHeight(int(bottom - top));
+        return Rectangle(left, top, int(right - left), int(bottom - top));
     }
 
     void Level::setTileLayer(int index, Tilemap* tilemap)

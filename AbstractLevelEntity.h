@@ -28,8 +28,7 @@ namespace TilesEditor
 		double m_x,
 			m_y;
 
-		double m_startSelectX;
-		double m_startSelectY;
+		Rectangle m_startRect;
 
 		Level* m_level;
 		double m_dragOffsetX;
@@ -69,9 +68,8 @@ namespace TilesEditor
 			return m_id;
 		}
 
-		void setStartSelectX(double val) { m_startSelectX = val; }
-		void setStartSelectY(double val) { m_startSelectY = val; }
-
+		void setStartRect(const IRectangle& rect) { m_startRect = rect; }
+		const IRectangle& getStartRect() const { return m_startRect; }
 
 		void draw(QPainter* painter, const Rectangle& viewRect) {
 			draw(painter, viewRect, getX(), getY());

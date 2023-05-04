@@ -94,7 +94,7 @@ namespace TilesEditor
 		void removeObject(AbstractLevelEntity* object);
 		void removeEntityFromSpatialMap(AbstractLevelEntity* object);
 
-		void clampEntity(AbstractLevelEntity* entity);
+		Rectangle clampEntity(AbstractLevelEntity* entity);
 		void setTileLayer(int index, Tilemap* tilemap);
 
 		static int convertFromGraalTile(int graalTileIndex) {

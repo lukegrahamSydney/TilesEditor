@@ -3,6 +3,7 @@
 
 #include <QSet>
 #include <QUndoCommand>
+#include <QList>
 #include "Rectangle.h"
 #include "ResourceManager.h"
 
@@ -23,6 +24,7 @@ namespace TilesEditor
 		virtual bool tryGetTileAt(double x, double y, int* outTile) = 0;
 		//virtual void setTileAt(double x, double y, int tile) = 0;
 		virtual void deleteEntity(AbstractLevelEntity* entity) = 0;
+		virtual void deleteEntities(const QList<AbstractLevelEntity*>& entities) = 0;
 		virtual bool containsLevel(const QString& levelName)const = 0;
 		virtual void centerLevel(const QString& levelName) = 0;
 		virtual void setModified(Level* level) = 0;
@@ -32,7 +34,7 @@ namespace TilesEditor
 		virtual void getTiles(double x, double y, int layer, Tilemap* output, bool deleteTiles = false) = 0;
 		virtual void putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible) = 0;
 		virtual void deleteTiles(double x, double y, int layer, int hcount, int vcount, int replacementTile) = 0;
-		virtual int floodFill(double x, double y, int newTile) = 0;
+		virtual int floodFill(double x, double y, int layer, int newTile, QList<QPair<unsigned short, unsigned short> >* outputNodes = nullptr) = 0;
 		virtual void addUndoCommand(QUndoCommand* command) = 0;
 	};
 };

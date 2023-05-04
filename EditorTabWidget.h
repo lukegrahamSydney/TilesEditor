@@ -182,7 +182,10 @@ namespace TilesEditor
 		AbstractLevelEntity* getEntityAt(double x, double y, bool checkAllowedSelect);
 		QList<AbstractLevelEntity*> getEntitiesAt(double x, double y) override;
 		QList<AbstractLevelEntity*> getEntitiesAt(double x, double y, bool checkAllowedSelect);
+
+		
 		void deleteEntity(AbstractLevelEntity* entity) override;
+		void deleteEntities(const QList<AbstractLevelEntity*>& entities) override;
 		void setModified(Level* level) override;
 		bool tryGetTileAt(double x, double y, int* outTile) override;
 
@@ -194,7 +197,7 @@ namespace TilesEditor
 		void putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible) override;
 		void deleteTiles(double x, double y, int layer, int hcount, int vcount, int replacementTile) override;
 
-		int floodFill(double x, double y, int newTile) override;
+		int floodFill(double x, double y, int layer, int newTile, QList<QPair<unsigned short, unsigned short> >* outputNodes = nullptr) override;
 		void newLevel(int hcount, int vcount);
 		void loadGMap(const QString& name, const QString& fileName);
 		void loadLevel(const QString& name, const QString& fileName);

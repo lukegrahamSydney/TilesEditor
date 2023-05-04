@@ -58,9 +58,7 @@ namespace TilesEditor
 				auto link = links.at(selectedRow);
 				if (link != nullptr)
 				{
-					m_level->removeObject(link);
-					delete link;
-					m_world->setModified(m_level);
+					m_world->deleteEntity(link);
 					populateTable();
 					
 				}

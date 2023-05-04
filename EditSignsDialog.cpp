@@ -175,10 +175,8 @@ namespace TilesEditor
 		if (row >= 0 && row < signs.size())
 		{
 			auto sign = signs[row];
-			m_world->setModified(m_level);
 
-			m_level->removeObject(sign);
-			delete sign;
+			m_world->deleteEntity(sign);
 			populateTable();
 		}
 	}
