@@ -41,4 +41,4 @@ cmake -S. -Bbuild/
 cmake --build build/ -j $(nproc)
 ```
 
-![Alt text](./screenshot1.png "Optional Title")
+![Alt text](https://user-images.githubusercontent.com/132313681/236118575-99d12ea4-4cad-411a-bee6-71d694e72abc.png "Optional Title")
