@@ -24,13 +24,13 @@ namespace TilesEditor
 {
 
 	EditorTabWidget::EditorTabWidget(QWidget* parent, ResourceManager& resourceManager)
-		: QWidget(parent)
+		: QWidget(parent), m_fillPattern(nullptr, 0.0, 0.0, 1, 1, 0)
 	{
 		ui.setupUi(this);
 
 		m_font1.setFamily("Arial");
 		m_font1.setPointSizeF(12);
-
+		m_useFillPattern = false;
 		m_tilesetsContainer = new QWidget();
 		m_tileObjectsContainer = new QWidget();
 		m_objectsContainer = new QWidget();
@@ -116,6 +116,7 @@ namespace TilesEditor
 		connect(ui.newLinkButton, &QToolButton::clicked, this, &EditorTabWidget::newLinkClicked);
 		connect(ui.newSignButton, &QToolButton::clicked, this, &EditorTabWidget::newSignClicked);
 
+		connect(ui.floodFillPatternButton, &QToolButton::clicked, this, &EditorTabWidget::floodFillPatternClicked);
 		connect(ui.preloadButton, &QToolButton::clicked, this, &EditorTabWidget::preloadOverworldClicked);
 		connect(ui.saveAsButton, &QToolButton::clicked, this, &EditorTabWidget::saveAsClicked);
 		connect(ui.saveButton, &QToolButton::clicked, this, &EditorTabWidget::saveClicked);
@@ -481,7 +482,10 @@ namespace TilesEditor
 		m_selection = newSelection;
 		if (m_selection != nullptr)
 		{
+			m_useFillPattern = false;
 			ui.floodFillButton->setChecked(false);
+			//ui.floodFillPatternButton->setChecked(false);
+
 			if (m_selector.visible())
 			{
 				m_selector.setVisible(false);
@@ -1022,6 +1026,26 @@ namespace TilesEditor
 
 		if (event->button() == Qt::MouseButton::LeftButton)
 		{
+			if (!m_tilesSelector.visible())
+			{
+				auto hcount = 1;
+				auto vcount = 1;
+				auto tileSelection = new TileSelection(-1000000, -1000000, hcount, vcount);
+
+				auto tile = Tilemap::MakeTile(int(pos.x() / 16.0), int(pos.y() / 16.0), 0);
+
+				tileSelection->setTile(0, 0, tile);
+
+				if (m_tilesetImage)
+					tileSelection->setTilesetImage(m_tilesetImage);
+				tileSelection->setAlternateSelectionMethod(true);
+				m_tilesSelector.endSelection(0.0f, 0.0f);
+
+				setSelection(tileSelection);
+				m_graphicsView->redraw();
+				return;
+			}
+
 			if (m_tilesSelector.selecting())
 			{
 				auto maxWidth = (int)ui_tilesetsClass.graphicsView->sceneRect().width();
@@ -1138,13 +1162,15 @@ namespace TilesEditor
 		{
 			if (ui.floodFillButton->isChecked())
 			{
-
-				//int oldTile = floodFill(pos.x(), pos.y(), m_defaultTile);
-
-				addUndoCommand(new CommandFloodFill(this, pos.x(), pos.y(), m_selectedTilesLayer, m_defaultTile));
+				if (m_useFillPattern)
+				{
+					addUndoCommand(new CommandFloodFillPattern(this, pos.x(), pos.y(), m_selectedTilesLayer, &m_fillPattern));
+				} else addUndoCommand(new CommandFloodFill(this, pos.x(), pos.y(), m_selectedTilesLayer, m_defaultTile));
+				
 				m_graphicsView->redraw();
 				return;
 			}
+
 			if (m_selection != nullptr)
 			{
 				if (!m_selection->getAlternateSelectionMethod())
@@ -1231,8 +1257,9 @@ namespace TilesEditor
 			if (m_selector.visible())
 				m_selector.setVisible(false);
 
-
+			m_useFillPattern = false;
 			ui.floodFillButton->setChecked(false);
+
 			setSelection(nullptr);
 
 			auto entities = getEntitiesAt(pos.x(), pos.y(), true);
@@ -1616,6 +1643,64 @@ namespace TilesEditor
 		
 	}
 
+	int EditorTabWidget::floodFillPattern(double x, double y, int layer, const Tilemap* pattern, QList<QPair<unsigned short, unsigned short>>* outputNodes)
+	{
+		auto startX = std::floor(x / 16.0) * 16.0;
+		auto startY = std::floor(y / 16.0) * 16.0;
+		auto startTile = 0;
+
+
+		if (tryGetTileAt(startX, startY, &startTile))
+		{
+			QStack<QPair<double, double> > nodes;
+
+			nodes.push(QPair<double, double>(startX, startY));
+
+			Level* level = nullptr;
+			while (nodes.count() > 0)
+			{
+				auto node = nodes.pop();
+
+				if (level == nullptr || node.first < level->getX() || node.first >= level->getRight() || node.second < level->getY() || node.second >= level->getBottom())
+					level = getLevelAt(node.first, node.second);
+
+				if (level != nullptr)
+				{
+					auto tilemap = level->getTilemap(layer);
+					if (tilemap != nullptr)
+					{
+						auto tileX = int((node.first - tilemap->getX()) / 16.0);
+						auto tileY = int((node.second - tilemap->getY()) / 16.0);
+
+						auto patternTileX = tileX % pattern->getHCount();
+						auto patternTileY = tileY % pattern->getVCount();
+
+						auto patternTile = pattern->getTile(patternTileX, patternTileY);
+						int tile = 0;
+						if (tilemap->tryGetTile(tileX, tileY, &tile) && !Tilemap::IsInvisibleTile(tile) && tile != patternTile)
+						{
+							if (tile == startTile)
+							{
+								setModified(level);
+
+								if (outputNodes)
+									outputNodes->push_back(QPair<unsigned short, unsigned short>((unsigned short)std::floor(node.first / 16.0), (unsigned short)std::floor(node.second / 16.0)));
+
+								tilemap->setTile(tileX, tileY, patternTile);
+
+								nodes.push(QPair<double, double>(node.first - 16, node.second));
+								nodes.push(QPair<double, double>(node.first, node.second - 16));
+								nodes.push(QPair<double, double>(node.first + 16, node.second));
+								nodes.push(QPair<double, double>(node.first, node.second + 16));
+							}
+						}
+					}
+				}
+			}
+		}
+		return startTile;
+	}
+
 	void EditorTabWidget::graphicsMouseWheel(QWheelEvent* event)
 	{
 		if (QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier))
@@ -1691,6 +1776,25 @@ namespace TilesEditor
 			ui.showLayerButton->setIcon(m_eyeOpen);
 		else ui.showLayerButton->setIcon(m_eyeClosed);
 		m_graphicsView->redraw();
+	}
+
+	void EditorTabWidget::floodFillPatternClicked(bool checked)
+	{
+
+		if (m_selector.visible())
+			doTileSelection();
+
+		if (m_selection && m_selection->getSelectionType() == SelectionType::SELECTION_TILES)
+		{
+			auto tileSelection = static_cast<TileSelection*>(m_selection);
+
+			m_fillPattern = *tileSelection->getTilemap();
+			setSelection(nullptr);
+			ui.floodFillButton->setChecked(true);
+			m_useFillPattern = true;
+
+		}
+		
 	}
 
 	void EditorTabWidget::preloadOverworldClicked(bool checked)
@@ -2288,6 +2392,7 @@ namespace TilesEditor
 		ui.newSignButton->setEnabled(false);
 		ui.copyButton->setEnabled(false);
 		ui.cutButton->setEnabled(false);
+		ui.floodFillPatternButton->setEnabled(false);
 	}
 
 	void EditorTabWidget::selectorMade()
@@ -2298,6 +2403,8 @@ namespace TilesEditor
 			ui.newSignButton->setEnabled(true);
 			ui.copyButton->setEnabled(true);
 			ui.cutButton->setEnabled(true);
+
+			ui.floodFillPatternButton->setEnabled(true);
 		}
 	}
 

@@ -282,4 +282,51 @@ namespace TilesEditor
 			m_entity->getLevel()->updateSpatialEntity(m_entity);
 	}
 
+	//Pattern
+	CommandFloodFillPattern::CommandFloodFillPattern(IWorld* world, double x, double y, int layer, const Tilemap* pattern)
+	{
+		m_world = world;
+		m_x = x;
+		m_y = y;
+		m_layer = layer;
+		m_pattern = new Tilemap(*pattern);
+
+	}
+
+	void CommandFloodFillPattern::undo()
+	{
+		Level* level = nullptr;
+		//Each node in m_nodes contains a tile position in the world that needs to revert back to m_oldTile
+		while (m_nodes.count() > 0)
+		{
+			auto node = m_nodes.front();
+			m_nodes.pop_front();
+
+			auto x = node.first * 16.0;
+			auto y = node.second * 16.0;
+
+
+			if (level == nullptr || x < level->getX() || x >= level->getRight() || y < level->getY() || y >= level->getBottom())
+				level = m_world->getLevelAt(x, y);
+
+			if (level != nullptr)
+			{
+				auto tilemap = level->getTilemap(m_layer);
+				if (tilemap != nullptr)
+				{
+					auto tileX = int((x - tilemap->getX()) / 16.0);
+					auto tileY = int((y - tilemap->getY()) / 16.0);
+
+					tilemap->setTile(tileX, tileY, m_oldTile);
+					m_world->setModified(level);
+				}
+			}
+		}
+	}
+
+	void CommandFloodFillPattern::redo()
+	{
+		m_oldTile = m_world->floodFillPattern(m_x, m_y, m_layer, m_pattern, &m_nodes);
+	}
+
 }

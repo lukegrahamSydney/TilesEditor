@@ -54,6 +54,7 @@ namespace TilesEditor
 		void layerChanged(int value);
 		void layerVisibilityChanged();
 
+		void floodFillPatternClicked(bool checked);
 		void preloadOverworldClicked(bool checked);
 		void editLinksClicked(bool checked);
 		void newLinkClicked(bool checked);
@@ -135,6 +136,8 @@ namespace TilesEditor
 
 		AbstractSelection* m_selection;
 
+		bool m_useFillPattern;
+		Tilemap	m_fillPattern;
 		QUndoStack m_undoStack;
 
 		void doTileSelection();
@@ -198,6 +201,7 @@ namespace TilesEditor
 		void deleteTiles(double x, double y, int layer, int hcount, int vcount, int replacementTile) override;
 
 		int floodFill(double x, double y, int layer, int newTile, QList<QPair<unsigned short, unsigned short> >* outputNodes = nullptr) override;
+		int floodFillPattern(double x, double y, int layer, const Tilemap* pattern, QList<QPair<unsigned short, unsigned short> >* outputNodes = nullptr) override;
 		void newLevel(int hcount, int vcount);
 		void loadGMap(const QString& name, const QString& fileName);
 		void loadLevel(const QString& name, const QString& fileName);

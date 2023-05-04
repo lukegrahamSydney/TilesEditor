@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/MainWindow">
+    <file>icons/fugue/paint-can--plus.png</file>
     <file>icons/fugue/paint-can.png</file>
     <file>icons/fugue/arrow-circle-315.png</file>
     <file>icons/fugue/arrow-curve.png</file>

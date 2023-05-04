@@ -32,6 +32,13 @@ namespace TilesEditor
 
 		void clear(int tile);
 
+		/*
+		void reset(int hcount, int vcount) {
+			delete m_tiles;
+			m_hcount = hcount;
+			m_vcount = vcount;
+			m_tiles = new int[hcount * vcount];
+		}*/
 
 		int getWidth() const {
 			return m_hcount * 16;

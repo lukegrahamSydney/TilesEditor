@@ -173,6 +173,29 @@
        </widget>
       </item>
       <item>
+       <widget class="QToolButton" name="floodFillPatternButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="toolTip">
+         <string>Flood Fill Pattern</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="MainWindow.qrc">
+          <normaloff>:/MainWindow/icons/fugue/paint-can--plus.png</normaloff>:/MainWindow/icons/fugue/paint-can--plus.png</iconset>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QWidget" name="widget_8" native="true">
         <property name="minimumSize">
          <size>
