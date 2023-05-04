@@ -71,6 +71,7 @@ namespace TilesEditor
 
 	void CommandFloodFill::undo()
 	{
+		Level* level = nullptr;
 		//Each node in m_nodes contains a tile position in the world that needs to revert back to m_oldTile
 		while (m_nodes.count() > 0)
 		{
@@ -79,7 +80,11 @@ namespace TilesEditor
 			 
 			auto x = node.first * 16.0;
 			auto y = node.second * 16.0;
-			auto level = m_world->getLevelAt(x, y);
+
+
+			if (level == nullptr || x < level->getX() || x >= level->getRight() || y < level->getY() || y >= level->getBottom())
+				level = m_world->getLevelAt(x, y);
+
 			if (level != nullptr)
 			{
 				auto tilemap = level->getTilemap(m_layer);

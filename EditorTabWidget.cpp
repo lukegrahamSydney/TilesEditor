@@ -1574,11 +1574,14 @@ namespace TilesEditor
 
 			nodes.push(QPair<double, double>(startX, startY));
 
+			Level* level = nullptr;
 			while (nodes.count() > 0)
 			{
 				auto node = nodes.pop();
 
-				auto level = getLevelAt(node.first, node.second);
+				if(level == nullptr || node.first < level->getX() || node.first >= level->getRight() || node.second < level->getY() || node.second >= level->getBottom())
+					level = getLevelAt(node.first, node.second);
+
 				if (level != nullptr)
 				{
 					auto tilemap = level->getTilemap(layer);
