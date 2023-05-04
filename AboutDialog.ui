@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>175</width>
-    <height>150</height>
+    <width>167</width>
+    <height>172</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -66,6 +66,16 @@
     <widget class="QLabel" name="label_5">
      <property name="text">
       <string>Graal Reborn</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>Ports by Cadavrez</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
