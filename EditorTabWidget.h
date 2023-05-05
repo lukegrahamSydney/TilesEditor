@@ -50,6 +50,7 @@ namespace TilesEditor
 		void graphicsMouseMove(QMouseEvent* event);
 		void graphicsMouseDoubleClick(QMouseEvent* event);
 		void graphicsMouseWheel(QWheelEvent* event);
+		void graphicsKeyPress(QKeyEvent* event);
 		void zoomMoved(int position);
 		void layerChanged(int value);
 		void layerVisibilityChanged();

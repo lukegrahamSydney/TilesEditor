@@ -82,12 +82,14 @@ namespace TilesEditor
 		AbstractLevelEntity* getObjectAt(double x, double y, LevelEntityType type);
 		void setModified(bool value) { m_modified = value; }
 		bool getModified() const { return m_modified; }
-		QVector<LevelLink*>& getLinks() { return m_links; }
-		QVector<LevelSign*>& getSigns() { return m_signs; }
+		const QVector<LevelLink*>& getLinks()const { return m_links; }
+		const QVector<LevelSign*>& getSigns() const { return m_signs; }
 		Tilemap* getOrMakeTilemap(int layer, ResourceManager& resourceManager);
 		Tilemap* getTilemap(size_t layer);
 		IEntitySpatialMap<AbstractLevelEntity>* getEntitySpatialMap() { return m_entitySpatialMap; }
-		QSet<AbstractLevelEntity*>& getObjects() { return m_objects; }
+		const QSet<AbstractLevelEntity*>& getObjects() const { return m_objects; }
+
+		const QMap<int, Tilemap*>& getTileLayers() const { return m_tileLayers; }
 		void updateSpatialEntity(AbstractLevelEntity* entity);
 		void addObject(AbstractLevelEntity* object);
 		void addEntityToSpatialMap(AbstractLevelEntity* object);

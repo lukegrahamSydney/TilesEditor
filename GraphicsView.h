@@ -19,7 +19,7 @@ namespace TilesEditor
         void mouseMove(QMouseEvent* event);
         void mouseDoubleClick(QMouseEvent* event);
         void mouseWheelEvent(QWheelEvent* event);
-
+        void keyPress(QKeyEvent* event);
 
     private:
         bool m_antialias;
@@ -28,6 +28,7 @@ namespace TilesEditor
         GraphicsView(QWidget* parent = nullptr) :
             QGraphicsView(parent)
         {
+            setFocusPolicy(Qt::StrongFocus);
             m_antialias = false;
             this->setScene(new QGraphicsScene());
 
@@ -50,7 +51,7 @@ namespace TilesEditor
         void mouseReleaseEvent(QMouseEvent* event) override;
         void mouseDoubleClickEvent(QMouseEvent* event) override;
         void drawBackground(QPainter* painter, const QRectF& rect) override;
-
+        void keyPressEvent(QKeyEvent* event) override;
         void wheelEvent(QWheelEvent* event) override;
 
         void dragEnterEvent(QDragEnterEvent* event) override

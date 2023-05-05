@@ -72,8 +72,6 @@ namespace TilesEditor
         if (m_entitySpatialMap)
             delete m_entitySpatialMap;
 
-        if (m_mainTileLayer)
-            delete m_mainTileLayer;
 
         for (auto tilemap : m_tileLayers)
             delete tilemap;
@@ -427,9 +425,6 @@ namespace TilesEditor
 
     void Level::drawAllTileLayers(QPainter* painter, const IRectangle& viewRect, Image* tilesetImage, int selectedLayer, QMap<int, bool>& visibleLayers)
     {
-        if(visibleLayers[0])
-            drawTilesLayer(painter, viewRect, tilesetImage, 0, selectedLayer != 0);
-
         for (auto layer : m_tileLayers)
         {
             if(visibleLayers.find(layer->getLayerIndex()) == visibleLayers.end() || visibleLayers[layer->getLayerIndex()])
@@ -547,21 +542,16 @@ namespace TilesEditor
 
     void Level::setTileLayer(int index, Tilemap* tilemap)
     {
-        if (index == 0)
-        {
-            if (m_mainTileLayer != nullptr)
-                delete m_mainTileLayer;
-            m_mainTileLayer = tilemap;
-        }
 
-        else if (index > 0)
+        auto it = m_tileLayers.find(index);
+        if (it != m_tileLayers.end())
         {
-            auto it = m_tileLayers.find(index);
-            if (it != m_tileLayers.end())
-            {
-                delete it.value();
-            }
-            m_tileLayers[index] = tilemap;
+            delete it.value();
         }
+        m_tileLayers[index] = tilemap;
+
+        if(index == 0)
+            m_mainTileLayer = tilemap;
+        
     }
 };

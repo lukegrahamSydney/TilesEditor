@@ -107,6 +107,7 @@ namespace TilesEditor
 		connect(m_graphicsView, &GraphicsView::mouseMove, this, &EditorTabWidget::graphicsMouseMove);
 		connect(m_graphicsView, &GraphicsView::mouseDoubleClick, this, &EditorTabWidget::graphicsMouseDoubleClick);
 		connect(m_graphicsView, &GraphicsView::mouseWheelEvent, this, &EditorTabWidget::graphicsMouseWheel);
+		connect(m_graphicsView, &GraphicsView::keyPress, this, &EditorTabWidget::graphicsKeyPress);
 
 		connect(ui.zoomSlider, &QSlider::valueChanged, this, &EditorTabWidget::zoomMoved);
 		connect(ui.layerWidget, &QSpinBox::valueChanged, this, &EditorTabWidget::layerChanged);
@@ -179,6 +180,7 @@ namespace TilesEditor
 	void EditorTabWidget::renderScene(QPainter * painter, const QRectF & rect)
 	{
 		Rectangle viewRect(rect.x(), rect.y(), rect.width(), rect.height());
+		auto mousePos = m_graphicsView->mapToScene(m_graphicsView->mapFromGlobal(QCursor::pos()));
 
 		painter->fillRect(rect, QColorConstants::Svg::black);
 
@@ -196,7 +198,113 @@ namespace TilesEditor
 			for (auto level : drawLevels)
 			{
 				loadLevel(level);
-				level->drawAllTileLayers(painter, viewRect, m_tilesetImage, m_selectedTilesLayer, m_visibleLayers);
+
+				auto& layers = level->getTileLayers();
+
+				for (auto tilemap : layers)
+				{
+					if (m_visibleLayers.find(tilemap->getLayerIndex()) == m_visibleLayers.end() || m_visibleLayers[tilemap->getLayerIndex()])
+					{
+						auto fade = m_selectedTilesLayer != tilemap->getLayerIndex();
+						if (fade)
+						{
+							painter->setOpacity(0.33);
+							tilemap->draw(painter, viewRect, m_tilesetImage, tilemap->getX(), tilemap->getY());
+							painter->setOpacity(1.0);
+						}
+						else {
+							tilemap->draw(painter, viewRect, m_tilesetImage, tilemap->getX(), tilemap->getY());
+
+							if (ui.floodFillButton->isChecked()/* && QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ShiftModifier)*/)
+							{
+								if (m_useFillPattern)
+								{
+									int count = 0;
+									QSet<QPair<int, int> > scannedIndexes;
+									auto x = mousePos.x();
+									auto y = mousePos.y();
+
+
+									auto startTileX = int(std::floor(x / 16));
+									auto startTileY = int(std::floor(y / 16));
+
+									auto startTileX2 = (int)std::ceil(double(startTileX) / m_fillPattern.getHCount()) * m_fillPattern.getHCount();
+									auto startTileY2 = (int)std::ceil(double(startTileY) / m_fillPattern.getVCount()) * m_fillPattern.getVCount();
+									auto startTile = 0;
+
+
+
+									if (tryGetTileAt(startTileX * 16, startTileY * 16, &startTile))
+									{
+										QStack<QPair<int, int> > nodes;
+										auto addNode = [&](int x, int y) 
+										{
+											QPair<int, int> a(x, y);
+
+											if (!scannedIndexes.contains(a))
+											{
+												scannedIndexes.insert(a);
+												nodes.push(a);
+											}
+
+										};
+										addNode(startTileX, startTileY);
+
+										Level* level = nullptr;
+										while (nodes.count() > 0)
+										{
+											auto node = nodes.pop();
+
+											auto nodeXPos = node.first * 16.0;
+											auto nodeYPos = node.second * 16.0;
+
+											if (level == nullptr || nodeXPos < level->getX() || nodeXPos >= level->getRight() || nodeYPos < level->getY() || nodeYPos >= level->getBottom())
+												level = getLevelAt(nodeXPos, nodeYPos);
+
+											if (level != nullptr)
+											{
+												auto tilemap = level->getTilemap(m_selectedTilesLayer);
+												if (tilemap != nullptr)
+												{
+													auto tileX = node.first - int(std::floor(tilemap->getX() / 16.0));
+													auto tileY = node.second - int(std::floor(tilemap->getY() / 16.0));
+
+													auto deltaX = startTileX2 + (node.first - startTileX);
+													auto deltaY = startTileY2 + (node.second - startTileY);
+													auto patternTileX = deltaX % m_fillPattern.getHCount();
+													auto patternTileY = deltaY % m_fillPattern.getVCount();
+
+													
+													auto patternTile = m_fillPattern.getTile(patternTileX, patternTileY);
+													int tile = 0;
+													if (tilemap->tryGetTile(tileX, tileY, &tile) && !Tilemap::IsInvisibleTile(tile))
+													{
+														if (tile == startTile)
+														{
+															painter->drawPixmap(node.first * 16, node.second * 16, m_tilesetImage->pixmap(), Tilemap::GetTileX(patternTile) * 16, Tilemap::GetTileY(patternTile) * 16, 16, 16);
+
+															if (nodes.count() < 3000)
+															{
+																addNode(node.first - 1, node.second);
+																addNode(node.first, node.second - 1);
+	
+																addNode(node.first + 1, node.second);
+																addNode(node.first, node.second + 1);
+
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				
+
+				}
 			}
 		}
 
@@ -231,10 +339,7 @@ namespace TilesEditor
 
 		if (selectingLevel())
 		{
-			auto pos1 = m_graphicsView->mapFromGlobal(QCursor::pos());
-			auto pos = m_graphicsView->mapToScene(pos1);
-
-			auto level = getLevelAt(pos.x(), pos.y());
+			auto level = getLevelAt(mousePos.x(), mousePos.y());
 			if (level)
 			{
 				auto rect = QRectF(level->getX(), level->getY(), level->getWidth(), level->getHeight());
@@ -244,11 +349,8 @@ namespace TilesEditor
 
 		if (ui.floodFillButton->isChecked())
 		{
-			auto pos1 = m_graphicsView->mapFromGlobal(QCursor::pos());
-			auto pos = m_graphicsView->mapToScene(pos1);
-
-			auto tileX = std::floor(pos.x() / 16.0) * 16.0;
-			auto tileY = std::floor(pos.y() / 16.0) * 16.0;
+			auto tileX = std::floor(mousePos.x() / 16.0) * 16.0;
+			auto tileY = std::floor(mousePos.y() / 16.0) * 16.0;
 
 			auto rect = QRectF(tileX, tileY, 16, 16);
 			painter->fillRect(rect, QColor(255, 0, 255, 128));
@@ -1645,59 +1747,85 @@ namespace TilesEditor
 
 	int EditorTabWidget::floodFillPattern(double x, double y, int layer, const Tilemap* pattern, QList<QPair<unsigned short, unsigned short>>* outputNodes)
 	{
-		auto startX = std::floor(x / 16.0) * 16.0;
-		auto startY = std::floor(y / 16.0) * 16.0;
+		QSet<QPair<int, int>> scannedIndexes;
+		auto startTileX = int(std::floor(x / 16));
+		auto startTileY = int(std::floor(y / 16));
+
+		auto startTileX2 = (int)std::ceil(double(startTileX) / pattern->getHCount()) * pattern->getHCount();
+		auto startTileY2 = (int)std::ceil(double(startTileY) / pattern->getVCount()) * pattern->getVCount();
 		auto startTile = 0;
 
 
-		if (tryGetTileAt(startX, startY, &startTile))
-		{
-			QStack<QPair<double, double> > nodes;
 
-			nodes.push(QPair<double, double>(startX, startY));
+		if (tryGetTileAt(startTileX * 16, startTileY * 16, &startTile))
+		{
+			QStack<QPair<int, int> > nodes;
+			auto addNode = [&](int x, int y)
+			{
+				QPair<int, int> a(x, y);
+
+				if (!scannedIndexes.contains(a))
+				{
+					scannedIndexes.insert(a);
+					nodes.push(a);
+				}
+
+			};
+			addNode(startTileX, startTileY);
 
 			Level* level = nullptr;
 			while (nodes.count() > 0)
 			{
 				auto node = nodes.pop();
 
-				if (level == nullptr || node.first < level->getX() || node.first >= level->getRight() || node.second < level->getY() || node.second >= level->getBottom())
-					level = getLevelAt(node.first, node.second);
+				auto nodeXPos = node.first * 16.0;
+				auto nodeYPos = node.second * 16.0;
+
+				if (level == nullptr || nodeXPos < level->getX() || nodeXPos >= level->getRight() || nodeYPos < level->getY() || nodeYPos >= level->getBottom())
+					level = getLevelAt(nodeXPos, nodeYPos);
 
 				if (level != nullptr)
 				{
-					auto tilemap = level->getTilemap(layer);
+					auto tilemap = level->getTilemap(m_selectedTilesLayer);
 					if (tilemap != nullptr)
 					{
-						auto tileX = int((node.first - tilemap->getX()) / 16.0);
-						auto tileY = int((node.second - tilemap->getY()) / 16.0);
+						auto tileX = node.first - int(std::floor(tilemap->getX() / 16.0));
+						auto tileY = node.second - int(std::floor(tilemap->getY() / 16.0));
 
-						auto patternTileX = tileX % pattern->getHCount();
-						auto patternTileY = tileY % pattern->getVCount();
+						auto deltaX = startTileX2 + (node.first - startTileX);
+						auto deltaY = startTileY2 + (node.second - startTileY);
+						auto patternTileX = deltaX % pattern->getHCount();
+						auto patternTileY = deltaY % pattern->getVCount();
+
 
 						auto patternTile = pattern->getTile(patternTileX, patternTileY);
 						int tile = 0;
-						if (tilemap->tryGetTile(tileX, tileY, &tile) && !Tilemap::IsInvisibleTile(tile) && tile != patternTile)
+						if (tilemap->tryGetTile(tileX, tileY, &tile) && !Tilemap::IsInvisibleTile(tile))
 						{
 							if (tile == startTile)
 							{
 								setModified(level);
 
 								if (outputNodes)
-									outputNodes->push_back(QPair<unsigned short, unsigned short>((unsigned short)std::floor(node.first / 16.0), (unsigned short)std::floor(node.second / 16.0)));
+									outputNodes->push_back(QPair<unsigned short, unsigned short>((unsigned short)node.first, (unsigned short)node.second));
 
 								tilemap->setTile(tileX, tileY, patternTile);
 
-								nodes.push(QPair<double, double>(node.first - 16, node.second));
-								nodes.push(QPair<double, double>(node.first, node.second - 16));
-								nodes.push(QPair<double, double>(node.first + 16, node.second));
-								nodes.push(QPair<double, double>(node.first, node.second + 16));
+
+								addNode(node.first - 1, node.second);
+								addNode(node.first, node.second - 1);
+
+								addNode(node.first + 1, node.second);
+								addNode(node.first, node.second + 1);
+
+								
 							}
 						}
 					}
 				}
 			}
 		}
+
 		return startTile;
 	}
 
@@ -1714,6 +1842,16 @@ namespace TilesEditor
 			}
 			m_graphicsView->redraw();
 		}else event->ignore();
+	}
+
+	void EditorTabWidget::graphicsKeyPress(QKeyEvent* event)
+	{
+
+		m_graphicsView->redraw();
+		if (event->key() == Qt::Key::Key_Shift)
+		{
+			
+		}
 	}
 
 	void EditorTabWidget::zoomMoved(int position)

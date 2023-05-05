@@ -9,6 +9,12 @@ namespace TilesEditor
 		emit renderView(painter, rect);
 	}
 
+	void GraphicsView::keyPressEvent(QKeyEvent* event)
+	{
+
+		emit keyPress(event);
+	}
+
 	void GraphicsView::wheelEvent(QWheelEvent* event)
 	{
 		emit mouseWheelEvent(event);
