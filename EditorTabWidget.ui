@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>665</width>
+    <width>690</width>
     <height>448</height>
    </rect>
   </property>
@@ -178,14 +178,14 @@
          <bool>false</bool>
         </property>
         <property name="toolTip">
-         <string>Flood Fill Pattern</string>
+         <string>Set Flood Fill Pattern</string>
         </property>
         <property name="text">
          <string/>
         </property>
         <property name="icon">
          <iconset resource="MainWindow.qrc">
-          <normaloff>:/MainWindow/icons/fugue/paint-can--plus.png</normaloff>:/MainWindow/icons/fugue/paint-can--plus.png</iconset>
+          <normaloff>:/MainWindow/icons/fugue/paint-can--pencil.png</normaloff>:/MainWindow/icons/fugue/paint-can--pencil.png</iconset>
         </property>
         <property name="checkable">
          <bool>false</bool>

@@ -58,55 +58,7 @@ namespace TilesEditor
 		m_world->putTiles(m_x, m_y, m_layer, m_newTiles, true);
 	}
 
-	//Flood fill
-	CommandFloodFill::CommandFloodFill(IWorld* world, double x, double y, int layer, int newTile)
-	{
-		m_world = world;
-		m_x = x;
-		m_y = y;
-		m_layer = layer;
-		m_newTile = newTile;
-		m_oldTile = 0;
-	}
-
-	void CommandFloodFill::undo()
-	{
-		Level* level = nullptr;
-		//Each node in m_nodes contains a tile position in the world that needs to revert back to m_oldTile
-		while (m_nodes.count() > 0)
-		{
-			auto node = m_nodes.front();
-			m_nodes.pop_front();
-			 
-			auto x = node.first * 16.0;
-			auto y = node.second * 16.0;
-
-
-			if (level == nullptr || x < level->getX() || x >= level->getRight() || y < level->getY() || y >= level->getBottom())
-				level = m_world->getLevelAt(x, y);
-
-			if (level != nullptr)
-			{
-				auto tilemap = level->getTilemap(m_layer);
-				if (tilemap != nullptr)
-				{
-					auto tileX = int((x - tilemap->getX()) / 16.0);
-					auto tileY = int((y - tilemap->getY()) / 16.0);
-
-					tilemap->setTile(tileX, tileY, m_oldTile);
-					m_world->setModified(level);
-				}
-			}
-		}
-
-	}
-
-	void CommandFloodFill::redo()
-	{
-		//Perform a flood fill. Returns the tile that was filled in, and a list of nodes that are need to undo the operation.
-		//Each node is just a position in the world of a single tile that needs to be reverted back to m_oldTile
-		m_oldTile = m_world->floodFill(m_x, m_y, m_layer, m_newTile, &m_nodes);
-	}
+	
 
 	//Move entity
 	CommandMoveEntity::CommandMoveEntity(IWorld* world, const IRectangle& oldRect, const IRectangle& newRect, AbstractLevelEntity* entity, QUndoCommand* parent):

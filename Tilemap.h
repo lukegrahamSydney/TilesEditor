@@ -63,7 +63,7 @@ namespace TilesEditor
 
 		bool update(double delta) { return false; }
 
-
+		Tilemap& operator=(const Tilemap& other);
 		void setTile(unsigned int x, unsigned int y, int tile) {
 			if (x < m_hcount && y < m_vcount) {
 				m_tiles[y * m_hcount + x] = tile;

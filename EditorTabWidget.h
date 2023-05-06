@@ -127,6 +127,7 @@ namespace TilesEditor
 
 		Overworld* m_overworld;
 		QMap<int, bool>	m_visibleLayers;
+		QPointF m_lastMousePos;
 
 		int m_selectedTilesLayer;
 		bool m_selectedLayerVisible;
@@ -137,7 +138,7 @@ namespace TilesEditor
 
 		AbstractSelection* m_selection;
 
-		bool m_useFillPattern;
+		//bool m_useFillPattern;
 		Tilemap	m_fillPattern;
 		QUndoStack m_undoStack;
 
@@ -201,7 +202,6 @@ namespace TilesEditor
 		void putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible) override;
 		void deleteTiles(double x, double y, int layer, int hcount, int vcount, int replacementTile) override;
 
-		int floodFill(double x, double y, int layer, int newTile, QList<QPair<unsigned short, unsigned short> >* outputNodes = nullptr) override;
 		int floodFillPattern(double x, double y, int layer, const Tilemap* pattern, QList<QPair<unsigned short, unsigned short> >* outputNodes = nullptr) override;
 		void newLevel(int hcount, int vcount);
 		void loadGMap(const QString& name, const QString& fileName);

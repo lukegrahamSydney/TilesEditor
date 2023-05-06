@@ -30,7 +30,7 @@ namespace TilesEditor
 
 		m_font1.setFamily("Arial");
 		m_font1.setPointSizeF(12);
-		m_useFillPattern = false;
+		//m_useFillPattern = false;
 		m_tilesetsContainer = new QWidget();
 		m_tileObjectsContainer = new QWidget();
 		m_objectsContainer = new QWidget();
@@ -51,7 +51,7 @@ namespace TilesEditor
 
 		m_selection = nullptr;
 
-		m_defaultTile = Tilemap::MakeTile(0, 0, 0);
+		setDefaultTile(Tilemap::MakeTile(0, 0, 0));
 
 		m_selectedTilesLayer = 0;
 		m_selectedLayerVisible = true;
@@ -217,88 +217,87 @@ namespace TilesEditor
 
 							if (ui.floodFillButton->isChecked()/* && QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ShiftModifier)*/)
 							{
-								if (m_useFillPattern)
+
+								
+								QSet<QPair<int, int> > scannedIndexes;
+								auto x = mousePos.x();
+								auto y = mousePos.y();
+
+
+								auto startTileX = int(std::floor(x / 16));
+								auto startTileY = int(std::floor(y / 16));
+
+								auto startTileX2 = (int)std::ceil(double(startTileX) / m_fillPattern.getHCount()) * m_fillPattern.getHCount();
+								auto startTileY2 = (int)std::ceil(double(startTileY) / m_fillPattern.getVCount()) * m_fillPattern.getVCount();
+								auto startTile = 0;
+
+
+
+								if (tryGetTileAt(startTileX * 16, startTileY * 16, &startTile))
 								{
-									int count = 0;
-									QSet<QPair<int, int> > scannedIndexes;
-									auto x = mousePos.x();
-									auto y = mousePos.y();
-
-
-									auto startTileX = int(std::floor(x / 16));
-									auto startTileY = int(std::floor(y / 16));
-
-									auto startTileX2 = (int)std::ceil(double(startTileX) / m_fillPattern.getHCount()) * m_fillPattern.getHCount();
-									auto startTileY2 = (int)std::ceil(double(startTileY) / m_fillPattern.getVCount()) * m_fillPattern.getVCount();
-									auto startTile = 0;
-
-
-
-									if (tryGetTileAt(startTileX * 16, startTileY * 16, &startTile))
+									QStack<QPair<int, int> > nodes;
+									auto addNode = [&](int x, int y) 
 									{
-										QStack<QPair<int, int> > nodes;
-										auto addNode = [&](int x, int y) 
+										QPair<int, int> a(x, y);
+
+										if (!scannedIndexes.contains(a))
 										{
-											QPair<int, int> a(x, y);
+											scannedIndexes.insert(a);
+											nodes.push(a);
+										}
 
-											if (!scannedIndexes.contains(a))
-											{
-												scannedIndexes.insert(a);
-												nodes.push(a);
-											}
+									};
+									addNode(startTileX, startTileY);
 
-										};
-										addNode(startTileX, startTileY);
+									Level* level = nullptr;
+									while (nodes.count() > 0)
+									{
+										auto node = nodes.pop();
 
-										Level* level = nullptr;
-										while (nodes.count() > 0)
+										auto nodeXPos = node.first * 16.0;
+										auto nodeYPos = node.second * 16.0;
+
+										if (level == nullptr || nodeXPos < level->getX() || nodeXPos >= level->getRight() || nodeYPos < level->getY() || nodeYPos >= level->getBottom())
+											level = getLevelAt(nodeXPos, nodeYPos);
+
+										if (level != nullptr)
 										{
-											auto node = nodes.pop();
-
-											auto nodeXPos = node.first * 16.0;
-											auto nodeYPos = node.second * 16.0;
-
-											if (level == nullptr || nodeXPos < level->getX() || nodeXPos >= level->getRight() || nodeYPos < level->getY() || nodeYPos >= level->getBottom())
-												level = getLevelAt(nodeXPos, nodeYPos);
-
-											if (level != nullptr)
+											auto tilemap = level->getTilemap(m_selectedTilesLayer);
+											if (tilemap != nullptr)
 											{
-												auto tilemap = level->getTilemap(m_selectedTilesLayer);
-												if (tilemap != nullptr)
-												{
-													auto tileX = node.first - int(std::floor(tilemap->getX() / 16.0));
-													auto tileY = node.second - int(std::floor(tilemap->getY() / 16.0));
+												auto tileX = node.first - int(std::floor(tilemap->getX() / 16.0));
+												auto tileY = node.second - int(std::floor(tilemap->getY() / 16.0));
 
-													auto deltaX = startTileX2 + (node.first - startTileX);
-													auto deltaY = startTileY2 + (node.second - startTileY);
-													auto patternTileX = deltaX % m_fillPattern.getHCount();
-													auto patternTileY = deltaY % m_fillPattern.getVCount();
+												auto deltaX = startTileX2 + (node.first - startTileX);
+												auto deltaY = startTileY2 + (node.second - startTileY);
+												auto patternTileX = deltaX % m_fillPattern.getHCount();
+												auto patternTileY = deltaY % m_fillPattern.getVCount();
 
 													
-													auto patternTile = m_fillPattern.getTile(patternTileX, patternTileY);
-													int tile = 0;
-													if (tilemap->tryGetTile(tileX, tileY, &tile) && !Tilemap::IsInvisibleTile(tile))
+												auto patternTile = m_fillPattern.getTile(patternTileX, patternTileY);
+												int tile = 0;
+												if (tilemap->tryGetTile(tileX, tileY, &tile) && !Tilemap::IsInvisibleTile(tile))
+												{
+													if (tile == startTile)
 													{
-														if (tile == startTile)
-														{
-															painter->drawPixmap(node.first * 16, node.second * 16, m_tilesetImage->pixmap(), Tilemap::GetTileX(patternTile) * 16, Tilemap::GetTileY(patternTile) * 16, 16, 16);
+														painter->drawPixmap(node.first * 16, node.second * 16, m_tilesetImage->pixmap(), Tilemap::GetTileX(patternTile) * 16, Tilemap::GetTileY(patternTile) * 16, 16, 16);
 
-															if (nodes.count() < 3000)
-															{
-																addNode(node.first - 1, node.second);
-																addNode(node.first, node.second - 1);
+														//if (nodes.count() < 3000)
+														//{
+															addNode(node.first - 1, node.second);
+															addNode(node.first, node.second - 1);
 	
-																addNode(node.first + 1, node.second);
-																addNode(node.first, node.second + 1);
+															addNode(node.first + 1, node.second);
+															addNode(node.first, node.second + 1);
 
-															}
-														}
+														//}
 													}
 												}
 											}
 										}
 									}
 								}
+								
 							}
 						}
 					}
@@ -463,6 +462,8 @@ namespace TilesEditor
 
 	void EditorTabWidget::setDefaultTile(int tile)
 	{
+		m_fillPattern = Tilemap(nullptr, 0.0, 0.0, 1, 1, 0);
+		m_fillPattern.setTile(0, 0, tile);
 		m_defaultTile = tile;
 		ui_tilesetsClass.tileIcon->update();
 	}
@@ -584,7 +585,6 @@ namespace TilesEditor
 		m_selection = newSelection;
 		if (m_selection != nullptr)
 		{
-			m_useFillPattern = false;
 			ui.floodFillButton->setChecked(false);
 			//ui.floodFillPatternButton->setChecked(false);
 
@@ -1264,10 +1264,7 @@ namespace TilesEditor
 		{
 			if (ui.floodFillButton->isChecked())
 			{
-				if (m_useFillPattern)
-				{
-					addUndoCommand(new CommandFloodFillPattern(this, pos.x(), pos.y(), m_selectedTilesLayer, &m_fillPattern));
-				} else addUndoCommand(new CommandFloodFill(this, pos.x(), pos.y(), m_selectedTilesLayer, m_defaultTile));
+				addUndoCommand(new CommandFloodFillPattern(this, pos.x(), pos.y(), m_selectedTilesLayer, &m_fillPattern));
 				
 				m_graphicsView->redraw();
 				return;
@@ -1359,9 +1356,12 @@ namespace TilesEditor
 			if (m_selector.visible())
 				m_selector.setVisible(false);
 
-			m_useFillPattern = false;
-			ui.floodFillButton->setChecked(false);
-
+			if (ui.floodFillButton->isChecked())
+			{
+				m_graphicsView->redraw();
+				ui.floodFillButton->setChecked(false);
+				return;
+			}
 			setSelection(nullptr);
 
 			auto entities = getEntitiesAt(pos.x(), pos.y(), true);
@@ -1455,46 +1455,64 @@ namespace TilesEditor
 
 	void EditorTabWidget::graphicsMouseMove(QMouseEvent* event)
 	{
+		auto pos = m_graphicsView->mapToScene(event->pos());
+		
+		auto tileXPos = int(pos.x() / 16.0);
+		auto tileYPos = int(pos.y() / 16.0);
+
+		auto oldTileXPos = int(m_lastMousePos.x() / 16);
+		auto oldTileYPos = int(m_lastMousePos.y() / 16);
+		m_lastMousePos = pos;
+
 		if (selectingLevel() || ui.floodFillButton->isChecked())
 		{
-			m_graphicsView->redraw();
+
+
+			//Only redraw if the tile position of the mouse has changed
+			if (oldTileXPos != tileXPos || oldTileYPos != tileYPos)
+			{
+				m_graphicsView->redraw();
+			}
 			return;
 		}
 
-		auto pos = m_graphicsView->mapToScene(event->pos());
+		
 
-		auto level = getLevelAt(pos.x(), pos.y());
-		if (level)
+		//Check if the tile position of the mouse has changed
+		if (oldTileXPos != tileXPos || oldTileYPos != tileYPos)
 		{
-			auto tileX = int(pos.x() / 16.0);
-			auto tileY = int(pos.y() / 16.0);
-
-			auto localX = int((pos.x() - level->getX()) / 16.0);
-			auto localY = int((pos.y() - level->getY()) / 16.0);
-
-			int tileIndex = 0;
-			auto tileMap = level->getTilemap(m_selectedTilesLayer);
-			if (tileMap)
+			auto level = getLevelAt(pos.x(), pos.y());
+			if (level)
 			{
-				auto tile = tileMap->getTile(int((pos.x() - tileMap->getX()) / 16.0), int((pos.y() - tileMap->getY()) / 16.0));
-				auto tileLeft = Tilemap::GetTileX(tile);
-				auto tileTop = Tilemap::GetTileY(tile);
+				auto localX = int((pos.x() - level->getX()) / 16.0);
+				auto localY = int((pos.y() - level->getY()) / 16.0);
 
-				tileIndex = tileLeft / 16 * 512 + tileLeft % 16 + tileTop * 16;
-			}
+				int tileIndex = 0;
+				auto tileMap = level->getTilemap(m_selectedTilesLayer);
+				if (tileMap)
+				{
+					auto tile = tileMap->getTile(localX, localY);
+					auto tileLeft = Tilemap::GetTileX(tile);
+					auto tileTop = Tilemap::GetTileY(tile);
 
-			if (m_overworld)
-			{
-				QString result;
-				QTextStream(&result) << "Tile: " << tileX << ", " << tileY << " (" << localX << ", " << localY << "): " << tileIndex;
-				emit setStatusBar(result, 0, 20000);
-			}
-			else {
-				QString result;
-				QTextStream(&result) << "Tile: " << tileX << ", " << tileY << ": " << tileIndex;
-				emit setStatusBar(result, 0, 20000);
+					//Gonstruct: Converts tile positions (lef/top) to graal tile index
+					tileIndex = tileLeft / 16 * 512 + tileLeft % 16 + tileTop * 16;
+				}
+
+				if (m_overworld)
+				{
+					QString result;
+					QTextStream(&result) << "Tile: " << tileXPos << ", " << tileYPos << " (" << localX << ", " << localY << "): " << tileIndex;
+					emit setStatusBar(result, 0, 20000);
+				}
+				else {
+					QString result;
+					QTextStream(&result) << "Tile: " << tileXPos << ", " << tileYPos << ": " << tileIndex;
+					emit setStatusBar(result, 0, 20000);
+				}
 			}
 		}
+
 		//If holding left button
 		if (event->buttons().testFlag(Qt::MouseButton::LeftButton))
 		{
@@ -1503,8 +1521,6 @@ namespace TilesEditor
 			{
 				if (m_selection->getAlternateSelectionMethod())
 				{
-
-
 					if (m_selection->getSelectionType() == SelectionType::SELECTION_TILES)
 					{
 						m_selection->reinsertIntoWorld(this, m_selectedTilesLayer);
@@ -1542,7 +1558,7 @@ namespace TilesEditor
 					true, this);
 
 				m_graphicsView->redraw();
-
+				return;
 
 			}
 			else {
@@ -1690,61 +1706,6 @@ namespace TilesEditor
 		}
 	}
 
-	int EditorTabWidget::floodFill(double x, double y, int layer, int newTile, QList<QPair<unsigned short, unsigned short> >* outputNodes)
-	{
-		auto startX = std::floor(x / 16.0) * 16.0;
-		auto startY = std::floor(y / 16.0) * 16.0;
-		auto startTile = 0;
-
-
-		if (tryGetTileAt(startX, startY, &startTile))
-		{
-			QStack<QPair<double, double> > nodes;
-
-			nodes.push(QPair<double, double>(startX, startY));
-
-			Level* level = nullptr;
-			while (nodes.count() > 0)
-			{
-				auto node = nodes.pop();
-
-				if(level == nullptr || node.first < level->getX() || node.first >= level->getRight() || node.second < level->getY() || node.second >= level->getBottom())
-					level = getLevelAt(node.first, node.second);
-
-				if (level != nullptr)
-				{
-					auto tilemap = level->getTilemap(layer);
-					if (tilemap != nullptr)
-					{
-						auto tileX = int((node.first - tilemap->getX()) / 16.0);
-						auto tileY = int((node.second - tilemap->getY()) / 16.0);
-
-						int tile = 0;
-						if (tilemap->tryGetTile(tileX, tileY, &tile) && !Tilemap::IsInvisibleTile(tile) && tile != newTile)
-						{
-							if (tile == startTile)
-							{
-								setModified(level);
-
-								if(outputNodes)
-									outputNodes->push_back(QPair<unsigned short, unsigned short>((unsigned short)std::floor(node.first / 16.0), (unsigned short)std::floor(node.second / 16.0)));
-
-								tilemap->setTile(tileX, tileY, newTile);
-
-								nodes.push(QPair<double, double>(node.first - 16, node.second));
-								nodes.push(QPair<double, double>(node.first, node.second - 16));
-								nodes.push(QPair<double, double>(node.first + 16, node.second));
-								nodes.push(QPair<double, double>(node.first, node.second + 16));
-							}
-						}
-					}
-				}
-			}
-		}
-		return startTile;
-		
-	}
-
 	int EditorTabWidget::floodFillPattern(double x, double y, int layer, const Tilemap* pattern, QList<QPair<unsigned short, unsigned short>>* outputNodes)
 	{
 		QSet<QPair<int, int>> scannedIndexes;
@@ -1753,10 +1714,8 @@ namespace TilesEditor
 
 		auto startTileX2 = (int)std::ceil(double(startTileX) / pattern->getHCount()) * pattern->getHCount();
 		auto startTileY2 = (int)std::ceil(double(startTileY) / pattern->getVCount()) * pattern->getVCount();
+		
 		auto startTile = 0;
-
-
-
 		if (tryGetTileAt(startTileX * 16, startTileY * 16, &startTile))
 		{
 			QStack<QPair<int, int> > nodes;
@@ -1789,18 +1748,21 @@ namespace TilesEditor
 					auto tilemap = level->getTilemap(m_selectedTilesLayer);
 					if (tilemap != nullptr)
 					{
-						auto tileX = node.first - int(std::floor(tilemap->getX() / 16.0));
-						auto tileY = node.second - int(std::floor(tilemap->getY() / 16.0));
+						//left/top position within the destination "Tilemap"
+						auto tilemapX = node.first - int(std::floor(tilemap->getX() / 16.0));
+						auto tilemapY = node.second - int(std::floor(tilemap->getY() / 16.0));
 
+						//Get the correct pattern co-ordinates
 						auto deltaX = startTileX2 + (node.first - startTileX);
 						auto deltaY = startTileY2 + (node.second - startTileY);
+
 						auto patternTileX = deltaX % pattern->getHCount();
 						auto patternTileY = deltaY % pattern->getVCount();
 
 
 						auto patternTile = pattern->getTile(patternTileX, patternTileY);
 						int tile = 0;
-						if (tilemap->tryGetTile(tileX, tileY, &tile) && !Tilemap::IsInvisibleTile(tile))
+						if (tilemap->tryGetTile(tilemapX, tilemapY, &tile) && !Tilemap::IsInvisibleTile(tile))
 						{
 							if (tile == startTile)
 							{
@@ -1809,7 +1771,7 @@ namespace TilesEditor
 								if (outputNodes)
 									outputNodes->push_back(QPair<unsigned short, unsigned short>((unsigned short)node.first, (unsigned short)node.second));
 
-								tilemap->setTile(tileX, tileY, patternTile);
+								tilemap->setTile(tilemapX, tilemapY, patternTile);
 
 
 								addNode(node.first - 1, node.second);
@@ -1929,7 +1891,6 @@ namespace TilesEditor
 			m_fillPattern = *tileSelection->getTilemap();
 			setSelection(nullptr);
 			ui.floodFillButton->setChecked(true);
-			m_useFillPattern = true;
 
 		}
 		

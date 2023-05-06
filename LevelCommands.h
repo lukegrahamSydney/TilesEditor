@@ -46,25 +46,6 @@ namespace TilesEditor
 		void redo() override;
 	};
 
-	class CommandFloodFill :
-		public QUndoCommand
-	{
-	private:
-		IWorld* m_world;
-		double m_x;
-		double m_y;
-		int m_layer;
-		int m_oldTile;
-		int m_newTile;
-		QList<QPair<unsigned short, unsigned short> > m_nodes;
-
-	public:
-		CommandFloodFill(IWorld* world, double x, double y, int layer, int newTile);
-
-		void undo() override;
-		void redo() override;
-	};
-
 	class CommandFloodFillPattern :
 		public QUndoCommand
 	{

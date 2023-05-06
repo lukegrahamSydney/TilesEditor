@@ -1,5 +1,5 @@
 #include "Tilemap.h"
-
+#include <QDebug>
 namespace TilesEditor
 {
     Tilemap::Tilemap(const Tilemap& source):
@@ -16,7 +16,6 @@ namespace TilesEditor
     Tilemap::Tilemap( Level* level, double x, double y, int hcount, int vcount, int layerIndex) :
 		AbstractLevelEntity(level, x, y), m_hcount(hcount), m_vcount(vcount)
 	{
-
 		m_tiles = new int[hcount * vcount];
 		clear(Tilemap::MakeTile(0, 0, 0));
 
@@ -32,7 +31,22 @@ namespace TilesEditor
 	}
 
 
-	void Tilemap::draw(QPainter* painter, const IRectangle& viewRect, double x, double y)
+    Tilemap& Tilemap::operator=(const Tilemap& other)
+    {
+        // Guard self assignment
+        if (this == &other)
+            return *this; // delete[]/size=0 would also be ok
+
+        m_hcount = other.m_hcount;
+        m_vcount = other.m_vcount;
+        m_layerIndex = other.m_layerIndex;
+        m_tiles = new int[m_hcount * m_vcount];
+
+        memcpy(m_tiles, other.m_tiles, m_hcount * m_vcount * sizeof(int));
+        return *this;
+    }
+
+    void Tilemap::draw(QPainter* painter, const IRectangle& viewRect, double x, double y)
 	{
 	}
 
