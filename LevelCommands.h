@@ -67,6 +67,26 @@ namespace TilesEditor
 
 	};
 
+	class CommandFloodFillPattern2 :
+		public QUndoCommand
+	{
+	private:
+		IWorld* m_world;
+		double m_x;
+		double m_y;
+		int m_layer;
+
+		Tilemap* m_pattern;
+		QList<IWorld::TileInfo> m_nodes;
+
+	public:
+		CommandFloodFillPattern2(IWorld* world, double x, double y, int layer, const Tilemap* pattern);
+		~CommandFloodFillPattern2() { delete m_pattern; }
+		void undo() override;
+		void redo() override;
+
+	};
+
 	class CommandAddEntity :
 		public QUndoCommand
 	{

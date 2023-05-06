@@ -202,6 +202,7 @@ namespace TilesEditor
 		void deleteTiles(double x, double y, int layer, int hcount, int vcount, int replacementTile) override;
 
 		int floodFillPattern(double x, double y, int layer, const Tilemap* pattern, QList<QPair<unsigned short, unsigned short> >* outputNodes = nullptr) override;
+		void floodFillPattern2(double x, double y, int layer, const Tilemap* pattern, QList<TileInfo>* outputNodes = nullptr) override;
 		void newLevel(int hcount, int vcount);
 		void loadGMap(const QString& name, const QString& fileName);
 		void loadLevel(const QString& name, const QString& fileName);
