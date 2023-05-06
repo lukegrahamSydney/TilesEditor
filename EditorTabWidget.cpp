@@ -218,7 +218,7 @@ namespace TilesEditor
 							if (ui.floodFillButton->isChecked()/* && QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ShiftModifier)*/)
 							{
 
-								
+								auto viewLevels = getLevelsInRect(viewRect);
 								QSet<QPair<int, int> > scannedIndexes;
 								auto x = mousePos.x();
 								auto y = mousePos.y();
@@ -258,7 +258,14 @@ namespace TilesEditor
 										auto nodeYPos = node.second * 16.0;
 
 										if (level == nullptr || nodeXPos < level->getX() || nodeXPos >= level->getRight() || nodeYPos < level->getY() || nodeYPos >= level->getBottom())
+										{
 											level = getLevelAt(nodeXPos, nodeYPos);
+											if (!viewLevels.contains(level))
+											{
+												level = nullptr;
+												continue;
+											}
+										}
 
 										if (level != nullptr)
 										{
@@ -1549,9 +1556,6 @@ namespace TilesEditor
 
 			if (m_selection->getAlternateSelectionMethod())
 			{
-				//m_selection->setX(std::floor((pos.x() - m_selection->getWidth() / 2) / 16.0) * 16.0);
-				//m_selection->setY(std::floor((pos.y() - m_selection->getHeight() / 2) / 16.0) * 16.0);
-
 				m_selection->drag(
 					std::floor((pos.x() - m_selection->getWidth() / 2) / 16.0) * 16.0,
 					std::floor((pos.y() - m_selection->getHeight() / 2) / 16.0) * 16.0,

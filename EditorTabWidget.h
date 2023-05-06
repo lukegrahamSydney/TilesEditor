@@ -138,7 +138,6 @@ namespace TilesEditor
 
 		AbstractSelection* m_selection;
 
-		//bool m_useFillPattern;
 		Tilemap	m_fillPattern;
 		QUndoStack m_undoStack;
 
