@@ -133,20 +133,31 @@ namespace TilesEditor
 		connect(ui.pasteButton, &QToolButton::pressed, this, &EditorTabWidget::pastePressed);
 		connect(ui.deleteButton, &QToolButton::clicked, this, &EditorTabWidget::deleteClicked);
 
-		auto menu = new QMenu();
-		m_selectNPCs = menu->addAction("Npcs");
+		auto selectMenu = new QMenu();
+		m_selectNPCs = selectMenu->addAction("Npcs");
 		m_selectNPCs->setCheckable(true);
 		m_selectNPCs->setChecked(true);
 
-		m_selectLinks = menu->addAction("Links");
+		m_selectLinks = selectMenu->addAction("Links");
 		m_selectLinks->setCheckable(true);
 		m_selectLinks->setChecked(true);
 
-		m_selectSigns = menu->addAction("Signs");
+		m_selectSigns = selectMenu->addAction("Signs");
 		m_selectSigns->setCheckable(true);
 		m_selectSigns->setChecked(true);
 
-		ui.selectionButton->setMenu(menu);
+		ui.selectionButton->setMenu(selectMenu);
+
+		auto functionsMenu = new QMenu();
+		auto deleteEdgeLinks = functionsMenu->addAction("Delete Edge Links");
+		connect(deleteEdgeLinks, &QAction::triggered, this, &EditorTabWidget::deleteEdgeLinksClicked);
+
+		auto trimScriptEndings = functionsMenu->addAction("Trim Script Endings");
+		connect(trimScriptEndings, &QAction::triggered, this, &EditorTabWidget::trimScriptEndingsClicked);
+
+		auto trimSignEndings = functionsMenu->addAction("Trim Sign Endings");
+		connect(trimSignEndings, &QAction::triggered, this, &EditorTabWidget::trimSignEndingsClicked);
+		ui.functionsButton->setMenu(functionsMenu);
 	}
 
 	EditorTabWidget::~EditorTabWidget()
@@ -546,9 +557,6 @@ namespace TilesEditor
 				return;
 
 			m_resourceManager.freeResource(m_tilesetImage);
-
-
-
 		}
 
 		m_tilesetImage = static_cast<Image*>(m_resourceManager.loadResource(name, ResourceType::RESOURCE_IMAGE));
@@ -557,7 +565,9 @@ namespace TilesEditor
 		{
 			ui_tilesetsClass.graphicsView->setSceneRect(0, 0, m_tilesetImage->width(), m_tilesetImage->height());
 
-		}
+		} else ui_tilesetsClass.graphicsView->setSceneRect(0, 0, 0, 0);
+
+		ui_tileObjectsClass.graphicsView->redraw();
 
 
 	}
@@ -609,6 +619,86 @@ namespace TilesEditor
 				return m_selectSigns->isChecked();
 		}
 		return false;
+	}
+
+	bool EditorTabWidget::hasSelectionTiles() const
+	{
+		return (m_tilesSelector.visible() && !m_tilesSelector.selecting()) || (m_selector.visible() && !m_selector.selecting()) || (m_selection != nullptr && m_selection->getSelectionType() == SelectionType::SELECTION_TILES);
+	}
+
+	Tilemap* EditorTabWidget::getTilesetSelection()
+	{
+		auto rect = m_tilesSelector.getSelection();
+		auto hcount = rect.getWidth() / 16;
+		auto vcount = rect.getHeight() / 16;
+		
+		auto tilemap = new Tilemap(nullptr, 0.0, 0.0, hcount, vcount, 0);
+
+		for (int y = 0; y < vcount; ++y)
+		{
+			for (int x = 0; x < hcount; ++x)
+			{
+				auto tileLeft = int(rect.getX() / 16) + x;
+				auto tileTop = int(rect.getY() / 16) + y;
+
+				auto tile = Tilemap::MakeTile(tileLeft, tileTop, 0);
+				tilemap->setTile(x, y, tile);
+			}
+		}
+		return tilemap;
+	}
+
+	Tilemap* EditorTabWidget::getSelectionTiles()
+	{
+		//First priority is any tiles selected in the tileset widget
+		if (m_tilesSelector.visible() && !m_tilesSelector.selecting())
+		{
+			return getTilesetSelection();
+		}
+
+		//Get tiles within the selector
+		if (m_selector.visible() && !m_selector.selecting())
+		{
+			auto rect = m_selector.getSelection();
+			auto hcount = rect.getWidth() / 16;
+			auto vcount = rect.getHeight() / 16;
+
+			auto retval = new Tilemap(nullptr, 0.0, 0.0, hcount, vcount, 0);
+
+			auto levels = getLevelsInRect(rect);
+
+			for (auto level : levels)
+			{
+				auto tilemap = level->getTilemap(m_selectedTilesLayer);
+				if (tilemap != nullptr)
+				{
+					int sourceTileX = int((rect.getX() - tilemap->getX()) / 16.0);
+					int sourceTileY = int((rect.getY() - tilemap->getY()) / 16.0);
+
+					for (int y = 0; y < vcount; ++y)
+					{
+						for (int x = 0; x < hcount; ++x)
+						{
+							int tile = 0;
+
+							if (tilemap->tryGetTile(x + sourceTileX, y + sourceTileY, &tile) && !Tilemap::IsInvisibleTile(tile))
+								retval->setTile(x, y, tile);
+
+						}
+					}
+
+				}
+			}
+			return retval;
+		}
+
+		//Get tiles within a m_selection
+		if (m_selection != nullptr && m_selection->getSelectionType() == SelectionType::SELECTION_TILES)
+		{
+			auto tilesSelection = static_cast<TileSelection*>(m_selection);
+			return new Tilemap(*tilesSelection->getTilemap());
+		}
+		return nullptr;
 	}
 
 	bool EditorTabWidget::selectingLevel()
@@ -713,6 +803,9 @@ namespace TilesEditor
 		m_selection = newSelection;
 		if (m_selection != nullptr)
 		{
+			//if (m_selection->getSelectionType() == SelectionType::SELECTION_TILES)
+			//	ui.floodFillPatternButton->setEnabled(true);
+
 			ui.floodFillButton->setChecked(false);
 			//ui.floodFillPatternButton->setChecked(false);
 
@@ -1236,10 +1329,9 @@ namespace TilesEditor
 				auto rect = m_tilesSelector.getSelection();
 				if (rect.intersects(Rectangle(pos.x(), pos.y(), 1, 1)))
 				{
-					auto viewRect = getViewRect();
 					auto hcount = rect.getWidth() / 16;
 					auto vcount = rect.getHeight() / 16;
-					auto tileSelection = new TileSelection(viewRect.getRight(), viewRect.getY(), hcount, vcount);
+					auto tileSelection = new TileSelection(-1000000, -1000000, hcount, vcount);
 
 					for (int y = 0; y < vcount; ++y)
 					{
@@ -1268,6 +1360,7 @@ namespace TilesEditor
 
 			m_tilesSelector.setVisible(false);
 
+			ui.floodFillPatternButton->setEnabled(hasSelectionTiles());
 			auto maxWidth = (int)ui_tilesetsClass.graphicsView->sceneRect().width();
 			auto maxHeight = (int)ui_tilesetsClass.graphicsView->sceneRect().height();
 			m_tilesSelector.beginSelection(
@@ -1279,6 +1372,7 @@ namespace TilesEditor
 		else if (event->button() == Qt::MouseButton::RightButton)
 		{
 			m_tilesSelector.setVisible(false);
+			ui.floodFillPatternButton->setEnabled(hasSelectionTiles());
 			setDefaultTile(Tilemap::MakeTile(int(pos.x() / 16), int(pos.y() / 16), 0));
 			ui_tilesetsClass.graphicsView->redraw();
 
@@ -1322,6 +1416,8 @@ namespace TilesEditor
 					std::min(maxWidth, std::max(0, (int)pos.x())),
 					std::min(maxHeight, std::max(0, (int)pos.y()))
 				);
+
+				ui.floodFillPatternButton->setEnabled(hasSelectionTiles());
 			}
 
 
@@ -1418,8 +1514,7 @@ namespace TilesEditor
 			return;
 		}
 
-		if(m_selector.visible())
-			selectorGone();
+
 
 
 
@@ -1510,7 +1605,13 @@ namespace TilesEditor
 				return;
 			}
 
-			m_selector.setVisible(false);
+			if (m_selector.visible())
+			{
+				m_selector.setVisible(false);
+				selectorGone();
+			}
+
+			
 			m_selector.beginSelection(pos.x(), pos.y(), 16, 16);
 			m_graphicsView->redraw();
 		}
@@ -1519,7 +1620,11 @@ namespace TilesEditor
 
 
 			if (m_selector.visible())
+			{
 				m_selector.setVisible(false);
+				selectorGone();
+				
+			}
 
 			if (ui.floodFillButton->isChecked())
 			{
@@ -1715,8 +1820,8 @@ namespace TilesEditor
 			if (m_selection->getAlternateSelectionMethod())
 			{
 				m_selection->drag(
-					std::floor((pos.x() - m_selection->getWidth() / 2) / 16.0) * 16.0,
-					std::floor((pos.y() - m_selection->getHeight() / 2) / 16.0) * 16.0,
+					std::round((pos.x() - m_selection->getWidth() / 2) / 16.0) * 16.0,
+					std::round((pos.y() - m_selection->getHeight() / 2) / 16.0) * 16.0,
 					true, this);
 
 				m_graphicsView->redraw();
@@ -2134,19 +2239,27 @@ namespace TilesEditor
 
 	void EditorTabWidget::floodFillPatternClicked(bool checked)
 	{
-
-		if (m_selector.visible())
-			doTileSelection();
-
-		if (m_selection && m_selection->getSelectionType() == SelectionType::SELECTION_TILES)
+		
+		//Get suitabable tile pattern
+		auto pattern = getSelectionTiles();
+		
+		if (pattern != nullptr)
 		{
-			auto tileSelection = static_cast<TileSelection*>(m_selection);
+			if (pattern->getHCount() * pattern->getVCount() > 0)
+			{
+				m_fillPattern = *pattern;
 
-			m_fillPattern = *tileSelection->getTilemap();
-			setSelection(nullptr);
-			ui.floodFillButton->setChecked(true);
 
+				m_selector.setVisible(false);
+
+
+				setSelection(nullptr);
+				ui.floodFillPatternButton->setEnabled(hasSelectionTiles());
+				ui.floodFillButton->setChecked(true);
+			}
+			delete pattern;
 		}
+
 		
 	}
 
@@ -2191,7 +2304,7 @@ namespace TilesEditor
 
 		if (rootLinkLevel)
 		{
-			auto link = new LevelLink(rootLinkLevel, rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+			auto link = new LevelLink(rootLinkLevel, rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), false);
 
 			EditLinkDialog frm(link);
 			if (frm.exec() == QDialog::Accepted)
@@ -2742,13 +2855,140 @@ namespace TilesEditor
 
 	}
 
+	void EditorTabWidget::deleteEdgeLinksClicked(bool checked)
+	{
+		if (!m_overworld)
+		{
+			QMessageBox::information(nullptr, "", "This function is for overworlds only");
+		}
+		else {
+			if (QMessageBox::question(nullptr, "Warning", "Are you sure you want to remove all edge links from all levels in the overworld?", QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
+			{
+				auto undoCommand = new QUndoCommand("Delete overworld edge links");
+				for (auto level : m_overworld->getLevelList())
+				{
+					loadLevel(level);
+
+					if (level->getLoaded())
+					{
+						auto& links = level->getLinks();
+
+						for (auto link : links) {
+							if (link->isPossibleEdgeLink() && m_overworld->getLevelList().contains(link->getNextLevel()))
+							{
+								deleteEntity(link, undoCommand);
+							}
+						}
+					}
+				}
+
+				addUndoCommand(undoCommand);
+				m_graphicsView->redraw();
+			}
+		}
+	}
+
+	void EditorTabWidget::trimScriptEndingsClicked(bool checked)
+	{
+		if (QMessageBox::question(nullptr, "Warning", "This function will trim the endings of all NPC scripts. Do you wish to proceed?", QMessageBox::Yes, QMessageBox::No) == QMessageBox::No)
+			return;
+
+		QList<Level*> levels;
+
+		if (m_overworld)
+			levels = m_overworld->getLevelList().values();
+		else if (m_level) {
+			levels.push_back(m_level);
+		}
+
+		auto rstrip = [](const QString& str) -> QString {
+			int n = str.size() - 1;
+			for (; n >= 0; --n) {
+				if (!str.at(n).isSpace()) {
+					return str.left(n + 1);
+				}
+			}
+			return "";
+		};
+
+		for (auto level : levels)
+		{
+			loadLevel(level);
+
+			if (level->getLoaded())
+			{
+				auto& objects = level->getObjects();
+				for (auto object : objects)
+				{
+					if (object->getEntityType() == LevelEntityType::ENTITY_NPC)
+					{
+						auto npc = static_cast<LevelNPC*>(object);
+
+						auto script = rstrip(npc->getCode());
+
+						if (script != npc->getCode())
+						{
+							npc->setCode(script);
+							setModified(level);
+						}
+
+					}
+				}
+			}
+		}
+	}
+	
+	void EditorTabWidget::trimSignEndingsClicked(bool checked)
+	{
+		if (QMessageBox::question(nullptr, "Warning", "This function will trim the endings of all Signs. Do you wish to proceed?", QMessageBox::Yes, QMessageBox::No) == QMessageBox::No)
+			return;
+
+		QList<Level*> levels;
+
+		if (m_overworld)
+			levels = m_overworld->getLevelList().values();
+		else if (m_level) {
+			levels.push_back(m_level);
+		}
+
+		auto rstrip = [](const QString& str) -> QString {
+			int n = str.size() - 1;
+			for (; n >= 0; --n) {
+				if (!str.at(n).isSpace()) {
+					return str.left(n + 1);
+				}
+			}
+			return "";
+		};
+
+		for (auto level : levels)
+		{
+			loadLevel(level);
+
+			if (level->getLoaded())
+			{
+				auto& signs = level->getSigns();
+				for (auto sign : signs)
+				{
+					auto text = rstrip(sign->getText());
+
+					if (text != sign->getText())
+					{
+						sign->setText(text);
+						setModified(level);
+					}
+				}
+			}
+		}
+	}
+
 	void EditorTabWidget::selectorGone()
 	{
 		ui.newLinkButton->setEnabled(false);
 		ui.newSignButton->setEnabled(false);
 		ui.copyButton->setEnabled(false);
 		ui.cutButton->setEnabled(false);
-		ui.floodFillPatternButton->setEnabled(false);
+		ui.floodFillPatternButton->setEnabled(hasSelectionTiles());
 	}
 
 	void EditorTabWidget::selectorMade()
@@ -2774,6 +3014,7 @@ namespace TilesEditor
 	{
 		ui.copyButton->setEnabled(false);
 		ui.cutButton->setEnabled(false);
+		ui.floodFillPatternButton->setEnabled(hasSelectionTiles());
 	}
 
 	bool EditorTabWidget::saveLevel(Level* level)

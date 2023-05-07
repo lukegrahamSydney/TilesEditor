@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>690</width>
+    <width>747</width>
     <height>448</height>
    </rect>
   </property>
@@ -464,6 +464,29 @@
          </size>
         </property>
        </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="functionsButton">
+        <property name="toolTip">
+         <string>Miscellaneous Functions</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="MainWindow.qrc">
+          <normaloff>:/MainWindow/icons/fugue/function.png</normaloff>:/MainWindow/icons/fugue/function.png</iconset>
+        </property>
+        <property name="popupMode">
+         <enum>QToolButton::InstantPopup</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget_9" native="true"/>
       </item>
       <item>
        <widget class="QLabel" name="label">

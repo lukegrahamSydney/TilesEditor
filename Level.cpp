@@ -196,7 +196,7 @@ namespace TilesEditor
                             else if ((y == 0 || y == 63 * 16) && height == 16)
                                 possibleEdgeLink = true;
 
-                            auto levelLink = new LevelLink(this, getX() + x, getY() + y, width, height);
+                            auto levelLink = new LevelLink(this, getX() + x, getY() + y, width, height, possibleEdgeLink);
                             levelLink->setNextLevel(words[1]);
                             levelLink->setNextX(nextX);
                             levelLink->setNextY(nextY);

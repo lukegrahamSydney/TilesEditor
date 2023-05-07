@@ -5,15 +5,17 @@
 
 namespace TilesEditor
 {
-	LevelLink::LevelLink(Level* level, double x, double y, int width, int height):
+	LevelLink::LevelLink(Level* level, double x, double y, int width, int height, bool possibleEdgeLink):
 		AbstractLevelEntity(level, x, y)
 	{ 
 		m_width = width;
 		m_height = height;
+		m_possibleEdgeLink = possibleEdgeLink;
+
 	}
 
 	LevelLink::LevelLink(Level* level, cJSON* json, IWorld* world):
-		LevelLink(level, 0, 0, 0, 0)
+		LevelLink(level, 0, 0, 0, 0, false)
 	{
 		deserializeJSON(json, world);
 	}
@@ -84,7 +86,7 @@ namespace TilesEditor
 	}
 
 	AbstractLevelEntity* LevelLink::duplicate() {
-		auto link = new LevelLink(this->getLevel(), getX(), getY(), getWidth(), getHeight());
+		auto link = new LevelLink(this->getLevel(), getX(), getY(), getWidth(), getHeight(), false);
 		link->m_nextLevel = this->m_nextLevel;
 		link->m_nextX = this->m_nextX;
 		link->m_nextY = this->m_nextY;

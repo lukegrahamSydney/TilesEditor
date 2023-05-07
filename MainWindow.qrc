@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/MainWindow">
+    <file>icons/fugue/function.png</file>
     <file>icons/fugue/paint-can--pencil.png</file>
     <file>icons/fugue/paint-can--plus.png</file>
     <file>icons/fugue/paint-can.png</file>

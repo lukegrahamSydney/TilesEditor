@@ -19,8 +19,10 @@ namespace TilesEditor
 		int m_width;
 		int m_height;
 
+		bool m_possibleEdgeLink;
+
 	public:
-		LevelLink(Level* level, double x, double y, int width, int height);
+		LevelLink(Level* level, double x, double y, int width, int height, bool possibleEdgeLink);
 		LevelLink(Level* level, cJSON* json, IWorld* world);
 
 		void setNextLevel(const QString& nextLevel);
@@ -44,6 +46,7 @@ namespace TilesEditor
 		void setHeight(int value) override { m_height = value; };
 		double getDepth() const override { return 10000000.0; }
 
+		bool isPossibleEdgeLink() const { return m_possibleEdgeLink; }
 		void setDragOffset(double x, double y, bool snap) override;
 		bool canResize() const override { return true; }
 		void drag(double x, double y, bool snap, IWorld* world) override;

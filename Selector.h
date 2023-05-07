@@ -25,11 +25,11 @@ namespace TilesEditor
 
 
     public:
-        bool selecting() {
+        bool selecting() const {
             return m_selecting;
         }
 
-        bool visible() {
+        bool visible() const {
             return m_visible;
         }
 
@@ -77,7 +77,7 @@ namespace TilesEditor
 
         }
 
-        Rectangle getSelection()
+        Rectangle getSelection() const
         {
             float x1 = qMin(m_x1, m_x2);
             float y1 = qMin(m_y1, m_y2);
@@ -137,6 +137,7 @@ namespace TilesEditor
             return 0;
 
         }
+
         static void draw(QPainter* painter, const IRectangle& viewRect, qreal x, qreal y, int width, int height, const QColor& lineColour, const QColor& fillColour, bool doubleOutline = false, bool marchingAnts = false)
         {
             auto compositionMode = painter->compositionMode();

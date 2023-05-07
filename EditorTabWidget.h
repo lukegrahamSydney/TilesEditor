@@ -87,6 +87,9 @@ namespace TilesEditor
 		void objectsRefreshClicked(bool checked);
 		void objectsDoubleClick(const QModelIndex& index);
 
+		void deleteEdgeLinksClicked(bool checked);
+		void trimScriptEndingsClicked(bool checked);
+		void trimSignEndingsClicked(bool checked);
 		//When the selector goes (he we will disable the button to create link/sign)
 		void selectorGone();
 
@@ -160,6 +163,10 @@ namespace TilesEditor
 
 		bool canSelectObject(LevelEntityType type) const;
 
+		bool hasSelectionTiles() const;
+		Tilemap* getTilesetSelection();
+		Tilemap* getSelectionTiles();
+
 	public:
 
 		void init(QStringListModel* tilesetList, TileGroupListModel* tileGroupList);
@@ -208,6 +215,8 @@ namespace TilesEditor
 		void newLevel(int hcount, int vcount);
 		void loadGMap(const QString& name, const QString& fileName);
 		void loadLevel(const QString& name, const QString& fileName);
+
+		
 
 		
 	};

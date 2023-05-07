@@ -62,6 +62,7 @@ namespace TilesEditor
 		Level* getLevelAt(double x, double y);
 
 		QList<Level*> getModifiedLevels();
+		QMap<QString, Level*>& getLevelList() { return m_levelNames; }
 	};
 };
 
