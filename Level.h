@@ -36,6 +36,7 @@ namespace TilesEditor
 		
 		QString m_name;
 		QString m_fileName;
+		QString m_tilesetName;
 
 		bool m_loaded;
 
@@ -60,6 +61,9 @@ namespace TilesEditor
 		~Level();
 
 		void release(ResourceManager& resourceManager);
+
+		const QString& getTilesetName() const { return m_tilesetName; }
+		void setTilesetName(const QString& name) { m_tilesetName = name; }
 
 		void setName(const QString& name) { m_name = name; }
 		const QString& getName() const { return m_name; }

@@ -81,6 +81,8 @@ namespace TilesEditor
 		connect(ui_tilesetsClass.graphicsView, &GraphicsView::mouseRelease, this, &EditorTabWidget::tilesetMouseRelease);
 		connect(ui_tilesetsClass.graphicsView, &GraphicsView::mouseMove, this, &EditorTabWidget::tilesetMouseMove);
 		connect(ui_tilesetsClass.tilesetsCombo, &QComboBox::currentIndexChanged, this, &EditorTabWidget::tilesetsIndexChanged);
+
+
 		connect(ui_tilesetsClass.deleteButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetDeleteClicked);
 		connect(ui_tilesetsClass.refreshButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetRefreshClicked);
 		connect(ui_tilesetsClass.newButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetNewClicked);
@@ -544,6 +546,9 @@ namespace TilesEditor
 				return;
 
 			m_resourceManager.freeResource(m_tilesetImage);
+
+
+
 		}
 
 		m_tilesetImage = static_cast<Image*>(m_resourceManager.loadResource(name, ResourceType::RESOURCE_IMAGE));
@@ -552,6 +557,23 @@ namespace TilesEditor
 		{
 			ui_tilesetsClass.graphicsView->setSceneRect(0, 0, m_tilesetImage->width(), m_tilesetImage->height());
 
+		}
+
+
+	}
+
+	void EditorTabWidget::changeTileset(const QString& name)
+	{
+		setTileset(name);
+
+		if (m_overworld)
+		{
+			m_overworld->setTilesetName(name);
+			setModified(nullptr);
+		}
+		else if (m_level) {
+			m_level->setTilesetName(name);
+			setModified(m_level);
 		}
 	}
 
@@ -929,7 +951,6 @@ namespace TilesEditor
 		m_level->setLoaded(true);
 		m_graphicsView->redraw();
 
-		qDebug() << "A: " << m_level->getFileName();
 	}
 
 	void EditorTabWidget::loadLevel(const QString& name, const QString& fileName)
@@ -942,6 +963,24 @@ namespace TilesEditor
 		m_level = new Level(0, 0, 64 * 16, 64 * 16, nullptr, name);
 		m_level->setFileName(fileName);
 		m_level->loadNWFile(m_resourceManager);
+
+		if (!m_level->getTilesetName().isEmpty())
+		{
+			auto index = ui_tilesetsClass.tilesetsCombo->findText(m_level->getTilesetName());
+			if (index >= 0) {
+				ui_tilesetsClass.tilesetsCombo->blockSignals(true);
+				ui_tilesetsClass.tilesetsCombo->setCurrentIndex(index);
+				setTileset(m_level->getTilesetName());
+				ui_tilesetsClass.tilesetsCombo->blockSignals(false);
+			}
+			else {
+				ui_tilesetsClass.tilesetsCombo->setEditText(m_level->getTilesetName());
+				setTileset(m_level->getTilesetName());
+			}
+		}
+		else {
+			setTileset(ui_tilesetsClass.tilesetsCombo->currentText());;
+		}
 
 
 	}
@@ -962,17 +1001,37 @@ namespace TilesEditor
 	void EditorTabWidget::loadGMap(const QString& name, const QString & fileName)
 	{
 		m_overworld = new Overworld(name);
+		m_overworld->setFileName(fileName);
 
 		QFileInfo fi(fileName);
 
 		m_resourceManager.addSearchDirRecursive(fi.absolutePath());
 		m_resourceManager.setRootDir(fi.absolutePath());
 
-		m_overworld->loadGMap(fileName, m_resourceManager);
+		m_overworld->loadGMap(m_resourceManager);
+		
+		if (!m_overworld->getTilesetName().isEmpty())
+		{
+			auto index = ui_tilesetsClass.tilesetsCombo->findText(m_overworld->getTilesetName());
+			if (index >= 0) {
+				ui_tilesetsClass.tilesetsCombo->blockSignals(true);
+				ui_tilesetsClass.tilesetsCombo->setCurrentIndex(index);
+				setTileset(m_overworld->getTilesetName());
+				ui_tilesetsClass.tilesetsCombo->blockSignals(false);
+			}
+			else {
+				ui_tilesetsClass.tilesetsCombo->setEditText(m_overworld->getTilesetName());
+				setTileset(m_overworld->getTilesetName());
+			}
+		}
+		else {
+			setTileset(ui_tilesetsClass.tilesetsCombo->currentText());;
+		}
+
 		m_graphicsView->setSceneRect(QRect(0, 0, m_overworld->getWidth(), m_overworld->getHeight()));
 
 		ui.saveAsButton->setEnabled(false);
-		setTileset("pics1.png");
+		
 
 		ui.preloadButton->setEnabled(true);
 
@@ -2370,6 +2429,8 @@ namespace TilesEditor
 					}
 					else resetModification = false;
 				}
+
+				m_overworld->saveGMap();
 				if(resetModification)
 					setUnmodified();
 			}
@@ -2412,8 +2473,7 @@ namespace TilesEditor
 	void EditorTabWidget::tilesetsIndexChanged(int index)
 	{
 		auto imageName = ui_tilesetsClass.tilesetsCombo->currentText();
-
-		setTileset(imageName);
+		changeTileset(imageName);
 
 		m_graphicsView->redraw();
 		ui_tilesetsClass.graphicsView->redraw();
@@ -2421,6 +2481,8 @@ namespace TilesEditor
 		if (m_tilesetImage)
 			ui_tilesetsClass.graphicsView->setSceneRect(0, 0, m_tilesetImage->width(), m_tilesetImage->height());
 	}
+
+
 
 	void EditorTabWidget::tilesetDeleteClicked(bool checked)
 	{

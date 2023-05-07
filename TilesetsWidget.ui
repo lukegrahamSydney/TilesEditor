@@ -68,7 +68,7 @@
       <item>
        <widget class="QComboBox" name="tilesetsCombo">
         <property name="editable">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>

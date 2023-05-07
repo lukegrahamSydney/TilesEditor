@@ -17,7 +17,9 @@ namespace TilesEditor
 	{
 	private:
 		QString m_name;
+		QString m_fileName;
 		QString m_tilesetName;
+		QStringList m_gmapFileLines;
 
 		int m_width;
 		int m_height;
@@ -30,6 +32,8 @@ namespace TilesEditor
 		Overworld(const QString& name);
 		~Overworld();
 
+		void setFileName(const QString& name) { m_fileName = name; }
+		const QString& getFileName() const { return m_fileName; }
 		void release(ResourceManager& resourceManager);
 
 		const QString& getName() const { return m_name; }
@@ -37,7 +41,8 @@ namespace TilesEditor
 		const QString& getTilesetName() const { return m_tilesetName; }
 		void setTilesetName(const QString& name) { m_tilesetName = name; }
 
-		void loadGMap(const QString& fileName, ResourceManager& resourceManager);
+		void loadGMap(ResourceManager& resourceManager);
+		bool saveGMap();
 
 		void setSize(int width, int height);
 		void searchLevels(const IRectangle& rect, QSet<Level*>& output);

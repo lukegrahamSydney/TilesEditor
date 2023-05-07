@@ -176,6 +176,10 @@ namespace TilesEditor
                                 }
                             }
                         }
+                        else if (words[0] == "TILESET" && wordCount >= 2)
+                        {
+                            m_tilesetName = words[1];
+                        }
                         else if (words[0] == "LINK" && wordCount >= 8)
                         {
                             double x = words[2].toInt() * 16;
@@ -351,8 +355,6 @@ namespace TilesEditor
                 }
             };
 
-            if(m_mainTileLayer)
-                writeTileLayer(stream, m_mainTileLayer);
             for (auto layer : m_tileLayers)
             {
                 writeTileLayer(stream, layer);
@@ -397,6 +399,9 @@ namespace TilesEditor
                 }
 
             }
+
+            if(!m_tilesetName.isEmpty())
+                stream << "TILESET " << m_tilesetName << Qt::endl;
             return true;
         }
         return false;

@@ -38,7 +38,7 @@ namespace TilesEditor
         restoreState(settings.value("windowState").toByteArray());
         EditAnonymousNPC::savedGeometry = settings.value("anonymousNPCGeometry").toByteArray();
 
-        
+        m_tilesetList.setStringList(settings.value("tilesets").toStringList());
         loadTileObjects();
 
         m_resourceManager.addSearchDir("./");
@@ -78,6 +78,10 @@ namespace TilesEditor
         settings.setValue("geometry", saveGeometry());
         settings.setValue("windowState", saveState());
         settings.setValue("anonymousNPCGeometry", EditAnonymousNPC::savedGeometry);
+
+
+        settings.setValue("tilesets", m_tilesetList.stringList());
+
 
         auto jsonRoot = cJSON_CreateObject();
 
@@ -139,15 +143,17 @@ namespace TilesEditor
     {
         auto tabPage = createNewTab();
 
+
+
         QFileInfo fi(fileName);
+
+        ui.levelsTab->addTab(tabPage, fi.fileName());
+        ui.levelsTab->setCurrentWidget(tabPage);
 
         if (fi.suffix() == "gmap")
             tabPage->loadGMap(fi.fileName(), fileName);
         else tabPage->loadLevel(fi.fileName(), fileName);
 
-        ui.levelsTab->addTab(tabPage, fi.fileName());
-
-        ui.levelsTab->setCurrentWidget(tabPage);
     }
 
     void MainWindow::openFile(bool checked)

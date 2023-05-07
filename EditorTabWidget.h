@@ -70,6 +70,7 @@ namespace TilesEditor
 		void saveClicked(bool checked);
 		void saveAsClicked(bool checked);
 		void tilesetsIndexChanged(int index);
+		
 		void tilesetDeleteClicked(bool checked);
 		void tilesetRefreshClicked(bool checked);
 		void tilesetNewClicked(bool checked);
@@ -153,6 +154,7 @@ namespace TilesEditor
 		void loadLevel(Level* level);
 		bool selectingLevel();
 		void setTileset(const QString& name);
+		void changeTileset(const QString& name);
 		void setUnmodified();
 		void setDefaultTile(int tile);
 

@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QFile>
 #include <iterator>
 #include "Overworld.h"
 #include "MainFileSystem.h"
@@ -13,8 +14,6 @@ namespace TilesEditor
 		m_name = name;
 		m_entitySpatialMap = nullptr;
 		m_levelMap = nullptr;
-
-		m_tilesetName = "pics1.png";
 	}
 
 	Overworld::~Overworld()
@@ -37,11 +36,11 @@ namespace TilesEditor
 	}
 
 
-	void Overworld::loadGMap(const QString& fileName, ResourceManager& resourceManager)
+	void Overworld::loadGMap(ResourceManager& resourceManager)
 	{
 		QStringList lines;
 
-		if (resourceManager.getFileSystem().readAllLines(fileName, lines))
+		if (resourceManager.getFileSystem().readAllLines(m_fileName, lines))
 		{
 		
 			int width = 0,
@@ -57,6 +56,12 @@ namespace TilesEditor
 				if (!words.isEmpty())
 				{
 					wordCount = words.size();
+
+					if (words[0] == "TILESET" && wordCount >= 2) {
+						m_tilesetName = words[1];
+					}
+					else m_gmapFileLines.append(line);
+
 					if (words[0] == "WIDTH" && wordCount >= 2) {
 						width = words[1].toInt();
 					}
@@ -72,6 +77,7 @@ namespace TilesEditor
 						for (++i; i < lines.size(); ++i)
 						{
 							auto& levelNameLine = lines[i];
+							m_gmapFileLines.append(levelNameLine);
 
 							if (levelNameLine == "LEVELNAMESEND")
 								break;
@@ -105,6 +111,27 @@ namespace TilesEditor
 				}
 			}
 		}
+	}
+
+	bool Overworld::saveGMap()
+	{
+		QFile file(m_fileName);
+		if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+		{
+			QTextStream stream(&file);
+
+			stream << "GRMAP001" << Qt::endl;
+
+			for (auto& line : m_gmapFileLines)
+			{
+				stream << line << Qt::endl;
+			}
+
+			if(!m_tilesetName.isEmpty())
+				stream << "TILESET " << m_tilesetName << Qt::endl;
+		}
+
+		return false;
 	}
 
 	void Overworld::setSize(int width, int height)
