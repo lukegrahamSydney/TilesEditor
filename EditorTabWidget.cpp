@@ -650,11 +650,6 @@ namespace TilesEditor
 
 	Tilemap* EditorTabWidget::getSelectionTiles()
 	{
-		//First priority is any tiles selected in the tileset widget
-		if (m_tilesSelector.visible() && !m_tilesSelector.selecting())
-		{
-			return getTilesetSelection();
-		}
 
 		//Get tiles within the selector
 		if (m_selector.visible() && !m_selector.selecting())
@@ -698,6 +693,13 @@ namespace TilesEditor
 			auto tilesSelection = static_cast<TileSelection*>(m_selection);
 			return new Tilemap(*tilesSelection->getTilemap());
 		}
+
+		//Last priority is any tiles selected in the tileset widget
+		if (m_tilesSelector.visible() && !m_tilesSelector.selecting())
+		{
+			return getTilesetSelection();
+		}
+
 		return nullptr;
 	}
 
@@ -1547,6 +1549,7 @@ namespace TilesEditor
 
 					if (m_selection->pointInSelection(pos.x(), pos.y()))
 					{
+						m_graphicsView->setCursor(Qt::CursorShape::OpenHandCursor);
 						m_selection->setDragOffset(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier));
 						return;
 					}
@@ -1582,6 +1585,7 @@ namespace TilesEditor
 				if (rect.intersects(Rectangle(pos.x(), pos.y(), 1, 1)) || m_selector.getResizeEdge(pos.x(), pos.y()))
 				{
 					doTileSelection();
+
 					m_selector.setVisible(false);
 					graphicsMousePress(event);
 					return;
@@ -1600,6 +1604,7 @@ namespace TilesEditor
 					else if (objectSelection->getEntityType() == LevelEntityType::ENTITY_LINK)
 						setStatusBar("Hint: Hold 'Shift' and double click the link to open the destination level", 1, 20000);
 				}
+				m_graphicsView->setCursor(Qt::CursorShape::OpenHandCursor);
 				m_selection->setDragOffset(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier));
 				m_graphicsView->redraw();
 				return;
@@ -2249,7 +2254,7 @@ namespace TilesEditor
 			{
 				m_fillPattern = *pattern;
 
-
+				
 				m_selector.setVisible(false);
 
 

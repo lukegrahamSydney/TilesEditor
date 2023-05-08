@@ -7,17 +7,20 @@
 
 namespace TilesEditor
 {
-	void ResourceManager::populateDirectories(const QString& searchPath, const QString& rootDir)
-	{
+	void ResourceManager::populateDirectories(const QString& searchPath, int level, const QString& rootDir)
+	{ 
 		m_searchDirectories.insert(searchPath);
 
-		QDir dir(searchPath);
-
-		auto list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-
-		for (auto& folder : list)
+		if (level <= 4)
 		{
-			populateDirectories(QString("%1%2/").arg(searchPath, folder), rootDir + folder + "/");
+			QDir dir(searchPath);
+
+			auto list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+			for (auto& folder : list)
+			{
+				populateDirectories(QString("%1%2/").arg(searchPath, folder), level + 1, rootDir + folder + "/");
+			}
 		}
 	}
 
@@ -53,10 +56,8 @@ namespace TilesEditor
 	void ResourceManager::addSearchDirRecursive(const QString& dir)
 	{
 		QDir absoluteDir(dir);
-		populateDirectories(absoluteDir.absolutePath() + "/");
+		populateDirectories(absoluteDir.absolutePath() + "/", 0);
 
-		for (auto path : m_searchDirectories)
-			qDebug() << "A: " << path;
 	}
 
 	bool ResourceManager::locateFile(const QString& name, QString* outPath)

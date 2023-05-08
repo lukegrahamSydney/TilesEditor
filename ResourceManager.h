@@ -37,7 +37,7 @@ namespace TilesEditor
 		}
 
 
-		void populateDirectories(const QString& searchPath, const QString& rootDir = "");
+		void populateDirectories(const QString& searchPath, int level, const QString& rootDir = "");
 
 	public:
 
