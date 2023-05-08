@@ -23,6 +23,7 @@ namespace TilesEditor
 
 		QMap<QString, Resource*>    m_resources;
 		QSet<QString> m_searchDirectories;
+		QList<QString> m_searchDirectoriesList;
 		QSet<QString> m_failedResources;
 
 		MainFileSystem m_fileSystem;

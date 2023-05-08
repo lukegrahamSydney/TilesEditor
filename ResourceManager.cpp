@@ -9,10 +9,11 @@ namespace TilesEditor
 {
 	void ResourceManager::populateDirectories(const QString& searchPath, int level, const QString& rootDir)
 	{ 
-		m_searchDirectories.insert(searchPath);
-
-		if (level <= 4)
+		if (m_searchDirectories.count() < 100 && level <= 2)
 		{
+			m_searchDirectories.insert(searchPath);
+			m_searchDirectoriesList.push_back(searchPath);
+
 			QDir dir(searchPath);
 
 			auto list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
@@ -21,6 +22,7 @@ namespace TilesEditor
 			{
 				populateDirectories(QString("%1%2/").arg(searchPath, folder), level + 1, rootDir + folder + "/");
 			}
+			
 		}
 	}
 
@@ -32,16 +34,16 @@ namespace TilesEditor
 	{
 		for (auto resource : m_resources)
 		{
-			qDebug() << "Delete resource: " << resource->getName();
 			delete resource;
 		}
 	}
 
 	void ResourceManager::mergeSearchDirectories(const ResourceManager& source)
 	{
-		for (auto& searchDir : source.m_searchDirectories)
+		for (auto& searchDir : source.m_searchDirectoriesList)
 		{
 			m_searchDirectories.insert(searchDir);
+			m_searchDirectoriesList.push_back(searchDir);
 		}
 	}
 
@@ -50,6 +52,7 @@ namespace TilesEditor
 
 		QDir absoluteDir(dir);
 		m_searchDirectories.insert(absoluteDir.absolutePath() + "/");
+		m_searchDirectoriesList.push_back(absoluteDir.absolutePath() + "/");
 	}
 
 
@@ -64,7 +67,7 @@ namespace TilesEditor
 	{
 		if (name != "")
 		{
-			for (auto& dir : m_searchDirectories)
+			for (auto& dir : m_searchDirectoriesList)
 			{
 				QString fullPath = dir + name;
 				qDebug() << fullPath;
@@ -76,7 +79,6 @@ namespace TilesEditor
 			}
 		}
 
-		qDebug() << "NOT FOUND";
 		*outPath = "";
 		return false;
 	}
