@@ -20,7 +20,7 @@ A level editor that will support multiple level formats
 16. Pattern tile flood
 17. Preview tile flood before doing it
 
-# Requirements
+# Requirements For compiling
 * QT6
 * python3 + pip3 (Linux)
 
