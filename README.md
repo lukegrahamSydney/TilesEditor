@@ -1,6 +1,9 @@
 # TilesEditor
 A level editor that will support multiple level formats
 
+Windows users can download this:
+[Windows Release](https://github.com/lukegrahamSydney/TilesEditor/blob/main/release.zip)
+
 # Features
 1. Supports .gmap and .nw file formats
 2. Select multiple objects at once (hold shift key to select another object)
