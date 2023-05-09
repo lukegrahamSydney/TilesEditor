@@ -92,13 +92,13 @@ namespace TilesEditor
 
 		AbstractLevelEntity* duplicate() { return nullptr; };
 		static bool IsInvisibleTile(int tile) {
-			static int invisibleTile = MakeInvisibleTile(0) >> 8;
+			static int invisibleTile = MakeInvisibleTile(0) & 0xFFFFFF;
 
-			return (tile >> 8) == invisibleTile;
+			return (tile & 0xFFFFFF) == invisibleTile;
 		}
 
 		static int MakeTile(int left, int top, int type) {
-			int retval = ((left & 0xFFF) << 20) | ((top & 0xFFF) << 8) | (type & 0xFF);
+			int retval = ((type & 0xFF) << 24) | ((left & 0xFFF) << 12) | ((top & 0xFFF));
 			return retval;
 		}
 
@@ -107,15 +107,15 @@ namespace TilesEditor
 		}
 
 		static int GetTileX(int tile) {
-			return ((unsigned int)tile >> 20) & 0xFFF;
+			return ((unsigned int)tile >> 12) & 0xFFF;
 		}
 
 		static int GetTileY(int tile) {
-			return ((unsigned int)tile >> 8) & 0xFFF;
+			return ((unsigned int)tile) & 0xFFF;
 		}
 
 		static int GetTileType(int tile) {
-			return (unsigned int)tile & 0xFF;
+			return (unsigned int)((tile >> 24) & 0xFF);
 		}
 	};
 };

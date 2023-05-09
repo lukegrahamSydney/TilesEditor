@@ -156,7 +156,7 @@ namespace TilesEditor
 
     void MainWindow::openFile(bool checked)
     {
-        auto fileName = QFileDialog::getOpenFileName(nullptr, "Select level", QString(), "All supported files (*.nw *.gmap)");
+        auto fileName = QFileDialog::getOpenFileName(nullptr, "Select level", QString(), "All supported files (*.nw *.gmap *.lvl)");
         
         if (!fileName.isEmpty())
         {
@@ -269,6 +269,8 @@ namespace TilesEditor
 
     void MainWindow::loadTileObjects()
     {
+        static const QString base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
         QFile fileObjectsHandle("tileObjects.json");
         if (fileObjectsHandle.open(QIODeviceBase::ReadOnly | QIODeviceBase::Text))
         {
@@ -326,10 +328,21 @@ namespace TilesEditor
                                                             auto parts = line.split(' ', Qt::SkipEmptyParts);
                                                             for (auto x = 0U; x < parts.size(); ++x)
                                                             {
-                                                                int tile = parts[x].toInt(nullptr, 16);
-                                                                tileObject->setTile(x, y, tile);
+                                                                int tile = 0;
+                                                                auto& part = parts[x];
+                                                                int bitcount = 0;
 
+
+                                                                for (auto i = part.length() - 1; i >= 0; --i) {
+                                                                    auto value = base64.indexOf(part[i]);
+
+                                                                    tile |= value << bitcount;
+                                                                    bitcount += 6;
+
+                                                                }
+                                                                tileObject->setTile(x, y, tile);
                                                             }
+
                                                         }
                                                     }
                                                 }

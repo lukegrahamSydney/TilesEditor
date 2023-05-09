@@ -501,24 +501,23 @@ static char *print_array(cJSON *item,int depth,int fmt,printbuffer *p)
 		memset(entries,0,numentries*sizeof(char*));
 		/* Retrieve all the results: */
 		child=item->child;
-		int breakFirstElement = 0;
 		while (child && !fail)
 		{
 			ret=print_value(child,depth+1,fmt,0);
 			entries[i++]=ret;
 			if (ret) {
+
 				len += strlen(ret) + 2 + (fmt ? 1 : 0);
-				if (child->type == cJSON_Object && !breakFirstElement)
-				{
-					if (fmt)
-						len += depth + 2;
-					breakFirstElement = 1;
-				}
 			}
 			else fail = 1;
 			child=child->next;
 		}
 		
+		int doBreaks = 0;
+		if (len > 500) {
+			doBreaks = 1;
+			len += (depth + 1) * numentries;
+		}
 		/* If we didn't fail, try to malloc the output string */
 		if (!fail)	out=(char*)cJSON_malloc(len);
 		/* If that fails, we fail. */
@@ -537,10 +536,11 @@ static char *print_array(cJSON *item,int depth,int fmt,printbuffer *p)
 		ptr=out+1;*ptr=0;
 		for (i=0;i<numentries;i++)
 		{
-			if (breakFirstElement && i == 0) {
+			if (doBreaks) {
 				*ptr++ = '\n';
 				for (int ii = 0; ii <= depth; ii++) *ptr++ = '\t';
 			}
+
 			tmplen=strlen(entries[i]);memcpy(ptr,entries[i],tmplen);ptr+=tmplen;
 			if (i!=numentries-1) {*ptr++=',';if(fmt)*ptr++=' ';*ptr=0;}
 			cJSON_free(entries[i]);

@@ -129,7 +129,7 @@ namespace TilesEditor
 
 	bool TileSelection::clipboardCopy()
 	{
-
+		static const QString base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 		auto jsonObject = cJSON_CreateObject();
 
 		cJSON_AddStringToObject(jsonObject, "type", "tileSelection");
@@ -142,10 +142,17 @@ namespace TilesEditor
 			QString line = "";
 			for (int x = 0; x < m_tilemap->getHCount(); ++x)
 			{
-				line += QString::number(getTile(x, y), 16) + " ";
+				auto tile = getTile(x, y);
+				QString tileString = "";
+				do {
+					tileString = base64[tile & 0x3F] + tileString;
+					tile = tile >> 6;
+				} while (tile != 0);
+
+				line += tileString + " ";
 			}
-			QByteArray ba = line.toLocal8Bit();
-			cJSON_AddItemToArray(tilesArray, cJSON_CreateString(ba.data()));
+
+			cJSON_AddItemToArray(tilesArray, cJSON_CreateString(line.toLocal8Bit().data()));
 
 		}
 		cJSON_AddItemToObject(jsonObject, "tiles", tilesArray);

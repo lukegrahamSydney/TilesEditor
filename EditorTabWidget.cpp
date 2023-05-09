@@ -1057,7 +1057,8 @@ namespace TilesEditor
 
 		m_level = new Level(0, 0, 64 * 16, 64 * 16, nullptr, name);
 		m_level->setFileName(fileName);
-		m_level->loadNWFile(m_resourceManager);
+		m_level->loadFile(m_resourceManager);
+		//m_level->loadNWFile(m_resourceManager);
 
 		if (!m_level->getTilesetName().isEmpty())
 		{
@@ -1076,6 +1077,8 @@ namespace TilesEditor
 		else {
 			setTileset(ui_tilesetsClass.tilesetsCombo->currentText());;
 		}
+
+		m_graphicsView->setSceneRect(QRect(0, 0, m_level->getWidth(), m_level->getHeight()));
 
 
 	}
@@ -2454,6 +2457,7 @@ namespace TilesEditor
 
 				if (tileArray && tileArray->type == cJSON_Array)
 				{
+					static const QString base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 					for (int y = 0; y < cJSON_GetArraySize(tileArray); ++y)
 					{
 						auto arrayItem = cJSON_GetArrayItem(tileArray, y);
@@ -2464,7 +2468,18 @@ namespace TilesEditor
 							auto parts = line.split(' ', Qt::SkipEmptyParts);
 							for (auto x = 0U; x < parts.size(); ++x)
 							{
-								int tile = parts[x].toInt(nullptr, 16);
+								int tile = 0;
+								auto& part = parts[x];
+								int bitcount = 0;
+
+
+								for (auto i = part.length() - 1; i >= 0; --i) {
+									auto value = base64.indexOf(part[i]);
+
+									tile |= value << bitcount;
+									bitcount += 6;
+
+								}
 								tileSelection->setTile(x, y, tile);
 							}
 						}
@@ -2573,7 +2588,7 @@ namespace TilesEditor
 	{
 		if (m_level)
 		{
-			auto fullPath = QFileDialog::getSaveFileName(nullptr, "Save Level As", QString(), "All Level Files (*.nw)");
+			auto fullPath = QFileDialog::getSaveFileName(nullptr, "Save Level As", QString(), "All Level Files (*.nw *.lvl)");
 
 			if (!fullPath.isEmpty())
 			{
@@ -3027,7 +3042,7 @@ namespace TilesEditor
 		qDebug() << level->getFileName();
 		if (level->getFileName().isEmpty())
 		{
-			auto fullPath = QFileDialog::getSaveFileName(nullptr, "Save Level", QString(), "All Level Files (*.nw)");
+			auto fullPath = QFileDialog::getSaveFileName(nullptr, "Save Level", QString(), "All Level Files (*.nw *.lvl)");
 
 			if (!fullPath.isEmpty())
 			{
@@ -3043,7 +3058,7 @@ namespace TilesEditor
 			QMessageBox::critical(nullptr, "Unable to save file", "Invalid file path");
 		}
 		else {
-			level->saveNWFile();
+			level->saveFile();
 			return true;
 		}
 		return false;

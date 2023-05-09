@@ -1,5 +1,6 @@
 #include <QStringList>
 #include <QTextStream>
+#include <QStringBuilder>
 #include <QFile>
 #include <QDebug>
 #include "Level.h"
@@ -9,6 +10,7 @@
 #include "LevelNPC.h"
 #include "LevelLink.h"
 #include "LevelSign.h"
+#include "cJSON/JsonHelper.h"
 
 namespace TilesEditor
 {
@@ -84,6 +86,16 @@ namespace TilesEditor
             entity->releaseResources(resourceManager);
         }
 
+    }
+
+    bool Level::loadFile(ResourceManager& resourceManager)
+    {
+        if (m_fileName.endsWith(".nw"))
+            return loadNWFile(resourceManager);
+
+        if (m_fileName.endsWith(".lvl"))
+            return loadLVLFile(resourceManager);
+        return false;
     }
 
     bool Level::loadNWFile(ResourceManager& resourceManager)
@@ -301,6 +313,163 @@ namespace TilesEditor
 
     }
 
+    bool Level::loadLVLFile(ResourceManager& resourceManager)
+    {
+        static const QString base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+        QString text = resourceManager.getFileSystem().readAllToString(m_fileName);
+        if (!text.isEmpty())
+        {
+            auto jsonRoot = cJSON_Parse(text.toLocal8Bit().data());
+
+            if (jsonRoot)
+            {
+                if (QString(cJSON_GetObjectType(jsonRoot)) == "LevelV1_0")
+                {
+                   
+                    auto hcount = jsonGetChildInt(jsonRoot, "hcount", 1);
+                    auto vcount = jsonGetChildInt(jsonRoot, "vcount", 1);
+
+                    m_width = hcount * 16;
+                    m_height = vcount * 16;
+
+                    
+                    if (m_entitySpatialMap) {
+                        delete m_entitySpatialMap;
+                        m_entitySpatialMap = new EntitySpatialGrid<AbstractLevelEntity>(getX(), getY(), getWidth(), getHeight());
+                    }
+
+
+                    auto jsonLayers = cJSON_GetObjectItem(jsonRoot, "layers");
+                    if (jsonLayers)
+                    {
+                        for (int i = 0; i < cJSON_GetArraySize(jsonLayers); ++i)
+                        {
+                            auto jsonLayer = cJSON_GetArrayItem(jsonLayers, i);
+
+                            if (jsonLayer)
+                            {
+                                auto index = jsonGetChildInt(jsonLayer, "index");
+
+                                
+                                auto jsonChunks = cJSON_GetObjectItem(jsonLayer, "chunks");
+                                if (jsonChunks)
+                                {
+                                    auto tilemap = new Tilemap(this, getX(), getY(), hcount, vcount, index);
+                                    tilemap->clear(Tilemap::MakeInvisibleTile(0));
+                                    for (int ii = 0; ii < cJSON_GetArraySize(jsonChunks); ++ii)
+                                    {
+                                        auto jsonChunk = cJSON_GetArrayItem(jsonChunks, ii);
+
+                                        if (jsonChunk)
+                                        {
+                                            auto left = jsonGetArrayInt(jsonChunk, 0);
+                                            auto top = jsonGetArrayInt(jsonChunk, 1);
+
+                                            auto line = jsonGetArrayString(jsonChunk, 2, "");
+
+                                            auto parts = line.split(' ', Qt::SkipEmptyParts);
+                                            for (auto x = 0U; x < parts.size(); ++x)
+                                            {
+                                                int tile = 0;
+                                                auto& part = parts[x];
+                                                int bitcount = 0;
+
+
+                                                for (auto i = part.length() - 1; i >= 0; --i) {
+                                                    auto value = base64.indexOf(part[i]);
+
+                                                    tile |= value << bitcount;
+                                                    bitcount += 6;
+                                                }
+                                                tilemap->setTile(left + x, top, tile);
+                                            }
+
+                                        }
+                                    }
+
+                                    setTileLayer(index, tilemap);
+                                }
+                            }
+                        }
+                    }
+
+                    auto jsonSigns = cJSON_GetObjectItem(jsonRoot, "signs");
+                    if (jsonSigns)
+                    {
+                        for (int i = 0; i < cJSON_GetArraySize(jsonSigns); ++i)
+                        {
+                            auto jsonSign = cJSON_GetArrayItem(jsonSigns, i);
+
+                            if (jsonSign)
+                            {
+                                if (QString(cJSON_GetObjectType(jsonSign)) == "Sign")
+                                {
+                                    auto x = this->getX() + jsonGetChildInt(jsonSign, "x");
+                                    auto y = this->getY() + jsonGetChildInt(jsonSign, "y");
+
+                                    auto width = jsonGetChildInt(jsonSign, "width");
+                                    auto height = jsonGetChildInt(jsonSign, "height");
+
+                                   
+                                    auto sign = new LevelSign(this, x, y, width, height);
+                                    sign->setText(jsonGetChildString(jsonSign, "text"));
+
+                                    addObject(sign);
+                                }
+                            }
+                        }
+                    }
+
+                    auto jsonLinks = cJSON_GetObjectItem(jsonRoot, "links");
+                    if (jsonLinks)
+                    {
+                        for (int i = 0; i < cJSON_GetArraySize(jsonLinks); ++i)
+                        {
+                            auto jsonLink = cJSON_GetArrayItem(jsonLinks, i);
+
+                            if (jsonLink)
+                            {
+                                if (QString(cJSON_GetObjectType(jsonLink)) == "Link")
+                                {
+                                    auto x = this->getX() + jsonGetChildInt(jsonLink, "x");
+                                    auto y = this->getY() + jsonGetChildInt(jsonLink, "y");
+
+                                    auto width = jsonGetChildInt(jsonLink, "width");
+                                    auto height = jsonGetChildInt(jsonLink, "height");
+
+
+                                    auto link = new LevelLink(this, x, y, width, height, false);
+                                    link->setNextLevel(jsonGetChildString(jsonLink, "destination"));
+                                    link->setNextX(jsonGetChildString(jsonLink, "destinationX"));
+                                    link->setNextY(jsonGetChildString(jsonLink, "destinationY"));
+                                    addObject(link);
+                                }
+                            }
+                        }
+                    }
+                    cJSON_Delete(jsonRoot);
+                    return true;
+                }
+                cJSON_Delete(jsonRoot);
+            }
+
+
+        }
+        return false;
+    }
+
+    bool Level::saveFile()
+    {
+        if (m_fileName.endsWith(".nw"))
+            return saveNWFile();
+
+        if (m_fileName.endsWith(".lvl"))
+            return saveLVLFile();
+
+        return false;
+    }
+
     bool Level::saveNWFile()
     {
         QFile file(m_fileName);
@@ -402,6 +571,143 @@ namespace TilesEditor
 
             if(!m_tilesetName.isEmpty())
                 stream << "TILESET " << m_tilesetName << Qt::endl;
+            return true;
+        }
+        return false;
+    }
+
+    bool Level::saveLVLFile()
+    {
+        auto writeJSONChunks = [](cJSON* jsonArray, Tilemap* tilemap)
+        {
+            for (int top = 0; top < tilemap->getVCount(); ++top)
+            {
+                for (int left = 0; left < tilemap->getHCount(); ++left)
+                {
+                    //Start scanning from left until we hit a NON-invisible title
+                    if (!Tilemap::IsInvisibleTile(tilemap->getTile(left, top)))
+                    {
+                        //Continue scanning until we hit the end, or an invisible tile
+                        int right = left;
+                        for (; right < tilemap->getHCount(); ++right)
+                        {
+                            if (Tilemap::IsInvisibleTile(tilemap->getTile(right, top)))
+                                break;
+                        }
+
+                        int width = right - left;
+                        if (width > 0)
+                        {
+                            auto jsonChunk = cJSON_CreateArray();
+                            
+                            cJSON_AddItemToArray(jsonChunk, cJSON_CreateNumber(left));
+                            cJSON_AddItemToArray(jsonChunk, cJSON_CreateNumber(top));
+
+                            QString tileData;
+                            for (; left < right; ++left)
+                            {
+                                static const QString base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+                                QString tileString;
+                                int tile = tilemap->getTile(left, top);
+
+                                do {
+                                 
+                                    tileString = base64[tile & 0x3F] + tileString;
+                                    tile = tile >> 6;
+                                } while (tile != 0);
+
+                                tileData += tileString + " ";
+
+                            }
+
+                            cJSON_AddItemToArray(jsonChunk, cJSON_CreateString(tileData.toLocal8Bit().data()));
+
+                            cJSON_AddItemToArray(jsonArray, jsonChunk);
+                        }
+                        left = right;
+                    }
+                }
+            }
+
+        };
+
+        QFile file(m_fileName);
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            auto jsonRoot = cJSON_CreateObjectType("LevelV1_0");
+
+            cJSON_AddNumberToObject(jsonRoot, "hcount", getWidth() / 16);
+            cJSON_AddNumberToObject(jsonRoot, "vcount", getHeight() / 16);
+
+            if (m_tileLayers.size() > 0)
+            {
+                auto jsonLayers = cJSON_CreateArray();
+
+                for (auto layer : m_tileLayers)
+                {
+                    auto jsonLayer = cJSON_CreateObjectType("TileLayer");
+                    cJSON_AddNumberToObject(jsonLayer, "index", layer->getLayerIndex());
+
+
+                    auto jsonChunks = cJSON_CreateArray();
+                    writeJSONChunks(jsonChunks, layer);
+
+                    cJSON_AddItemToObject(jsonLayer, "chunks", jsonChunks);
+
+                    cJSON_AddItemToArray(jsonLayers, jsonLayer);
+                }
+
+                cJSON_AddItemToObject(jsonRoot, "layers", jsonLayers);
+            }
+
+            if (m_signs.size() > 0)
+            {
+                auto jsonSigns = cJSON_CreateArray();
+                for (auto sign : m_signs)
+                {
+                    auto jsonSign = cJSON_CreateObjectType("Sign");
+
+                    cJSON_AddNumberToObject(jsonSign, "x", int(sign->getX() - this->getX()));
+                    cJSON_AddNumberToObject(jsonSign, "y", int(sign->getY() - this->getY()));
+                    cJSON_AddNumberToObject(jsonSign, "width", sign->getWidth());
+                    cJSON_AddNumberToObject(jsonSign, "height", sign->getHeight());
+
+                    cJSON_AddStringToObject(jsonSign, "text", sign->getText().toLocal8Bit().data());
+
+                    cJSON_AddItemToArray(jsonSigns, jsonSign);
+;               }
+
+                cJSON_AddItemToObject(jsonRoot, "signs", jsonSigns);
+            }
+
+            if (m_links.size() > 0)
+            {
+                auto jsonLinks = cJSON_CreateArray();
+                for (auto link : m_links)
+                {
+                    auto jsonLink = cJSON_CreateObjectType("Link");
+
+                    cJSON_AddNumberToObject(jsonLink, "x", int(link->getX() - this->getX()));
+                    cJSON_AddNumberToObject(jsonLink, "y", int(link->getY() - this->getY()));
+                    cJSON_AddNumberToObject(jsonLink, "width", link->getWidth());
+                    cJSON_AddNumberToObject(jsonLink, "height", link->getHeight());
+
+                    cJSON_AddStringToObject(jsonLink, "destination", link->getNextLevel().toLocal8Bit().data());
+                    cJSON_AddStringToObject(jsonLink, "destinationX", link->getNextX().toLocal8Bit().data());
+                    cJSON_AddStringToObject(jsonLink, "destinationY", link->getNextY().toLocal8Bit().data());
+                    cJSON_AddItemToArray(jsonLinks, jsonLink);
+      
+                }
+
+                cJSON_AddItemToObject(jsonRoot, "links", jsonLinks);
+            }
+
+            auto levelText = cJSON_Print(jsonRoot);
+            QTextStream stream(&file);
+            stream << levelText;
+
+            cJSON_Delete(jsonRoot);
             return true;
         }
         return false;

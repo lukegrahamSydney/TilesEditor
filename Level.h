@@ -69,8 +69,14 @@ namespace TilesEditor
 		const QString& getName() const { return m_name; }
 		void setFileName(const QString& fileName) { m_fileName = fileName; }
 		const QString& getFileName() const { return m_fileName; }
+
+		bool loadFile(ResourceManager& resourceManager);
 		bool loadNWFile(ResourceManager& resourceManager);
+		bool loadLVLFile(ResourceManager& resourceManager);
+
+		bool saveFile();
 		bool saveNWFile();
+		bool saveLVLFile();
 
 		bool getLoaded() const { return m_loaded; }
 		void setLoaded(bool val) { m_loaded = val; }

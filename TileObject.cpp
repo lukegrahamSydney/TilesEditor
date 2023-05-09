@@ -9,7 +9,7 @@ namespace TilesEditor
 
 	cJSON* TileObject::serializeJSON()
 	{
-
+		static const QString base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 		auto jsonObject = cJSON_CreateObjectType("tileObject");
 
 		cJSON_AddStringToObject(jsonObject, "name", getName().toLocal8Bit().data());
@@ -19,13 +19,21 @@ namespace TilesEditor
 		auto tilesArray = cJSON_CreateArray();
 		for (int y = 0; y < this->getVCount(); ++y)
 		{
+
 			QString line = "";
 			for (int x = 0; x < this->getHCount(); ++x)
 			{
-				line += QString::number(this->getTile(x, y), 16) + " ";
+				auto tile = getTile(x, y);
+				QString tileString = "";
+				do {
+					tileString = base64[tile & 0x3F] + tileString;
+					tile = tile >> 6;
+				} while (tile != 0);
+
+				line += tileString + " ";
 			}
-			QByteArray ba = line.toLocal8Bit();
-			cJSON_AddItemToArray(tilesArray, cJSON_CreateString(ba.data()));
+
+			cJSON_AddItemToArray(tilesArray, cJSON_CreateString(line.toLocal8Bit().data()));
 
 		}
 		cJSON_AddItemToObject(jsonObject, "tiles", tilesArray);
