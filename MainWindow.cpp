@@ -83,15 +83,13 @@ namespace TilesEditor
         settings.setValue("tilesets", m_tilesetList.stringList());
 
 
-        auto jsonRoot = cJSON_CreateObject();
+        auto jsonRoot = cJSON_CreateObjectType("tileGroupSet");
 
-        cJSON_AddStringToObject(jsonRoot, "type", "tileGroupSet");
 
         auto jsonRootArray = cJSON_CreateArray();
         for (auto group : m_tileGroupsList)
         {
-            auto jsonGroup = cJSON_CreateObject();
-            cJSON_AddStringToObject(jsonGroup, "type", "tileGroup");
+            auto jsonGroup = cJSON_CreateObjectType("tileGroup");
             cJSON_AddStringToObject(jsonGroup, "name", group->getName().toLocal8Bit().data());
 
             auto jsonGroupArray = cJSON_CreateArray();
@@ -280,7 +278,8 @@ namespace TilesEditor
 
             auto jsonRoot = cJSON_Parse(text.toLocal8Bit().data());
 
-            if (jsonGetChildString(jsonRoot, "type") == "tileGroupSet")
+
+            if (QString(cJSON_GetObjectType(jsonRoot)) == "tileGroupSet")
             {
                 auto jsonGroups = cJSON_GetObjectItem(jsonRoot, "tileGroups");
                 if (jsonGroups)
@@ -290,7 +289,7 @@ namespace TilesEditor
                         auto jsonGroup = cJSON_GetArrayItem(jsonGroups, i);
                         if (jsonGroup)
                         {
-                            if (jsonGetChildString(jsonGroup, "type") == "tileGroup")
+                            if (QString(cJSON_GetObjectType(jsonGroup)) == "tileGroup")
                             {
                                 auto groupName = jsonGetChildString(jsonGroup, "name");
 
@@ -305,7 +304,7 @@ namespace TilesEditor
                                         auto jsonTileObject = cJSON_GetArrayItem(jsonObjects, ii);
                                         if (jsonTileObject)
                                         {
-                                            if (jsonGetChildString(jsonTileObject, "type") == "tileObject")
+                                            if (QString(cJSON_GetObjectType(jsonTileObject)) == "tileObject")
                                             {
                                                 auto objectName = jsonGetChildString(jsonTileObject, "name");
                                                 auto hcount = jsonGetChildInt(jsonTileObject, "hcount");

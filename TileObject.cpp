@@ -10,9 +10,8 @@ namespace TilesEditor
 	cJSON* TileObject::serializeJSON()
 	{
 
-		auto jsonObject = cJSON_CreateObject();
+		auto jsonObject = cJSON_CreateObjectType("tileObject");
 
-		cJSON_AddStringToObject(jsonObject, "type", "tileObject");
 		cJSON_AddStringToObject(jsonObject, "name", getName().toLocal8Bit().data());
 		cJSON_AddNumberToObject(jsonObject, "hcount", this->getHCount());
 		cJSON_AddNumberToObject(jsonObject, "vcount", this->getVCount());

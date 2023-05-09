@@ -53,6 +53,7 @@ typedef struct cJSON {
 	double valuedouble;			/* The item's number, if type==cJSON_Number */
 
 	char *string;				/* The item's name string, if this item is the child of, or is in the list of subitems of an object. */
+	char* objectName;
 } cJSON;
 
 typedef struct cJSON_Hooks {
@@ -82,6 +83,9 @@ extern cJSON *cJSON_GetArrayItem(cJSON *array,int item);
 /* Get item "string" from object. Case insensitive. */
 extern cJSON *cJSON_GetObjectItem(cJSON *object,const char *string);
 
+/* Get object "type" value */
+extern const char* cJSON_GetObjectType(cJSON* object);
+
 /* For analysing failed parses. This returns a pointer to the parse error. You'll probably need to look a few chars back to make sense of it. Defined when cJSON_Parse() returns 0. 0 when cJSON_Parse() succeeds. */
 extern const char *cJSON_GetErrorPtr(void);
 	
@@ -94,6 +98,7 @@ extern cJSON *cJSON_CreateNumber(double num);
 extern cJSON *cJSON_CreateString(const char *string);
 extern cJSON *cJSON_CreateArray(void);
 extern cJSON *cJSON_CreateObject(void);
+extern cJSON* cJSON_CreateObjectType(const char* type);
 
 /* These utilities create an Array of count items. */
 extern cJSON *cJSON_CreateIntArray(const int *numbers,int count);
