@@ -9,7 +9,7 @@ namespace TilesEditor
 {
 	void ResourceManager::populateDirectories(const QString& searchPath, int level, const QString& rootDir)
 	{ 
-		if (m_searchDirectories.count() < 100 && level <= 2)
+		if (m_searchDirectories.count() < 100 && level <= 2 && !m_searchDirectories.contains(searchPath))
 		{
 			m_searchDirectories.insert(searchPath);
 			m_searchDirectoriesList.push_back(searchPath);
@@ -42,8 +42,11 @@ namespace TilesEditor
 	{
 		for (auto& searchDir : source.m_searchDirectoriesList)
 		{
-			m_searchDirectories.insert(searchDir);
-			m_searchDirectoriesList.push_back(searchDir);
+			if (!m_searchDirectories.contains(searchDir))
+			{
+				m_searchDirectories.insert(searchDir);
+				m_searchDirectoriesList.push_back(searchDir);
+			}
 		}
 	}
 
@@ -51,8 +54,12 @@ namespace TilesEditor
 	{
 
 		QDir absoluteDir(dir);
-		m_searchDirectories.insert(absoluteDir.absolutePath() + "/");
-		m_searchDirectoriesList.push_back(absoluteDir.absolutePath() + "/");
+		auto searchPath = absoluteDir.absolutePath() + "/";
+		if (!m_searchDirectories.contains(searchPath))
+		{
+			m_searchDirectories.insert(searchPath);
+			m_searchDirectoriesList.push_back(searchPath);
+		}
 	}
 
 
