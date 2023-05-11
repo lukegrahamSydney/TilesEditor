@@ -161,6 +161,7 @@ namespace TilesEditor
 		void setUnmodified();
 		void setDefaultTile(int tile);
 
+
 		bool canSelectObject(LevelEntityType type) const;
 
 		bool hasSelectionTiles() const;
@@ -213,7 +214,7 @@ namespace TilesEditor
 		int floodFillPattern(double x, double y, int layer, const Tilemap* pattern, QList<QPair<unsigned short, unsigned short> >* outputNodes = nullptr) override;
 		void floodFillPattern2(double x, double y, int layer, const Tilemap* pattern, QList<TileInfo>* outputNodes = nullptr) override;
 		void newLevel(int hcount, int vcount);
-		void loadGMap(const QString& name, const QString& fileName);
+		void loadOverworld(const QString& name, const QString& fileName);
 		void loadLevel(const QString& name, const QString& fileName);
 
 		

@@ -83,13 +83,13 @@ namespace TilesEditor
         settings.setValue("tilesets", m_tilesetList.stringList());
 
 
-        auto jsonRoot = cJSON_CreateObjectType("tileGroupSet");
+        auto jsonRoot = cJSON_CreateObject();
 
 
         auto jsonRootArray = cJSON_CreateArray();
         for (auto group : m_tileGroupsList)
         {
-            auto jsonGroup = cJSON_CreateObjectType("tileGroup");
+            auto jsonGroup = cJSON_CreateObject();
             cJSON_AddStringToObject(jsonGroup, "name", group->getName().toLocal8Bit().data());
 
             auto jsonGroupArray = cJSON_CreateArray();
@@ -148,15 +148,15 @@ namespace TilesEditor
         ui.levelsTab->addTab(tabPage, fi.fileName());
         ui.levelsTab->setCurrentWidget(tabPage);
 
-        if (fi.suffix() == "gmap")
-            tabPage->loadGMap(fi.fileName(), fileName);
+        if (fi.suffix() == "gmap" || fi.suffix() == "world")
+            tabPage->loadOverworld(fi.fileName(), fileName);
         else tabPage->loadLevel(fi.fileName(), fileName);
 
     }
 
     void MainWindow::openFile(bool checked)
     {
-        auto fileName = QFileDialog::getOpenFileName(nullptr, "Select level", QString(), "All supported files (*.nw *.gmap *.lvl)");
+        auto fileName = QFileDialog::getOpenFileName(nullptr, "Select level", QString(), "All supported files (*.nw *.gmap *.lvl *.world)");
         
         if (!fileName.isEmpty())
         {
@@ -281,7 +281,7 @@ namespace TilesEditor
             auto jsonRoot = cJSON_Parse(text.toLocal8Bit().data());
 
 
-            if (QString(cJSON_GetObjectType(jsonRoot)) == "tileGroupSet")
+            if (jsonRoot->type == cJSON_Object)
             {
                 auto jsonGroups = cJSON_GetObjectItem(jsonRoot, "tileGroups");
                 if (jsonGroups)
@@ -291,7 +291,7 @@ namespace TilesEditor
                         auto jsonGroup = cJSON_GetArrayItem(jsonGroups, i);
                         if (jsonGroup)
                         {
-                            if (QString(cJSON_GetObjectType(jsonGroup)) == "tileGroup")
+                            if (jsonGroup->type == cJSON_Object)
                             {
                                 auto groupName = jsonGetChildString(jsonGroup, "name");
 
@@ -306,7 +306,7 @@ namespace TilesEditor
                                         auto jsonTileObject = cJSON_GetArrayItem(jsonObjects, ii);
                                         if (jsonTileObject)
                                         {
-                                            if (QString(cJSON_GetObjectType(jsonTileObject)) == "tileObject")
+                                            if (jsonTileObject->type == cJSON_Object)
                                             {
                                                 auto objectName = jsonGetChildString(jsonTileObject, "name");
                                                 auto hcount = jsonGetChildInt(jsonTileObject, "hcount");

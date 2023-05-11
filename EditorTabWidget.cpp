@@ -42,9 +42,9 @@ namespace TilesEditor
 		m_modified = false;
 		m_resourceManager.mergeSearchDirectories(resourceManager);
 
-		QPixmap a(":/MainWindow/icons/npc.png");
+		//QPixmap a(":/MainWindow/icons/npc.png");
 
-		m_resourceManager.addPersistantResource(new Image("__blankNPC", a));
+		//m_resourceManager.addPersistantResource(new Image("__blankNPC", a));
 
 		m_eyeOpen = QPixmap(":/MainWindow/icons/fugue/eye.png");
 		m_eyeClosed = QPixmap(":/MainWindow/icons/fugue/eye-close.png");
@@ -1085,18 +1085,18 @@ namespace TilesEditor
 
 	void EditorTabWidget::loadLevel(Level* level)
 	{
-		if (!level->getLoaded())
+		if (!level->getLoaded() && !level->getLoadFail())
 		{
 			QString fullPath;
 			if (m_resourceManager.locateFile(level->getName(), &fullPath))
 			{
 				level->setFileName(fullPath);
-				level->loadNWFile(m_resourceManager);
+				level->loadFile(m_resourceManager);
 			}
 		}
 	}
 
-	void EditorTabWidget::loadGMap(const QString& name, const QString & fileName)
+	void EditorTabWidget::loadOverworld(const QString& name, const QString & fileName)
 	{
 		m_overworld = new Overworld(name);
 		m_overworld->setFileName(fileName);
@@ -1106,7 +1106,7 @@ namespace TilesEditor
 		m_resourceManager.addSearchDirRecursive(fi.absolutePath());
 		m_resourceManager.setRootDir(fi.absolutePath());
 
-		m_overworld->loadGMap(m_resourceManager);
+		m_overworld->loadFile(m_resourceManager);
 		
 		if (!m_overworld->getTilesetName().isEmpty())
 		{
@@ -1762,30 +1762,27 @@ namespace TilesEditor
 			auto level = getLevelAt(pos.x(), pos.y());
 			if (level)
 			{
-				auto localX = int((pos.x() - level->getX()) / 16.0);
-				auto localY = int((pos.y() - level->getY()) / 16.0);
+				auto localX = int((pos.x() - level->getX()) / level->getUnitWidth());
+				auto localY = int((pos.y() - level->getY()) / level->getUnitHeight());
 
-				int tileIndex = 0;
+				QString displayTile = "";
 				auto tileMap = level->getTilemap(m_selectedTilesLayer);
 				if (tileMap)
 				{
 					auto tile = tileMap->getTile(localX, localY);
-					auto tileLeft = Tilemap::GetTileX(tile);
-					auto tileTop = Tilemap::GetTileY(tile);
 
-					//Gonstruct: Converts tile positions (lef/top) to graal tile index
-					tileIndex = tileLeft / 16 * 512 + tileLeft % 16 + tileTop * 16;
+					displayTile = level->getDisplayTile(tile);
 				}
 
 				if (m_overworld)
 				{
 					QString result;
-					QTextStream(&result) << "Tile: " << tileXPos << ", " << tileYPos << " (" << localX << ", " << localY << "): " << tileIndex;
+					QTextStream(&result) << "Tile: " << int(pos.x() / level->getUnitWidth()) << ", " << int(pos.y() / level->getUnitHeight()) << " (" << localX << ", " << localY << "): " << displayTile;
 					emit setStatusBar(result, 0, 20000);
 				}
 				else {
 					QString result;
-					QTextStream(&result) << "Tile: " << tileXPos << ", " << tileYPos << ": " << tileIndex;
+					QTextStream(&result) << "Tile: " << int(pos.x() / level->getUnitWidth()) << ", " << int(pos.y() / level->getUnitHeight()) << ": " << displayTile;
 					emit setStatusBar(result, 0, 20000);
 				}
 			}
@@ -2563,7 +2560,7 @@ namespace TilesEditor
 					else resetModification = false;
 				}
 
-				m_overworld->saveGMap();
+				m_overworld->saveFile();
 				if(resetModification)
 					setUnmodified();
 			}

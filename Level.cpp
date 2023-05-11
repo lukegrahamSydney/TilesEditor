@@ -44,12 +44,14 @@ namespace TilesEditor
 
     Level::Level(double x, double y, int width, int height, Overworld* overworld, const QString& name)
     {
+        m_loadFail = false;
         m_modified = false;
         m_x = x;
         m_y = y;
         m_width = width;
         m_height = height;
-
+        m_unitWidth = 16;
+        m_unitHeight = 16;
         m_overworld = overworld;
         m_name = name;
 
@@ -91,11 +93,11 @@ namespace TilesEditor
     bool Level::loadFile(ResourceManager& resourceManager)
     {
         if (m_fileName.endsWith(".nw"))
-            return loadNWFile(resourceManager);
+            m_loadFail = !loadNWFile(resourceManager);
 
-        if (m_fileName.endsWith(".lvl"))
-            return loadLVLFile(resourceManager);
-        return false;
+        else if (m_fileName.endsWith(".lvl"))
+            m_loadFail = !loadLVLFile(resourceManager);
+        return !m_loadFail;
     }
 
     bool Level::loadNWFile(ResourceManager& resourceManager)
@@ -103,7 +105,7 @@ namespace TilesEditor
         
         QStringList lines;
         
-        if (resourceManager.getFileSystem().readAllLines(m_fileName, lines))
+        if (resourceManager.getFileSystem().readAllLines(m_fileName, lines) && lines.size() > 0)
         {
             auto& version = lines[0];
 
@@ -129,28 +131,6 @@ namespace TilesEditor
 
 
                 QVector<Tilemap*> tilemaps;
-                auto getOrMakeTilemap = [&](int index) {
-                    Tilemap* retval = nullptr;
-                    if (index == 0)
-                        retval = m_mainTileLayer;
-                    else {
-                        auto it = m_tileLayers.find(index);
-                        if (it != m_tileLayers.end())
-                            retval = it.value();
-                    }
-
-                    if (retval == nullptr)
-                    {
-                        retval = new Tilemap(this, getX(), getY(), 64, 64, index);
-                        retval->clear(Tilemap::MakeInvisibleTile(0));
-                        setTileLayer(index, retval);
-                        return retval;
-                    }
-                    else return retval;
-
-                };
-
-
 
                 auto lineCount = lines.size();
                 for (size_t i = 1; i < lineCount; ++i)
@@ -168,7 +148,7 @@ namespace TilesEditor
                             unsigned int width = words[3].toInt();
                             unsigned int layer = words[4].toInt();
 
-                            auto tilemap = getOrMakeTilemap(layer);
+                            auto tilemap = getOrMakeTilemap(layer, resourceManager);
                             auto& tileData = words[5];
 
                             if (x < 64 && y < 64 && x + width <= 64)
@@ -283,17 +263,11 @@ namespace TilesEditor
                             double x = words[2].toDouble() * 16.0,
                                 y = words[3].toDouble() * 16.0;
 
-                            int width = 0, height = 0;
+                            int width = 48, height = 48;
 
                             for (++i; i < lineCount && lines[i] != "NPCEND"; ++i)
                                 code += lines[i] + "\n";
-
-                            if(image != "")
-                                getImageDimensions(resourceManager, image, &width, &height);
-                            else {
-                                width = height = 48;
-                            }
-
+                            
                             QString className = "";
 
                             auto levelNPC = new LevelNPC(this, x + getX(), y + getY(), width, height);
@@ -324,23 +298,28 @@ namespace TilesEditor
 
             if (jsonRoot)
             {
-                if (QString(cJSON_GetObjectType(jsonRoot)) == "LevelV1_0")
+                auto type = jsonGetChildString(jsonRoot, "type");
+                auto version = jsonGetChildString(jsonRoot, "version");
+
+
+                if (type == "level" && version == "1.0")
                 {
-                   
+
                     auto hcount = jsonGetChildInt(jsonRoot, "hcount", 1);
                     auto vcount = jsonGetChildInt(jsonRoot, "vcount", 1);
 
                     m_width = hcount * 16;
                     m_height = vcount * 16;
 
-                    
+                    m_unitWidth = 1;
+                    m_unitHeight = 1;
                     if (m_entitySpatialMap) {
                         delete m_entitySpatialMap;
                         m_entitySpatialMap = new EntitySpatialGrid<AbstractLevelEntity>(getX(), getY(), getWidth(), getHeight());
                     }
 
 
-                    auto jsonLayers = cJSON_GetObjectItem(jsonRoot, "layers");
+                    auto jsonLayers = cJSON_GetObjectItem(jsonRoot, "tileLayers");
                     if (jsonLayers)
                     {
                         for (int i = 0; i < cJSON_GetArraySize(jsonLayers); ++i)
@@ -351,7 +330,7 @@ namespace TilesEditor
                             {
                                 auto index = jsonGetChildInt(jsonLayer, "index");
 
-                                
+
                                 auto jsonChunks = cJSON_GetObjectItem(jsonLayer, "chunks");
                                 if (jsonChunks)
                                 {
@@ -403,20 +382,19 @@ namespace TilesEditor
 
                             if (jsonSign)
                             {
-                                if (QString(cJSON_GetObjectType(jsonSign)) == "Sign")
-                                {
-                                    auto x = this->getX() + jsonGetChildInt(jsonSign, "x");
-                                    auto y = this->getY() + jsonGetChildInt(jsonSign, "y");
 
-                                    auto width = jsonGetChildInt(jsonSign, "width");
-                                    auto height = jsonGetChildInt(jsonSign, "height");
+                                auto x = this->getX() + jsonGetChildInt(jsonSign, "x");
+                                auto y = this->getY() + jsonGetChildInt(jsonSign, "y");
 
-                                   
-                                    auto sign = new LevelSign(this, x, y, width, height);
-                                    sign->setText(jsonGetChildString(jsonSign, "text"));
+                                auto width = jsonGetChildInt(jsonSign, "width");
+                                auto height = jsonGetChildInt(jsonSign, "height");
 
-                                    addObject(sign);
-                                }
+
+                                auto sign = new LevelSign(this, x, y, width, height);
+                                sign->setText(jsonGetChildString(jsonSign, "text"));
+
+                                addObject(sign);
+
                             }
                         }
                     }
@@ -430,25 +408,54 @@ namespace TilesEditor
 
                             if (jsonLink)
                             {
-                                if (QString(cJSON_GetObjectType(jsonLink)) == "Link")
-                                {
-                                    auto x = this->getX() + jsonGetChildInt(jsonLink, "x");
-                                    auto y = this->getY() + jsonGetChildInt(jsonLink, "y");
 
-                                    auto width = jsonGetChildInt(jsonLink, "width");
-                                    auto height = jsonGetChildInt(jsonLink, "height");
+                                auto x = this->getX() + jsonGetChildInt(jsonLink, "x");
+                                auto y = this->getY() + jsonGetChildInt(jsonLink, "y");
+
+                                auto width = jsonGetChildInt(jsonLink, "width");
+                                auto height = jsonGetChildInt(jsonLink, "height");
 
 
-                                    auto link = new LevelLink(this, x, y, width, height, false);
-                                    link->setNextLevel(jsonGetChildString(jsonLink, "destination"));
-                                    link->setNextX(jsonGetChildString(jsonLink, "destinationX"));
-                                    link->setNextY(jsonGetChildString(jsonLink, "destinationY"));
-                                    addObject(link);
-                                }
+                                auto link = new LevelLink(this, x, y, width, height, false);
+                                link->setNextLevel(jsonGetChildString(jsonLink, "destination"));
+                                link->setNextX(jsonGetChildString(jsonLink, "destinationX"));
+                                link->setNextY(jsonGetChildString(jsonLink, "destinationY"));
+                                addObject(link);
+
                             }
                         }
                     }
+
+                    auto jsonObjects = cJSON_GetObjectItem(jsonRoot, "objects");
+                    if (jsonObjects)
+                    {
+                        for (int i = 0; i < cJSON_GetArraySize(jsonObjects); ++i)
+                        {
+                            auto jsonObject = cJSON_GetArrayItem(jsonObjects, i);
+
+
+                            auto x = this->getX() + jsonGetChildInt(jsonObject, "x");
+                            auto y = this->getY() + jsonGetChildInt(jsonObject, "y");
+                            auto image = jsonGetChildString(jsonObject, "image");
+
+                            int width, height;
+                            if (image != "")
+                                getImageDimensions(resourceManager, image, &width, &height);
+                            else {
+                                width = height = 48;
+                            }
+
+
+                            auto npc = new LevelNPC(this, x, y, width, height);
+                            npc->setImageName(image, resourceManager);
+
+                            npc->setCode(jsonGetChildString(jsonObject, "code"));
+                            addObject(npc);
+
+                        }
+                    }
                     cJSON_Delete(jsonRoot);
+                    m_loaded = true;
                     return true;
                 }
                 cJSON_Delete(jsonRoot);
@@ -578,8 +585,9 @@ namespace TilesEditor
 
     bool Level::saveLVLFile()
     {
-        auto writeJSONChunks = [](cJSON* jsonArray, Tilemap* tilemap)
+        auto getJSONChunks = [](Tilemap* tilemap) -> cJSON*
         {
+            cJSON* retval = nullptr;
             for (int top = 0; top < tilemap->getVCount(); ++top)
             {
                 for (int left = 0; left < tilemap->getHCount(); ++left)
@@ -598,6 +606,8 @@ namespace TilesEditor
                         int width = right - left;
                         if (width > 0)
                         {
+
+
                             auto jsonChunk = cJSON_CreateArray();
                             
                             cJSON_AddItemToArray(jsonChunk, cJSON_CreateNumber(left));
@@ -623,20 +633,27 @@ namespace TilesEditor
 
                             cJSON_AddItemToArray(jsonChunk, cJSON_CreateString(tileData.toLocal8Bit().data()));
 
-                            cJSON_AddItemToArray(jsonArray, jsonChunk);
+                            if (retval == nullptr)
+                                retval = cJSON_CreateArray();
+
+                            cJSON_AddItemToArray(retval, jsonChunk);
                         }
                         left = right;
                     }
                 }
             }
 
+            return retval;
+
         };
 
         QFile file(m_fileName);
         if (file.open(QIODevice::WriteOnly | QIODevice::Text))
         {
-            auto jsonRoot = cJSON_CreateObjectType("LevelV1_0");
+            auto jsonRoot = cJSON_CreateObject();
 
+            cJSON_AddStringToObject(jsonRoot, "type", "level");
+            cJSON_AddStringToObject(jsonRoot, "version", "1.0");
             cJSON_AddNumberToObject(jsonRoot, "hcount", getWidth() / 16);
             cJSON_AddNumberToObject(jsonRoot, "vcount", getHeight() / 16);
 
@@ -646,19 +663,18 @@ namespace TilesEditor
 
                 for (auto layer : m_tileLayers)
                 {
-                    auto jsonLayer = cJSON_CreateObjectType("TileLayer");
-                    cJSON_AddNumberToObject(jsonLayer, "index", layer->getLayerIndex());
+                    auto jsonChunks = getJSONChunks(layer);
+                    if (jsonChunks)
+                    {
+                        auto jsonLayer = cJSON_CreateObject();
+                        cJSON_AddNumberToObject(jsonLayer, "index", layer->getLayerIndex());
+                        cJSON_AddItemToObject(jsonLayer, "chunks", jsonChunks);
 
-
-                    auto jsonChunks = cJSON_CreateArray();
-                    writeJSONChunks(jsonChunks, layer);
-
-                    cJSON_AddItemToObject(jsonLayer, "chunks", jsonChunks);
-
-                    cJSON_AddItemToArray(jsonLayers, jsonLayer);
+                        cJSON_AddItemToArray(jsonLayers, jsonLayer);
+                    }
                 }
 
-                cJSON_AddItemToObject(jsonRoot, "layers", jsonLayers);
+                cJSON_AddItemToObject(jsonRoot, "tileLayers", jsonLayers);
             }
 
             if (m_signs.size() > 0)
@@ -666,7 +682,7 @@ namespace TilesEditor
                 auto jsonSigns = cJSON_CreateArray();
                 for (auto sign : m_signs)
                 {
-                    auto jsonSign = cJSON_CreateObjectType("Sign");
+                    auto jsonSign = cJSON_CreateObject();
 
                     cJSON_AddNumberToObject(jsonSign, "x", int(sign->getX() - this->getX()));
                     cJSON_AddNumberToObject(jsonSign, "y", int(sign->getY() - this->getY()));
@@ -686,7 +702,7 @@ namespace TilesEditor
                 auto jsonLinks = cJSON_CreateArray();
                 for (auto link : m_links)
                 {
-                    auto jsonLink = cJSON_CreateObjectType("Link");
+                    auto jsonLink = cJSON_CreateObject();
 
                     cJSON_AddNumberToObject(jsonLink, "x", int(link->getX() - this->getX()));
                     cJSON_AddNumberToObject(jsonLink, "y", int(link->getY() - this->getY()));
@@ -703,6 +719,29 @@ namespace TilesEditor
                 cJSON_AddItemToObject(jsonRoot, "links", jsonLinks);
             }
 
+            auto jsonObjects = cJSON_CreateArray();
+
+            for (auto obj : m_objects)
+            {
+                if (obj->getEntityType() == LevelEntityType::ENTITY_NPC)
+                {
+                    auto npc = static_cast<LevelNPC*>(obj);
+
+                    auto jsonNPC = cJSON_CreateObject();
+                    if (jsonNPC)
+                    {
+                        cJSON_AddNumberToObject(jsonNPC, "x", int(npc->getX() - this->getX()));
+                        cJSON_AddNumberToObject(jsonNPC, "y", int(npc->getY() - this->getY()));
+
+                        cJSON_AddStringToObject(jsonNPC, "image", npc->getImageName().toLocal8Bit().data());
+                        cJSON_AddStringToObject(jsonNPC, "code", npc->getCode().toLocal8Bit().data());
+
+                        cJSON_AddItemReferenceToArray(jsonObjects, jsonNPC);
+                    }
+                }
+            }
+
+            cJSON_AddItemToObject(jsonRoot, "objects", jsonObjects);
             auto levelText = cJSON_Print(jsonRoot);
             QTextStream stream(&file);
             stream << levelText;
@@ -713,36 +752,7 @@ namespace TilesEditor
         return false;
     }
 
-    void Level::drawTilesLayer(QPainter* painter, const IRectangle& viewRect, Image* tilesetImage, int index, bool fade)
-    {
-        Tilemap* tilemap = nullptr;
-        if (index == 0)
-            tilemap = m_mainTileLayer;
 
-        auto it = m_tileLayers.find(index);
-        if (it != m_tileLayers.end())
-            tilemap = it.value();
-
-        if (tilemap != nullptr)
-        {
-            if (fade)
-            {
-                painter->setOpacity(0.33);
-                tilemap->draw(painter, viewRect, tilesetImage, tilemap->getX(), tilemap->getY());
-                painter->setOpacity(1.0);
-            } else tilemap->draw(painter, viewRect, tilesetImage,  tilemap->getX(), tilemap->getY());
-        }
-    }
-
-    void Level::drawAllTileLayers(QPainter* painter, const IRectangle& viewRect, Image* tilesetImage, int selectedLayer, QMap<int, bool>& visibleLayers)
-    {
-        for (auto layer : m_tileLayers)
-        {
-            if(visibleLayers.find(layer->getLayerIndex()) == visibleLayers.end() || visibleLayers[layer->getLayerIndex()])
-                drawTilesLayer(painter, viewRect, tilesetImage, layer->getLayerIndex(), selectedLayer != layer->getLayerIndex());
-        }
-
-    }
 
 
     AbstractLevelEntity* Level::getObjectAt(double x, double y, LevelEntityType type)
@@ -769,7 +779,7 @@ namespace TilesEditor
 
         if (retval == nullptr)
         {
-            retval = new Tilemap(this, getX(), getY(), 64, 64, index);
+            retval = new Tilemap(this, getX(), getY(), getWidth() / 16, getHeight() / 16, index);
             retval->clear(Tilemap::MakeInvisibleTile(0));
             setTileLayer(index, retval);
             return retval;
@@ -833,6 +843,16 @@ namespace TilesEditor
         if (m_overworld)
             m_overworld->removeEntityFromSpatialMap(object);
         else m_entitySpatialMap->remove(object);
+    }
+
+    QString Level::getDisplayTile(int tile) const
+    {
+        auto tileLeft = Tilemap::GetTileX(tile);
+        auto tileTop = Tilemap::GetTileY(tile);
+
+        //Gonstruct: Converts tile positions (lef/top) to graal tile index
+        auto tileIndex = tileLeft / 16 * 512 + tileLeft % 16 + tileTop * 16;
+        return QString::number(tileIndex);
     }
 
     Rectangle Level::clampEntity(AbstractLevelEntity* entity)

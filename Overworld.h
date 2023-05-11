@@ -20,6 +20,7 @@ namespace TilesEditor
 		QString m_fileName;
 		QString m_tilesetName;
 		QStringList m_gmapFileLines;
+		cJSON* m_json;
 
 		int m_width;
 		int m_height;
@@ -41,8 +42,13 @@ namespace TilesEditor
 		const QString& getTilesetName() const { return m_tilesetName; }
 		void setTilesetName(const QString& name) { m_tilesetName = name; }
 
-		void loadGMap(ResourceManager& resourceManager);
-		bool saveGMap();
+		bool loadFile(ResourceManager& resourceManager);
+		bool loadGMapFile(ResourceManager& resourceManager);
+		bool loadWorldFile(ResourceManager& resourceManager);
+
+		bool saveFile();
+		bool saveGMapFile();
+		bool saveWorldFile();
 
 		void setSize(int width, int height);
 		void searchLevels(const IRectangle& rect, QSet<Level*>& output);

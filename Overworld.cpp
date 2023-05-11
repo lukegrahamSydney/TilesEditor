@@ -6,11 +6,13 @@
 #include "Level.h"
 #include "EntitySpatialGrid.h"
 #include "StringTools.h"
+#include "cJSON/JsonHelper.h"
 
 namespace TilesEditor
 {
 	Overworld::Overworld(const QString& name)
 	{
+		m_json = nullptr;
 		m_name = name;
 		m_entitySpatialMap = nullptr;
 		m_levelMap = nullptr;
@@ -26,6 +28,10 @@ namespace TilesEditor
 
 		if (m_levelMap)
 			delete m_levelMap;
+
+		if (m_json)
+			cJSON_Delete(m_json);
+
 	}
 
 	void Overworld::release(ResourceManager& resourceManager)
@@ -36,11 +42,21 @@ namespace TilesEditor
 	}
 
 
-	void Overworld::loadGMap(ResourceManager& resourceManager)
+	bool Overworld::loadFile(ResourceManager& resourceManager)
+	{
+		if (m_fileName.endsWith(".gmap"))
+			return loadGMapFile(resourceManager);
+
+		else if (m_fileName.endsWith(".world"))
+			return loadWorldFile(resourceManager);
+		return false;
+	}
+
+	bool Overworld::loadGMapFile(ResourceManager& resourceManager)
 	{
 		QStringList lines;
 
-		if (resourceManager.getFileSystem().readAllLines(m_fileName, lines))
+		if (resourceManager.getFileSystem().readAllLines(m_fileName, lines) && lines.size() > 0)
 		{
 		
 			int width = 0,
@@ -110,10 +126,108 @@ namespace TilesEditor
 					}
 				}
 			}
+			return true;
 		}
+		return false;
 	}
 
-	bool Overworld::saveGMap()
+	bool Overworld::loadWorldFile(ResourceManager& resourceManager)
+	{
+		if (m_json) {
+			cJSON_Delete(m_json);
+			m_json = nullptr;
+		}
+
+		QString text = resourceManager.getFileSystem().readAllToString(m_fileName);
+		if (!text.isEmpty())
+		{
+			m_json = cJSON_Parse(text.toLocal8Bit().data());
+
+			if (m_json)
+			{
+				auto type = jsonGetChildString(m_json, "type");
+				auto version = jsonGetChildString(m_json, "version");
+
+
+				if (type == "overworld" && version == "1.0")
+				{
+
+					auto width = jsonGetChildInt(m_json, "width", 1) * 16;
+					auto height = jsonGetChildInt(m_json, "height", 1) * 16;
+
+					auto defaultLevelWidth = jsonGetChildInt(m_json, "defaultLevelWidth", 1) * 16;
+					auto defaultLevelHeight = jsonGetChildInt(m_json, "defaultLevelHeight", 1) * 16;
+
+					setSize(width, height);
+
+					auto jsonLevels = cJSON_GetObjectItem(m_json, "levels");
+					if (jsonLevels)
+					{
+						auto nextLevelX = 0.0;
+						auto nextLevelY = 0.0;
+
+						for (auto row = 0; row < cJSON_GetArraySize(jsonLevels); ++row)
+						{
+							auto jsonRow = cJSON_GetArrayItem(jsonLevels, row);
+
+							if (jsonRow)
+							{
+								for (auto column = 0; column < cJSON_GetArraySize(jsonRow); ++column)
+								{
+									auto jsonItem = cJSON_GetArrayItem(jsonRow, column);
+
+									if (jsonItem->type == cJSON_String)
+									{
+										auto levelName = QString(jsonItem->valuestring);
+
+										auto levelWidth = defaultLevelWidth;
+										auto levelHeight = defaultLevelHeight;
+
+
+										auto level = new Level(nextLevelX, nextLevelY, levelWidth, levelHeight, this, levelName);
+										m_levelMap->add(level);
+										m_levelNames[levelName] = level;
+										nextLevelX += levelWidth;
+									}
+									else if (jsonItem->type == cJSON_Object)
+									{
+										auto levelName = jsonGetChildString(jsonItem, "name");
+										auto levelWidth = jsonGetChildInt(jsonItem, "width") * 16;
+										auto levelHeight = jsonGetChildInt(jsonItem, "height") * 16;
+										auto level = new Level(nextLevelX, nextLevelY, levelWidth, levelHeight, this, levelName);
+										m_levelMap->add(level);
+										m_levelNames[levelName] = level;
+										nextLevelX += levelWidth;
+									}
+								}
+								nextLevelX = 0.0;
+								nextLevelY += defaultLevelHeight;
+							}
+						}
+					}
+
+					return true;
+				}
+				cJSON_Delete(m_json);
+				m_json = nullptr;
+			}
+
+
+		}
+		return false;
+	}
+
+	bool Overworld::saveFile()
+	{
+		if (m_fileName.endsWith(".gmap"))
+			return saveGMapFile();
+
+		else if (m_fileName.endsWith(".world"))
+			return saveWorldFile();
+		return false;
+	}
+
+	bool Overworld::saveGMapFile()
 	{
 		QFile file(m_fileName);
 		if (file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -131,6 +245,27 @@ namespace TilesEditor
 				stream << "TILESET " << m_tilesetName << Qt::endl;
 		}
 
+		return false;
+	}
+
+	bool Overworld::saveWorldFile()
+	{
+		if (m_json)
+		{
+			QFile file(m_fileName);
+			if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+			{
+				cJSON_DeleteItemFromObject(m_json, "tileset");
+				if (!m_tilesetName.isEmpty())
+					cJSON_AddStringToObject(m_json, "tileset", m_tilesetName.toLocal8Bit().data());
+
+				auto levelText = cJSON_Print(m_json);
+				QTextStream stream(&file);
+				stream << levelText;
+
+				return true;
+			}
+		}
 		return false;
 	}
 
