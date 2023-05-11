@@ -106,6 +106,7 @@
     <ClCompile Include="EditLinkDialog.cpp" />
     <ClCompile Include="EditorTabWidget.cpp" />
     <ClCompile Include="EditSignsDialog.cpp" />
+    <ClCompile Include="EditTilesetDialog.cpp" />
     <ClCompile Include="GraphicsView.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImageDimensions.cpp" />
@@ -148,6 +149,7 @@
     <QtUic Include="EditLinkDialog.ui" />
     <QtUic Include="EditorTabWidget.ui" />
     <QtUic Include="EditSignsDialog.ui" />
+    <QtUic Include="EditTilesetDialog.ui" />
     <QtUic Include="ListLinksDialog.ui" />
     <QtUic Include="MainWindow.ui" />
     <QtMoc Include="MainWindow.h" />
@@ -172,6 +174,7 @@
     <QtMoc Include="EditExternalNPC.h" />
     <ClInclude Include="cJSON\cJSON.h" />
     <ClInclude Include="cJSON\JsonHelper.h" />
+    <QtMoc Include="EditTilesetDialog.h" />
     <ClInclude Include="LevelCommands.h" />
     <ClInclude Include="LevelLink.h" />
     <ClInclude Include="LevelNPC.h" />

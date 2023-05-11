@@ -11,30 +11,32 @@
 namespace TilesEditor
 {
 	class ResourceManager;
-	class Tileset :
-		public Resource
+	class Tileset
 	{
 	private:
 		QString m_imageName;
 
-		Image* m_image;
 		int m_hcount;
 		int m_vcount;
 
 		QVector<int> m_tileTypes;
 
 	public:
-		Tileset(const QString& resName);
-
-		void release(ResourceManager& resourceManager);
-
-		ResourceType getResourceType() const { return ResourceType::RESOURCE_TILESET; }
-
+		Tileset();
 		void readFromJSONNode(cJSON* node);
 
+		int getHCount() const { return m_hcount; }
+		int getVCount() const { return m_vcount; }
 		int getTileType(size_t index) const;
 		int getTileType(int left, int top) const;
+
+		void setTileType(int left, int top, int type);
+
 		const QString& getImageName() const { return m_imageName; }
+		void setImageName(const QString& name) { m_imageName = name; }
+		void loadFromFile(const QString& fileName);
+		void saveToFile(const QString& fileName);
+		cJSON* serializeJSON();
 
 		static Tileset* loadTileset(const QString& resName, const QString& fileName, ResourceManager& resourceManager);
 	};

@@ -25,6 +25,9 @@ namespace TilesEditor
 		int m_width;
 		int m_height;
 
+		int m_unitWidth;
+		int m_unitHeight;
+
 		IEntitySpatialMap<Level>* m_levelMap;
 		IEntitySpatialMap<AbstractLevelEntity>* m_entitySpatialMap;
 		QMap<QString, Level*> m_levelNames;
@@ -63,6 +66,12 @@ namespace TilesEditor
 		bool containsLevel(const QString& name) const;
 		int getWidth() const { return m_width; }
 		int getHeight() const { return m_height; }
+
+		int getUnitWidth() const { return m_unitWidth; }
+		int getUnitHeight() const { return m_unitHeight; }
+
+		int getTileWidth() const { return 16; }
+		int getTileHeight() const { return 16; }
 		IEntitySpatialMap<AbstractLevelEntity>* getEntitySpatialMap() { return m_entitySpatialMap; }
 		Level* getLevel(const QString& levelName);
 		Level* getLevelAt(double x, double y);

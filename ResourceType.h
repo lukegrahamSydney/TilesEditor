@@ -4,8 +4,7 @@
 namespace TilesEditor
 {
 	enum ResourceType {
-		RESOURCE_IMAGE,
-		RESOURCE_TILESET
+		RESOURCE_IMAGE
 	};
 };
 

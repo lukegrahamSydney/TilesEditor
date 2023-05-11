@@ -16,6 +16,8 @@ namespace TilesEditor
 		m_name = name;
 		m_entitySpatialMap = nullptr;
 		m_levelMap = nullptr;
+
+		m_unitWidth = m_unitHeight = 16;
 	}
 
 	Overworld::~Overworld()
@@ -151,7 +153,7 @@ namespace TilesEditor
 
 				if (type == "overworld" && version == "1.0")
 				{
-
+					m_unitWidth = m_unitHeight = 1;
 					auto width = jsonGetChildInt(m_json, "width", 1) * 16;
 					auto height = jsonGetChildInt(m_json, "height", 1) * 16;
 
@@ -262,6 +264,7 @@ namespace TilesEditor
 				auto levelText = cJSON_Print(m_json);
 				QTextStream stream(&file);
 				stream << levelText;
+				free(levelText);
 
 				return true;
 			}

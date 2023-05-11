@@ -88,8 +88,10 @@ namespace TilesEditor
 		int getWidth() const { return m_width; }
 		int getHeight() const { return m_height; }
 
-		double getUnitWidth() const { return m_unitWidth; }
-		double getUnitHeight() const { return m_unitHeight; }
+		int getUnitWidth() const { return m_unitWidth; }
+		int getUnitHeight() const { return m_unitHeight; }
+		int getTileWidth() const { return 16; }
+		int getTileHeight() const { return 16; }
 
 		AbstractLevelEntity* getObjectAt(double x, double y, LevelEntityType type);
 		void setModified(bool value) { m_modified = value; }

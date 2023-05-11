@@ -117,7 +117,7 @@ namespace TilesEditor
             stream << tileObjectsText;
         }
 
-        delete tileObjectsText;
+        free(tileObjectsText);
         cJSON_Delete(jsonRoot);
 
        // event->ignore();

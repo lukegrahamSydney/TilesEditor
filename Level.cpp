@@ -746,6 +746,7 @@ namespace TilesEditor
             QTextStream stream(&file);
             stream << levelText;
 
+            free(levelText);
             cJSON_Delete(jsonRoot);
             return true;
         }

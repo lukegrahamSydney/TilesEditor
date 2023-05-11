@@ -1,4 +1,6 @@
 #include <QStringList>
+#include <QFile>
+#include <QTextStream>
 #include "Tileset.h"
 #include "StringTools.h"
 #include "ResourceManager.h"
@@ -6,21 +8,10 @@
 
 namespace TilesEditor
 {
-	Tileset::Tileset(const QString& resName) :
-		Resource(resName)
+	Tileset::Tileset()
 	{
-		m_image = nullptr;
 		m_hcount = m_vcount = 0;
 	}
-
-	void Tileset::release(ResourceManager& resourceManager)
-	{
-		if (m_image != nullptr)
-			resourceManager.freeResource(m_image);
-	}
-
-
-
 
 
 	void Tileset::readFromJSONNode(cJSON* node)
@@ -56,17 +47,81 @@ namespace TilesEditor
 		return getTileType(index);
 	}
 
+	void Tileset::setTileType(int left, int top, int type)
+	{
+		size_t index = (top * m_hcount) + left;
+		if (index < m_tileTypes.size())
+			m_tileTypes[index] = type;
+	}
+
+	void Tileset::loadFromFile(const QString& fileName)
+	{
+		QFile f(fileName);
+		if (f.open(QFile::ReadOnly | QFile::Text))
+		{
+			auto text = QTextStream(&f).readAll();
+
+			auto cJSON = cJSON_Parse(text.toLocal8Bit().data());
+			if (cJSON != nullptr)
+			{
+				readFromJSONNode(cJSON);
+
+				cJSON_Delete(cJSON);
+
+			}
+		}
+	}
+
+	void Tileset::saveToFile(const QString& fileName)
+	{
+		QFile f(fileName);
+		if (f.open(QFile::WriteOnly | QFile::Text))
+		{
+			auto json = serializeJSON();
+
+			if (json)
+			{
+				auto text = cJSON_Print(json);
+				QTextStream(&f) << text;
+
+				free(text);
+				cJSON_Delete(json);
+			}
+
+		}
+	}
+
+	cJSON* Tileset::serializeJSON()
+	{
+		auto jsonRoot = cJSON_CreateObject();
+
+		cJSON_AddStringToObject(jsonRoot, "defaultImage", m_imageName.toLocal8Bit().data());
+		cJSON_AddNumberToObject(jsonRoot, "hcount", m_hcount);
+		cJSON_AddNumberToObject(jsonRoot, "vcount", m_vcount);
+
+		QStringList values;
+
+		auto count = m_hcount * m_vcount;
+		for (auto i = 0; i < count; ++i)
+		{
+			auto value = getTileType(i);
+			values.push_back(QString::number(value, 16));
+		}
+
+		cJSON_AddStringToObject(jsonRoot, "defaultTileTypes", values.join(" ").toLocal8Bit().data());
+		return jsonRoot;
+	}
+
 
 	Tileset* Tileset::loadTileset(const QString& resName, const QString& fileName, ResourceManager& resourceManager)
 	{
-		
 		auto text = resourceManager.getFileSystem().readAllToString(fileName);
 		QByteArray ba = text.toLocal8Bit();
 
 		auto cJSON = cJSON_Parse(ba.data());
 		if (cJSON != nullptr)
 		{
-			auto tileset = new Tileset(resName);
+			auto tileset = new Tileset();
 			tileset->readFromJSONNode(cJSON);
 
 			cJSON_Delete(cJSON);

@@ -19,6 +19,7 @@
 #include "EditSignsDialog.h"
 #include "ObjectListModel.h"
 #include "LevelCommands.h"
+#include "EditTilesetDialog.h"
 
 namespace TilesEditor
 {
@@ -30,6 +31,7 @@ namespace TilesEditor
 
 		m_font1.setFamily("Arial");
 		m_font1.setPointSizeF(12);
+
 		//m_useFillPattern = false;
 		m_tilesetsContainer = new QWidget();
 		m_tileObjectsContainer = new QWidget();
@@ -86,6 +88,7 @@ namespace TilesEditor
 		connect(ui_tilesetsClass.deleteButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetDeleteClicked);
 		connect(ui_tilesetsClass.refreshButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetRefreshClicked);
 		connect(ui_tilesetsClass.newButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetNewClicked);
+		connect(ui_tilesetsClass.editButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetEditClicked);
 
 		connect(ui_tileObjectsClass.graphicsView, &GraphicsView::renderView, this, &EditorTabWidget::renderTileObjects);
 		connect(ui_tileObjectsClass.graphicsView, &GraphicsView::mousePress, this, &EditorTabWidget::tileObjectsMousePress);
@@ -551,15 +554,34 @@ namespace TilesEditor
 
 	void EditorTabWidget::setTileset(const QString& name)
 	{
+		QString imageName = "";
+		if (name.indexOf(".") == -1)
+		{
+			QString fileName;
+			if (m_resourceManager.locateFile(name + ".json", &fileName))
+			{
+				m_tilesetFileName = fileName;
+				m_tileset.loadFromFile(m_tilesetFileName);
+
+				imageName = m_tileset.getImageName();
+
+				ui_tilesetsClass.editButton->setEnabled(true);
+			}
+		}
+		else {
+			imageName = name;
+			ui_tilesetsClass.editButton->setEnabled(false);
+		}
+
 		if (m_tilesetImage != nullptr)
 		{
-			if (m_tilesetImage->getName() == name)
+			if (m_tilesetImage->getName() == imageName)
 				return;
 
 			m_resourceManager.freeResource(m_tilesetImage);
 		}
 
-		m_tilesetImage = static_cast<Image*>(m_resourceManager.loadResource(name, ResourceType::RESOURCE_IMAGE));
+		m_tilesetImage = static_cast<Image*>(m_resourceManager.loadResource(imageName, ResourceType::RESOURCE_IMAGE));
 
 		if (m_tilesetImage)
 		{
@@ -1452,6 +1474,13 @@ namespace TilesEditor
 
 	}
 
+	void EditorTabWidget::tilesetEditClicked(bool checked)
+	{
+	
+		EditTilesetDialog dialog(m_tilesetFileName, m_resourceManager);
+		dialog.exec();
+	}
+
 	void EditorTabWidget::tileObjectsMousePress(QMouseEvent* event)
 	{
 		auto tileObject = getCurrentTileObject();
@@ -1735,6 +1764,7 @@ namespace TilesEditor
 	{
 		auto pos = m_graphicsView->mapToScene(event->pos());
 		
+
 		auto tileXPos = int(pos.x() / 16.0);
 		auto tileYPos = int(pos.y() / 16.0);
 
@@ -1762,27 +1792,34 @@ namespace TilesEditor
 			auto level = getLevelAt(pos.x(), pos.y());
 			if (level)
 			{
-				auto localX = int((pos.x() - level->getX()) / level->getUnitWidth());
-				auto localY = int((pos.y() - level->getY()) / level->getUnitHeight());
+				auto tilemapX = int((pos.x() - level->getX()) / level->getTileWidth());
+				auto tilemapY = int((pos.y() - level->getY()) / level->getTileHeight());
 
 				QString displayTile = "";
 				auto tileMap = level->getTilemap(m_selectedTilesLayer);
 				if (tileMap)
 				{
-					auto tile = tileMap->getTile(localX, localY);
+					auto tile = tileMap->getTile(tilemapX, tilemapY);
 
-					displayTile = level->getDisplayTile(tile);
+					if (!Tilemap::IsInvisibleTile(tile))
+						displayTile = level->getDisplayTile(tile);
+					else displayTile = "";
 				}
+
+				auto tileX = (std::floor(pos.x() / level->getTileWidth()) * level->getTileWidth()) / getUnitWidth();
+				auto tileY = (std::floor(pos.y() / level->getTileHeight()) * level->getTileHeight()) / getUnitHeight();
+				auto localTileX = (std::floor((pos.x() - level->getX()) / level->getTileWidth()) * level->getTileWidth()) / getUnitWidth();
+				auto localTileY = (std::floor((pos.y() - level->getY()) / level->getTileHeight()) * level->getTileHeight()) / getUnitHeight();
 
 				if (m_overworld)
 				{
 					QString result;
-					QTextStream(&result) << "Tile: " << int(pos.x() / level->getUnitWidth()) << ", " << int(pos.y() / level->getUnitHeight()) << " (" << localX << ", " << localY << "): " << displayTile;
+					QTextStream(&result) << "Mouse: " << tileX << ", " << tileY << " (" << localTileX << ", " << localTileY << ") Tile: " << displayTile;
 					emit setStatusBar(result, 0, 20000);
 				}
 				else {
 					QString result;
-					QTextStream(&result) << "Tile: " << int(pos.x() / level->getUnitWidth()) << ", " << int(pos.y() / level->getUnitHeight()) << ": " << displayTile;
+					QTextStream(&result) << "Mouse: " << tileX << ", " << tileY << " Tile: " << displayTile;
 					emit setStatusBar(result, 0, 20000);
 				}
 			}
@@ -2153,6 +2190,26 @@ namespace TilesEditor
 			}
 		}
 		
+	}
+
+	int EditorTabWidget::getUnitWidth() const
+	{
+		if (m_overworld)
+			return m_overworld->getUnitWidth();
+		else if (m_level)
+			return m_level->getUnitWidth();
+
+		return 1;
+	}
+
+	int EditorTabWidget::getUnitHeight() const
+	{
+		if (m_overworld)
+			return m_overworld->getUnitHeight();
+		else if (m_level)
+			return m_level->getUnitHeight();
+
+		return 1;
 	}
 
 	void EditorTabWidget::graphicsMouseWheel(QWheelEvent* event)
