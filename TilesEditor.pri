@@ -46,6 +46,7 @@ HEADERS += ./AbstractFileSystem.h \
     ./EditAnonymousNPC.h \
     ./EditLinkDialog.h \
     ./EditSignsDialog.h \
+    ./EditTilesetDialog.h \
     ./CustomPaintWidget.h \
     ./ListLinksDialog.h \
     ./SaveOverworldDialog.h \
@@ -73,6 +74,7 @@ SOURCES += ./AboutDialog.cpp \
     ./EditLinkDialog.cpp \
     ./EditorTabWidget.cpp \
     ./EditSignsDialog.cpp \
+    ./EditTilesetDialog.cpp \
     ./GraphicsView.cpp \
     ./Image.cpp \
     ./ImageDimensions.cpp \

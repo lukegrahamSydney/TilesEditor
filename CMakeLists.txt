@@ -23,6 +23,7 @@ qt_add_executable(TilesEditor WIN32 MACOSX_BUNDLE
     EditExternalNPC.cpp EditExternalNPC.h EditExternalNPC.ui
     EditLinkDialog.cpp EditLinkDialog.h EditLinkDialog.ui
     EditSignsDialog.cpp EditSignsDialog.h EditSignsDialog.ui
+    EditTilesetDialog.cpp EditTilesetDialog.h
     EditorTabWidget.cpp EditorTabWidget.h EditorTabWidget.ui
     EntitySpatialGrid.cpp EntitySpatialGrid.h
     GraphicsView.cpp GraphicsView.h
