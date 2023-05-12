@@ -127,6 +127,8 @@ set(MainWindow_resource_files
     "icons/fugue/information-octagon.png"
     "icons/fugue/layers.png"
     "icons/fugue/magnifier.png"
+    "icons/fugue/paint-can--pencil.png"
+    "icons/fugue/paint-can--plus.png"
     "icons/fugue/paint-can.png"
     "icons/fugue/scissors.png"
     "icons/fugue/script--pencil.png"
