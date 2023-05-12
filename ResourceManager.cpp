@@ -150,8 +150,6 @@ namespace TilesEditor
 			{
 				if (type == ResourceType::RESOURCE_IMAGE)
 					res = Image::load(resourceName, fileName);
-				else if (type == ResourceType::RESOURCE_TILESET)
-					res = Tileset::loadTileset(resourceName, fileName, *this);
 
 				if (res == nullptr)
 				{

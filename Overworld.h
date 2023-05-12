@@ -20,9 +20,13 @@ namespace TilesEditor
 		QString m_fileName;
 		QString m_tilesetName;
 		QStringList m_gmapFileLines;
+		cJSON* m_json;
 
 		int m_width;
 		int m_height;
+
+		int m_unitWidth;
+		int m_unitHeight;
 
 		IEntitySpatialMap<Level>* m_levelMap;
 		IEntitySpatialMap<AbstractLevelEntity>* m_entitySpatialMap;
@@ -41,8 +45,13 @@ namespace TilesEditor
 		const QString& getTilesetName() const { return m_tilesetName; }
 		void setTilesetName(const QString& name) { m_tilesetName = name; }
 
-		void loadGMap(ResourceManager& resourceManager);
-		bool saveGMap();
+		bool loadFile(ResourceManager& resourceManager);
+		bool loadGMapFile(ResourceManager& resourceManager);
+		bool loadWorldFile(ResourceManager& resourceManager);
+
+		bool saveFile();
+		bool saveGMapFile();
+		bool saveWorldFile();
 
 		void setSize(int width, int height);
 		void searchLevels(const IRectangle& rect, QSet<Level*>& output);
@@ -57,6 +66,12 @@ namespace TilesEditor
 		bool containsLevel(const QString& name) const;
 		int getWidth() const { return m_width; }
 		int getHeight() const { return m_height; }
+
+		int getUnitWidth() const { return m_unitWidth; }
+		int getUnitHeight() const { return m_unitHeight; }
+
+		int getTileWidth() const { return 16; }
+		int getTileHeight() const { return 16; }
 		IEntitySpatialMap<AbstractLevelEntity>* getEntitySpatialMap() { return m_entitySpatialMap; }
 		Level* getLevel(const QString& levelName);
 		Level* getLevelAt(double x, double y);

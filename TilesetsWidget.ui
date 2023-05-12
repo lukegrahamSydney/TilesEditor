@@ -174,6 +174,26 @@
        </spacer>
       </item>
       <item>
+       <widget class="QToolButton" name="editButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="toolTip">
+         <string>Edit Tileset</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="MainWindow.qrc">
+          <normaloff>:/MainWindow/icons/fugue/pencil.png</normaloff>:/MainWindow/icons/fugue/pencil.png</iconset>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="TilesEditor::CustomPaintWidget" name="tileIcon" native="true">
         <property name="minimumSize">
          <size>

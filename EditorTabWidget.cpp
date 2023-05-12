@@ -19,6 +19,7 @@
 #include "EditSignsDialog.h"
 #include "ObjectListModel.h"
 #include "LevelCommands.h"
+#include "EditTilesetDialog.h"
 
 namespace TilesEditor
 {
@@ -30,6 +31,7 @@ namespace TilesEditor
 
 		m_font1.setFamily("Arial");
 		m_font1.setPointSizeF(12);
+
 		//m_useFillPattern = false;
 		m_tilesetsContainer = new QWidget();
 		m_tileObjectsContainer = new QWidget();
@@ -42,9 +44,9 @@ namespace TilesEditor
 		m_modified = false;
 		m_resourceManager.mergeSearchDirectories(resourceManager);
 
-		QPixmap a(":/MainWindow/icons/npc.png");
+		//QPixmap a(":/MainWindow/icons/npc.png");
 
-		m_resourceManager.addPersistantResource(new Image("__blankNPC", a));
+		//m_resourceManager.addPersistantResource(new Image("__blankNPC", a));
 
 		m_eyeOpen = QPixmap(":/MainWindow/icons/fugue/eye.png");
 		m_eyeClosed = QPixmap(":/MainWindow/icons/fugue/eye-close.png");
@@ -86,6 +88,7 @@ namespace TilesEditor
 		connect(ui_tilesetsClass.deleteButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetDeleteClicked);
 		connect(ui_tilesetsClass.refreshButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetRefreshClicked);
 		connect(ui_tilesetsClass.newButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetNewClicked);
+		connect(ui_tilesetsClass.editButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetEditClicked);
 
 		connect(ui_tileObjectsClass.graphicsView, &GraphicsView::renderView, this, &EditorTabWidget::renderTileObjects);
 		connect(ui_tileObjectsClass.graphicsView, &GraphicsView::mousePress, this, &EditorTabWidget::tileObjectsMousePress);
@@ -551,15 +554,34 @@ namespace TilesEditor
 
 	void EditorTabWidget::setTileset(const QString& name)
 	{
+		QString imageName = "";
+		if (name.indexOf(".") == -1)
+		{
+			QString fileName;
+			if (m_resourceManager.locateFile(name + ".json", &fileName))
+			{
+				m_tilesetFileName = fileName;
+				m_tileset.loadFromFile(m_tilesetFileName);
+
+				imageName = m_tileset.getImageName();
+
+				ui_tilesetsClass.editButton->setEnabled(true);
+			}
+		}
+		else {
+			imageName = name;
+			ui_tilesetsClass.editButton->setEnabled(false);
+		}
+
 		if (m_tilesetImage != nullptr)
 		{
-			if (m_tilesetImage->getName() == name)
+			if (m_tilesetImage->getName() == imageName)
 				return;
 
 			m_resourceManager.freeResource(m_tilesetImage);
 		}
 
-		m_tilesetImage = static_cast<Image*>(m_resourceManager.loadResource(name, ResourceType::RESOURCE_IMAGE));
+		m_tilesetImage = static_cast<Image*>(m_resourceManager.loadResource(imageName, ResourceType::RESOURCE_IMAGE));
 
 		if (m_tilesetImage)
 		{
@@ -1085,18 +1107,18 @@ namespace TilesEditor
 
 	void EditorTabWidget::loadLevel(Level* level)
 	{
-		if (!level->getLoaded())
+		if (!level->getLoaded() && !level->getLoadFail())
 		{
 			QString fullPath;
 			if (m_resourceManager.locateFile(level->getName(), &fullPath))
 			{
 				level->setFileName(fullPath);
-				level->loadNWFile(m_resourceManager);
+				level->loadFile(m_resourceManager);
 			}
 		}
 	}
 
-	void EditorTabWidget::loadGMap(const QString& name, const QString & fileName)
+	void EditorTabWidget::loadOverworld(const QString& name, const QString & fileName)
 	{
 		m_overworld = new Overworld(name);
 		m_overworld->setFileName(fileName);
@@ -1106,7 +1128,7 @@ namespace TilesEditor
 		m_resourceManager.addSearchDirRecursive(fi.absolutePath());
 		m_resourceManager.setRootDir(fi.absolutePath());
 
-		m_overworld->loadGMap(m_resourceManager);
+		m_overworld->loadFile(m_resourceManager);
 		
 		if (!m_overworld->getTilesetName().isEmpty())
 		{
@@ -1452,6 +1474,13 @@ namespace TilesEditor
 
 	}
 
+	void EditorTabWidget::tilesetEditClicked(bool checked)
+	{
+	
+		EditTilesetDialog dialog(m_tilesetFileName, m_resourceManager);
+		dialog.exec();
+	}
+
 	void EditorTabWidget::tileObjectsMousePress(QMouseEvent* event)
 	{
 		auto tileObject = getCurrentTileObject();
@@ -1735,6 +1764,7 @@ namespace TilesEditor
 	{
 		auto pos = m_graphicsView->mapToScene(event->pos());
 		
+
 		auto tileXPos = int(pos.x() / 16.0);
 		auto tileYPos = int(pos.y() / 16.0);
 
@@ -1762,30 +1792,34 @@ namespace TilesEditor
 			auto level = getLevelAt(pos.x(), pos.y());
 			if (level)
 			{
-				auto localX = int((pos.x() - level->getX()) / 16.0);
-				auto localY = int((pos.y() - level->getY()) / 16.0);
+				auto tilemapX = int((pos.x() - level->getX()) / level->getTileWidth());
+				auto tilemapY = int((pos.y() - level->getY()) / level->getTileHeight());
 
-				int tileIndex = 0;
+				QString displayTile = "";
 				auto tileMap = level->getTilemap(m_selectedTilesLayer);
 				if (tileMap)
 				{
-					auto tile = tileMap->getTile(localX, localY);
-					auto tileLeft = Tilemap::GetTileX(tile);
-					auto tileTop = Tilemap::GetTileY(tile);
+					auto tile = tileMap->getTile(tilemapX, tilemapY);
 
-					//Gonstruct: Converts tile positions (lef/top) to graal tile index
-					tileIndex = tileLeft / 16 * 512 + tileLeft % 16 + tileTop * 16;
+					if (!Tilemap::IsInvisibleTile(tile))
+						displayTile = level->getDisplayTile(tile);
+					else displayTile = "";
 				}
+
+				auto tileX = (std::floor(pos.x() / level->getTileWidth()) * level->getTileWidth()) / getUnitWidth();
+				auto tileY = (std::floor(pos.y() / level->getTileHeight()) * level->getTileHeight()) / getUnitHeight();
+				auto localTileX = (std::floor((pos.x() - level->getX()) / level->getTileWidth()) * level->getTileWidth()) / getUnitWidth();
+				auto localTileY = (std::floor((pos.y() - level->getY()) / level->getTileHeight()) * level->getTileHeight()) / getUnitHeight();
 
 				if (m_overworld)
 				{
 					QString result;
-					QTextStream(&result) << "Tile: " << tileXPos << ", " << tileYPos << " (" << localX << ", " << localY << "): " << tileIndex;
+					QTextStream(&result) << "Mouse: " << tileX << ", " << tileY << " (" << localTileX << ", " << localTileY << ") Tile: " << displayTile;
 					emit setStatusBar(result, 0, 20000);
 				}
 				else {
 					QString result;
-					QTextStream(&result) << "Tile: " << tileXPos << ", " << tileYPos << ": " << tileIndex;
+					QTextStream(&result) << "Mouse: " << tileX << ", " << tileY << " Tile: " << displayTile;
 					emit setStatusBar(result, 0, 20000);
 				}
 			}
@@ -2156,6 +2190,26 @@ namespace TilesEditor
 			}
 		}
 		
+	}
+
+	int EditorTabWidget::getUnitWidth() const
+	{
+		if (m_overworld)
+			return m_overworld->getUnitWidth();
+		else if (m_level)
+			return m_level->getUnitWidth();
+
+		return 1;
+	}
+
+	int EditorTabWidget::getUnitHeight() const
+	{
+		if (m_overworld)
+			return m_overworld->getUnitHeight();
+		else if (m_level)
+			return m_level->getUnitHeight();
+
+		return 1;
 	}
 
 	void EditorTabWidget::graphicsMouseWheel(QWheelEvent* event)
@@ -2563,7 +2617,7 @@ namespace TilesEditor
 					else resetModification = false;
 				}
 
-				m_overworld->saveGMap();
+				m_overworld->saveFile();
 				if(resetModification)
 					setUnmodified();
 			}

@@ -201,7 +201,7 @@ namespace TilesEditor
         auto buffer = cJSON_Print(jsonObject);
 
         clipboard->setText(QString(buffer));
-        delete buffer;
+        free(buffer);
         cJSON_Delete(jsonObject);
 
         return true;

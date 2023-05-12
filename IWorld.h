@@ -36,6 +36,9 @@ namespace TilesEditor
 		virtual void updateMovedEntity(AbstractLevelEntity* entity) = 0;
 		virtual QList<Level*> getModifiedLevels() = 0;
 
+		virtual int getUnitWidth() const = 0;
+		virtual int getUnitHeight() const = 0;
+
 		virtual void getTiles(double x, double y, int layer, Tilemap* output) = 0;
 		virtual void putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible) = 0;
 		virtual void deleteTiles(double x, double y, int layer, int hcount, int vcount, int replacementTile) = 0;

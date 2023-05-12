@@ -10,7 +10,7 @@ namespace TilesEditor
 	cJSON* TileObject::serializeJSON()
 	{
 		static const QString base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-		auto jsonObject = cJSON_CreateObjectType("tileObject");
+		auto jsonObject = cJSON_CreateObject();
 
 		cJSON_AddStringToObject(jsonObject, "name", getName().toLocal8Bit().data());
 		cJSON_AddNumberToObject(jsonObject, "hcount", this->getHCount());

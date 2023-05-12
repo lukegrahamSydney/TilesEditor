@@ -39,12 +39,14 @@ namespace TilesEditor
 		QString m_tilesetName;
 
 		bool m_loaded;
-
+		bool m_loadFail;
 		double m_x;
 		double m_y;
 		int m_width;
 		int m_height;
 
+		int m_unitWidth;
+		int m_unitHeight;
 		Tilemap* m_mainTileLayer;
 		QMap<int, Tilemap*>	m_tileLayers;
 		QSet<AbstractLevelEntity*>	m_objects;
@@ -53,7 +55,6 @@ namespace TilesEditor
 
 		IEntitySpatialMap<AbstractLevelEntity>* m_entitySpatialMap;
 
-		void drawTilesLayer(QPainter* painter, const IRectangle& viewRect, Image* tilesetImage, int index, bool fade);
 
 	public:
 
@@ -80,14 +81,17 @@ namespace TilesEditor
 
 		bool getLoaded() const { return m_loaded; }
 		void setLoaded(bool val) { m_loaded = val; }
+
+		bool getLoadFail() const { return m_loadFail; }
 		double getX() const { return m_x; }
 		double getY() const { return m_y; }
 		int getWidth() const { return m_width; }
 		int getHeight() const { return m_height; }
 
-		double getUnitWidth() const { return 16.0; }
-		double getUnitHeight() const { return 16.0; }
-		void drawAllTileLayers(QPainter* painter, const IRectangle& viewRect, Image* tilesetImage, int selectedLayer, QMap<int, bool>& visibleLayers);
+		int getUnitWidth() const { return m_unitWidth; }
+		int getUnitHeight() const { return m_unitHeight; }
+		int getTileWidth() const { return 16; }
+		int getTileHeight() const { return 16; }
 
 		AbstractLevelEntity* getObjectAt(double x, double y, LevelEntityType type);
 		void setModified(bool value) { m_modified = value; }
@@ -106,6 +110,7 @@ namespace TilesEditor
 		void removeObject(AbstractLevelEntity* object);
 		void removeEntityFromSpatialMap(AbstractLevelEntity* object);
 
+		QString getDisplayTile(int tile) const;
 		Rectangle clampEntity(AbstractLevelEntity* entity);
 		void setTileLayer(int index, Tilemap* tilemap);
 

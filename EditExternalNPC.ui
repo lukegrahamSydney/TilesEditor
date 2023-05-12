@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>510</width>
-    <height>399</height>
+    <width>455</width>
+    <height>451</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
    <property name="bottomMargin">
     <number>1</number>
    </property>
-   <item alignment="Qt::AlignTop">
+   <item>
     <widget class="QWidget" name="widget" native="true">
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="leftMargin">
@@ -58,7 +58,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit"/>
+          <widget class="QLineEdit" name="classNameText"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="browseButton">
+           <property name="text">
+            <string>Browse</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -67,7 +74,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="widget_2" native="true"/>
+    <widget class="QWidget" name="widget_2" native="true">
+     <layout class="QGridLayout" name="gridLayout"/>
+    </widget>
    </item>
   </layout>
  </widget>

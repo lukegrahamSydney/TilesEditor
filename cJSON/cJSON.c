@@ -501,8 +501,13 @@ static char *print_array(cJSON *item,int depth,int fmt,printbuffer *p)
 		memset(entries,0,numentries*sizeof(char*));
 		/* Retrieve all the results: */
 		child=item->child;
+
+		int doBreaks = 0;
 		while (child && !fail)
 		{
+			if (child->type == cJSON_Array || child->type == cJSON_Object)
+				doBreaks = 1;
+
 			ret=print_value(child,depth+1,fmt,0);
 			entries[i++]=ret;
 			if (ret) {
@@ -513,11 +518,12 @@ static char *print_array(cJSON *item,int depth,int fmt,printbuffer *p)
 			child=child->next;
 		}
 		
-		int doBreaks = 0;
-		if (len > 500) {
-			doBreaks = 1;
-			len += (depth + 1) * numentries;
+		//if (len > 500) doBreaks = 1;
+
+		if (doBreaks) {
+			len += (depth + 2) * numentries;
 		}
+
 		/* If we didn't fail, try to malloc the output string */
 		if (!fail)	out=(char*)cJSON_malloc(len);
 		/* If that fails, we fail. */
@@ -563,10 +569,10 @@ static const char* parse_object_named(cJSON* item, const char*name, const char* 
 	cJSON* child;
 	if (*value != '{') { ep = value; return 0; }	/* not an object! */
 
-	size_t nameLen = strlen(name);
+
 	item->type = cJSON_Object;
 
-	if (name != NULL) 
+	if (name != NULL)
 		item->objectName = cJSON_strdup(name);
 	else item->objectName = NULL;
 
