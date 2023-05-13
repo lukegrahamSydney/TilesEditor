@@ -101,13 +101,7 @@ namespace TilesEditor
 
 				QPainter* painter = new QPainter(&output);
 
-				if (m_zoomLevel > 1)
-					painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
-				else {
-					painter->setRenderHint(QPainter::Antialiasing, true);
-					painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-				}
-
+				painter->setRenderHint(QPainter::SmoothPixmapTransform, m_zoomLevel <= 1);
 				painter->scale(m_zoomLevel, m_zoomLevel);
 
 				painter->translate(-level->getX(), -level->getY());
@@ -120,20 +114,23 @@ namespace TilesEditor
 					tilemap->draw(painter, viewRect, m_world->getTilesetImage(), tilemap->getX(), tilemap->getY());
 				}
 
-				auto& entities = level->getObjects();
-				for (auto entity : entities)
+				if (ui.showObjectCheckBox->isChecked())
 				{
-					if (entity->getEntityType() == LevelEntityType::ENTITY_NPC)
+					auto& entities = level->getObjects();
+					for (auto entity : entities)
 					{
-						auto npc = static_cast<LevelNPC*>(entity);
-
-
-						entity->loadResources(m_world->getResourceManager());
-						if (npc->hasValidImage())
+						if (entity->getEntityType() == LevelEntityType::ENTITY_NPC)
 						{
-							entity->draw(painter, viewRect);
-						}
+							auto npc = static_cast<LevelNPC*>(entity);
 
+
+							entity->loadResources(m_world->getResourceManager());
+							if (npc->hasValidImage())
+							{
+								entity->draw(painter, viewRect);
+							}
+
+						}
 					}
 				}
 				delete painter;
