@@ -23,6 +23,7 @@ qt_add_executable(TilesEditor WIN32 MACOSX_BUNDLE
     EditExternalNPC.cpp EditExternalNPC.h EditExternalNPC.ui
     EditLinkDialog.cpp EditLinkDialog.h EditLinkDialog.ui
     EditSignsDialog.cpp EditSignsDialog.h EditSignsDialog.ui
+    EditTilesetDialog.cpp EditTilesetDialog.h
     EditorTabWidget.cpp EditorTabWidget.h EditorTabWidget.ui
     EntitySpatialGrid.cpp EntitySpatialGrid.h
     GraphicsView.cpp GraphicsView.h
@@ -109,6 +110,7 @@ set(MainWindow_resource_files
     "icons/fugue/arrow-circle-315.png"
     "icons/fugue/arrow-curve-180-left.png"
     "icons/fugue/arrow-curve.png"
+    "icons/fugue/block.png"
     "icons/fugue/chain--pencil.png"
     "icons/fugue/chain--plus.png"
     "icons/fugue/clipboard-paste.png"
@@ -127,7 +129,10 @@ set(MainWindow_resource_files
     "icons/fugue/information-octagon.png"
     "icons/fugue/layers.png"
     "icons/fugue/magnifier.png"
+    "icons/fugue/paint-can--pencil.png"
+    "icons/fugue/paint-can--plus.png"
     "icons/fugue/paint-can.png"
+    "icons/fugue/pencil.png"
     "icons/fugue/scissors.png"
     "icons/fugue/script--pencil.png"
     "icons/fugue/script--plus.png"
