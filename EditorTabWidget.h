@@ -69,6 +69,7 @@ namespace TilesEditor
 		void copyPressed();
 		void pastePressed();
 		void deleteClicked(bool checked);
+		void screenshotClicked(bool checked);
 		void saveClicked(bool checked);
 		void saveAsClicked(bool checked);
 		void tilesetsIndexChanged(int index);
@@ -201,7 +202,7 @@ namespace TilesEditor
 		AbstractLevelEntity* getEntityAt(double x, double y, bool checkAllowedSelect);
 		QList<AbstractLevelEntity*> getEntitiesAt(double x, double y) override;
 		QList<AbstractLevelEntity*> getEntitiesAt(double x, double y, bool checkAllowedSelect);
-
+		QSet<AbstractLevelEntity*> getEntitiesInRect(const IRectangle& rect) override;
 		
 		void deleteEntity(AbstractLevelEntity* entity, QUndoCommand* parent = nullptr) override;
 		void deleteEntities(const QList<AbstractLevelEntity*>& entities, QUndoCommand* parent = nullptr) override;
@@ -221,13 +222,12 @@ namespace TilesEditor
 
 		int getUnitWidth() const override;
 		int getUnitHeight() const override;
+		int getWidth() const override;
+		int getHeight() const override;
+		Image* getTilesetImage() override { return m_tilesetImage; }
 
 		void newLevel(int hcount, int vcount);
 		void loadOverworld(const QString& name, const QString& fileName);
 		void loadLevel(const QString& name, const QString& fileName);
-
-		
-
-		
 	};
 };

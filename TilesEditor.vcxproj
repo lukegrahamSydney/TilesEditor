@@ -134,6 +134,7 @@
     <ClCompile Include="QCodeEditor\src\Widgets\QCodeEditorSlots.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="SaveOverworldDialog.cpp" />
+    <ClCompile Include="ScreenshotDialog.cpp" />
     <ClCompile Include="TileGroupListModel.cpp" />
     <ClCompile Include="TileGroupModel.cpp" />
     <ClCompile Include="Tilemap.cpp" />
@@ -158,6 +159,7 @@
     <ClCompile Include="main.cpp" />
     <QtUic Include="ObjectsWidget.ui" />
     <QtUic Include="SaveOverworldDialog.ui" />
+    <QtUic Include="ScreenshotDialog.ui" />
     <QtUic Include="TileObjectsWidget.ui" />
     <QtUic Include="TilesetsWidget.ui" />
   </ItemGroup>
@@ -194,6 +196,7 @@
     <QtMoc Include="QCodeEditor\include\KGL\Widgets\QCodeEditorPopup.hpp" />
     <QtMoc Include="SaveOverworldDialog.h" />
     <QtMoc Include="ObjectsWidget.h" />
+    <QtMoc Include="ScreenshotDialog.h" />
     <ClInclude Include="SelectionType.h" />
     <ClInclude Include="Selector.h" />
     <QtMoc Include="TileObjectsWidget.h" />

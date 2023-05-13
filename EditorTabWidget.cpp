@@ -20,6 +20,7 @@
 #include "ObjectListModel.h"
 #include "LevelCommands.h"
 #include "EditTilesetDialog.h"
+#include "ScreenshotDialog.h"
 
 namespace TilesEditor
 {
@@ -135,7 +136,7 @@ namespace TilesEditor
 		connect(ui.copyButton, &QToolButton::pressed, this, &EditorTabWidget::copyPressed);
 		connect(ui.pasteButton, &QToolButton::pressed, this, &EditorTabWidget::pastePressed);
 		connect(ui.deleteButton, &QToolButton::clicked, this, &EditorTabWidget::deleteClicked);
-
+		connect(ui.screenshotButton, &QToolButton::clicked, this, &EditorTabWidget::screenshotClicked);
 		auto selectMenu = new QMenu();
 		m_selectNPCs = selectMenu->addAction("Npcs");
 		m_selectNPCs->setCheckable(true);
@@ -1025,6 +1026,18 @@ namespace TilesEditor
 				}
 			}
 		}
+
+		return entities;
+	}
+
+	QSet<AbstractLevelEntity*> EditorTabWidget::getEntitiesInRect(const IRectangle& rect)
+	{
+		QSet<AbstractLevelEntity*> entities;
+
+		if (m_overworld)
+			m_overworld->getEntitySpatialMap()->search(rect, true, entities);
+		else if (m_level)
+			m_level->getEntitySpatialMap()->search(rect, true, entities);
 
 		return entities;
 	}
@@ -2212,10 +2225,30 @@ namespace TilesEditor
 		return 1;
 	}
 
+	int EditorTabWidget::getWidth() const
+	{
+		if (m_overworld)
+			return m_overworld->getWidth();
+		else if (m_level)
+			return m_level->getWidth();
+		return 0;
+	}
+
+	int EditorTabWidget::getHeight() const
+	{
+		if (m_overworld)
+			return m_overworld->getHeight();
+		else if (m_level)
+			return m_level->getHeight();
+		return 0;
+	}
+
 	void EditorTabWidget::graphicsMouseWheel(QWheelEvent* event)
 	{
+		
 		if (QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier))
 		{
+
 			if (event->angleDelta().y() < 0)
 			{
 				ui.zoomSlider->setValue(ui.zoomSlider->value() - 1);
@@ -2239,6 +2272,7 @@ namespace TilesEditor
 
 	void EditorTabWidget::zoomMoved(int position)
 	{
+		auto oldMousePos = m_graphicsView->mapToScene(m_graphicsView->mapFromGlobal(QCursor::pos()));
 
 		qreal zoomFactors[] = {
 			0.25,
@@ -2250,8 +2284,8 @@ namespace TilesEditor
 			4
 		};
 
-		qreal scaleX = zoomFactors[position];
-		qreal scaleY = zoomFactors[position];
+		auto scaleX = zoomFactors[position];
+		auto scaleY = zoomFactors[position];
 
 		if (zoomFactors[position] > 1.0)
 			m_graphicsView->setAntiAlias(false);
@@ -2260,6 +2294,12 @@ namespace TilesEditor
 		
 		m_graphicsView->resetTransform();
 		m_graphicsView->scale(scaleX, scaleY);
+		
+		auto newMousePos = m_graphicsView->mapToScene(m_graphicsView->mapFromGlobal(QCursor::pos()));
+
+		auto deltaMousePos = newMousePos - oldMousePos;
+
+		m_graphicsView->translate(deltaMousePos.x(), deltaMousePos.y());
 
 		ui.zoomLabel->setText("x" + QString::number(zoomFactors[position]));
 	}
@@ -2573,6 +2613,12 @@ namespace TilesEditor
 			setSelection(nullptr);
 			m_graphicsView->redraw();
 		}
+	}
+
+	void EditorTabWidget::screenshotClicked(bool checked)
+	{
+		ScreenshotDialog frm(this);
+		frm.exec();
 	}
 
 

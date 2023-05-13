@@ -10,10 +10,10 @@ message("You are running qmake on a generated .pro file. This may not work!")
 HEADERS += ./AbstractFileSystem.h \
     ./AbstractLevelEntity.h \
     ./AbstractSelection.h \
+    ./LevelCommands.h \
     ./LevelLink.h \
     ./LevelNPC.h \
     ./LevelSign.h \
-    ./LevelCommands.h \
     ./ObjectListModel.h \
     ./ObjectSelection.h \
     ./SelectionType.h \
@@ -46,16 +46,17 @@ HEADERS += ./AbstractFileSystem.h \
     ./EditAnonymousNPC.h \
     ./EditLinkDialog.h \
     ./EditSignsDialog.h \
-    ./EditTilesetDialog.h \
     ./CustomPaintWidget.h \
+    ./EditExternalNPC.h \
+    ./EditTilesetDialog.h \
     ./ListLinksDialog.h \
     ./SaveOverworldDialog.h \
     ./ObjectsWidget.h \
     ./TileObjectsWidget.h \
     ./GraphicsView.h \
     ./EditorTabWidget.h \
-    ./cJSON/JsonHelper.h \
     ./cJSON/cJSON.h \
+    ./cJSON/JsonHelper.h \
     ./QCodeEditor/include/KGL/Design/QCodeEditorDesign.hpp \
     ./QCodeEditor/include/KGL/Design/QCodeEditorSheets.hpp \
     ./QCodeEditor/include/KGL/Design/QLineColumnPadding.hpp \
@@ -66,11 +67,12 @@ HEADERS += ./AbstractFileSystem.h \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorHighlighter.hpp \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorLineWidget.hpp \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorPopup.hpp \
-    ./EditExternalNPC.h
+    ./ScreenshotDialog.h
 SOURCES += ./AboutDialog.cpp \
     ./AbstractLevelEntity.cpp \
     ./AbstractSelection.cpp \
     ./EditAnonymousNPC.cpp \
+    ./EditExternalNPC.cpp \
     ./EditLinkDialog.cpp \
     ./EditorTabWidget.cpp \
     ./EditSignsDialog.cpp \
@@ -79,10 +81,10 @@ SOURCES += ./AboutDialog.cpp \
     ./Image.cpp \
     ./ImageDimensions.cpp \
     ./Level.cpp \
+    ./LevelCommands.cpp \
     ./LevelLink.cpp \
     ./LevelNPC.cpp \
     ./LevelSign.cpp \
-    ./LevelCommands.cpp \
     ./ListLinksDialog.cpp \
     ./MainFileSystem.cpp \
     ./ObjectListModel.cpp \
@@ -114,17 +116,19 @@ SOURCES += ./AboutDialog.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorLineWidget.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorPopup.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorSlots.cpp \
-    ./EditExternalNPC.cpp
+    ./ScreenshotDialog.cpp
 FORMS += ./AboutDialog.ui \
     ./EditAnonymousNPC.ui \
+    ./EditExternalNPC.ui \
     ./EditLinkDialog.ui \
     ./EditorTabWidget.ui \
     ./EditSignsDialog.ui \
+    ./EditTilesetDialog.ui \
     ./ListLinksDialog.ui \
     ./MainWindow.ui \
     ./ObjectsWidget.ui \
     ./SaveOverworldDialog.ui \
     ./TileObjectsWidget.ui \
     ./TilesetsWidget.ui \
-    ./EditExternalNPC.ui
+    ./ScreenshotDialog.ui
 RESOURCES += MainWindow.qrc

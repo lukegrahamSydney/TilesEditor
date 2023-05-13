@@ -36,7 +36,7 @@ namespace TilesEditor
             this->setMouseTracking(true);
 
             scale(1.0, 1.0f);
-            setResizeAnchor(QGraphicsView::AnchorUnderMouse);
+            setTransformationAnchor(QGraphicsView::NoAnchor);
         }
 
         void redraw() {

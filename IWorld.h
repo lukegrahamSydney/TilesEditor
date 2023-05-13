@@ -6,6 +6,8 @@
 #include <QList>
 #include "Rectangle.h"
 #include "ResourceManager.h"
+#include "Image.h"
+
 
 namespace TilesEditor
 {
@@ -26,6 +28,7 @@ namespace TilesEditor
 		virtual ResourceManager& getResourceManager() = 0;
 		virtual AbstractLevelEntity* getEntityAt(double x, double y) = 0;
 		virtual QList<AbstractLevelEntity*> getEntitiesAt(double x, double y) = 0;
+		virtual QSet<AbstractLevelEntity*> getEntitiesInRect(const IRectangle& rect) = 0;
 		virtual bool tryGetTileAt(double x, double y, int* outTile) = 0;
 		//virtual void setTileAt(double x, double y, int tile) = 0;
 		virtual void deleteEntity(AbstractLevelEntity* entity, QUndoCommand* parent = nullptr) = 0;
@@ -39,6 +42,10 @@ namespace TilesEditor
 		virtual int getUnitWidth() const = 0;
 		virtual int getUnitHeight() const = 0;
 
+		virtual int getWidth() const = 0;
+		virtual int getHeight() const = 0;
+
+		virtual Image* getTilesetImage() = 0;
 		virtual void getTiles(double x, double y, int layer, Tilemap* output) = 0;
 		virtual void putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible) = 0;
 		virtual void deleteTiles(double x, double y, int layer, int hcount, int vcount, int replacementTile) = 0;

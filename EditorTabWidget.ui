@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>747</width>
+    <width>807</width>
     <height>448</height>
    </rect>
   </property>
@@ -479,6 +479,23 @@
         </property>
         <property name="popupMode">
          <enum>QToolButton::InstantPopup</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="screenshotButton">
+        <property name="toolTip">
+         <string>Generate Screenshot/Map Image</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="MainWindow.qrc">
+          <normaloff>:/MainWindow/icons/fugue/image-export.png</normaloff>:/MainWindow/icons/fugue/image-export.png</iconset>
         </property>
         <property name="autoRaise">
          <bool>true</bool>

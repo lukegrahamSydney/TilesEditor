@@ -44,6 +44,10 @@ namespace TilesEditor
 		const QString& getCode() const { return m_code; }
 		int getWidth() const override { return m_width; }
 		int getHeight() const override { return m_height; }
+
+		bool hasValidImage() const {
+			return m_imageName != "" && !m_loadImageFail;
+		}
 		void setWidth(int value) override {
 			m_width = value;
 		}
