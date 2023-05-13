@@ -60,6 +60,7 @@ namespace TilesEditor
         int top = qAbs((int)qFloor((qMax((int)(viewRect.getY() - y), 0) / tileHeight)));
         int right = qMin(left + (int)qCeil(viewRect.getRight() / tileWidth), left + (int)m_hcount);
         int bottom = qMin(top + (int)qCeil(viewRect.getBottom() / tileWidth), top + (int)m_vcount);
+       
 
         //keep within map dimensions
         left = left > m_hcount - 1 ? m_hcount - 1 : left;
@@ -71,6 +72,7 @@ namespace TilesEditor
 
         if (image != nullptr)
         {
+            int currentTranslucency = 0;
             auto& pixmap = image->pixmap();
 
             QRectF dstRect(0, 0, -1, -1),
@@ -85,6 +87,12 @@ namespace TilesEditor
 
                     if (tryGetTile(x2, y2, &tile))
                     {
+                        auto translucency = Tilemap::GetTileTranslucency(tile);
+                        if (translucency != currentTranslucency) {
+                            currentTranslucency = translucency;
+                            painter->setOpacity(1.0 - (translucency / 15.0));
+                        }
+
                         dstRect.moveTo(x + (x2 * tileWidth), y + (y2 * tileHeight));
                         srcRect.moveTo(Tilemap::GetTileX(tile) * tileWidth, Tilemap::GetTileY(tile) * tileHeight);
 
@@ -92,6 +100,7 @@ namespace TilesEditor
                     }
                 }
             }
+            painter->setOpacity(1.0);
         }
     }
 };

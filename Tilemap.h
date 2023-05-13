@@ -92,30 +92,36 @@ namespace TilesEditor
 
 		AbstractLevelEntity* duplicate() { return nullptr; };
 		static bool IsInvisibleTile(int tile) {
-			static int invisibleTile = MakeInvisibleTile(0) & 0xFFFFFF;
+			static int invisibleTile = MakeInvisibleTile(0) & 0xFFFFF;
 
-			return (tile & 0xFFFFFF) == invisibleTile;
+			return (tile & 0xFFFFF) == invisibleTile;
 		}
 
-		static int MakeTile(int left, int top, int type) {
-			int retval = ((type & 0xFF) << 24) | ((left & 0xFFF) << 12) | ((top & 0xFFF));
+		static int MakeTile(int left, int top, int type, int translucency = 0) {
+			int retval = ((translucency & 0xF) << 28) | ((type & 0xFF) << 20) | ((left & 0x3FF) << 10) | ((top & 0x3FF));
 			return retval;
 		}
 
 		static int MakeInvisibleTile(int type) {
-			return MakeTile(0xFFF, 0xFFF, type);
+			return MakeTile(0x3FF, 0x3FF, type, 0);
+		}
+
+
+		static int GetTileY(int tile) {
+			return ((unsigned int)tile) & 0x3FF;
 		}
 
 		static int GetTileX(int tile) {
-			return ((unsigned int)tile >> 12) & 0xFFF;
+			return ((unsigned int)tile >> 10) & 0x3FF;
 		}
 
-		static int GetTileY(int tile) {
-			return ((unsigned int)tile) & 0xFFF;
-		}
 
 		static int GetTileType(int tile) {
-			return (unsigned int)((tile >> 24) & 0xFF);
+			return (unsigned int)((tile >> 20) & 0xFF);
+		}
+
+		static int GetTileTranslucency(int tile) {
+			return (unsigned int)((tile >> 28) & 0xF);
 		}
 	};
 };

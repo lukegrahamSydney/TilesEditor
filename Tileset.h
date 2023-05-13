@@ -4,7 +4,6 @@
 #include <QVector>
 #include <QString>
 #include "Image.h"
-#include "Resource.h"
 #include "cJSON/cJSON.h"
 #include "ResourceType.h"
 

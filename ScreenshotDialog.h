@@ -18,6 +18,8 @@ namespace TilesEditor
 		void graphicsMouseWheel(QWheelEvent* event);
 
 	private:
+		static QByteArray savedGeometry;
+
 		IWorld* m_world;
 		QPixmap m_output;
 		double m_zoomLevel;

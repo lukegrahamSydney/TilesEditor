@@ -5,7 +5,7 @@
 
 namespace TilesEditor
 {
-
+	QByteArray ScreenshotDialog::savedGeometry;
 	ScreenshotDialog::ScreenshotDialog(IWorld* world, QWidget* parent)
 		: QDialog(parent)
 	{
@@ -14,6 +14,7 @@ namespace TilesEditor
 		this->setWindowFlag(Qt::Window);
 		this->setWindowFlag(Qt::WindowMaximizeButtonHint);
 
+		
 		m_zoomLevel = ui.zoomLevelSpinBox->value();
 		if (m_zoomLevel > 1.0)
 			ui.graphicsView->setAntiAlias(false);
@@ -25,6 +26,7 @@ namespace TilesEditor
 
 		m_world = world;
 
+	
 		connect(ui.graphicsView, &GraphicsView::renderView, this, &ScreenshotDialog::renderScene);
 		connect(ui.zoomLevelSpinBox, &QDoubleSpinBox::valueChanged, this, &ScreenshotDialog::zoomLevelChanged);
 		connect(ui.saveFileButton, &QAbstractButton::clicked, this, &ScreenshotDialog::saveFileClicked);
@@ -33,10 +35,14 @@ namespace TilesEditor
 		connect(ui.showObjectCheckBox, &QAbstractButton::clicked, ui.graphicsView, &GraphicsView::redraw);
 		ui.graphicsView->setSceneRect(0, 0, world->getWidth(), world->getHeight());
 
+		if (!savedGeometry.isNull())
+			restoreGeometry(savedGeometry);
 	}
 
 	ScreenshotDialog::~ScreenshotDialog()
-	{}
+	{
+		savedGeometry = saveGeometry();
+	}
 
 	void ScreenshotDialog::graphicsMouseWheel(QWheelEvent* event)
 	{
