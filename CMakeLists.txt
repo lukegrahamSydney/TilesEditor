@@ -23,7 +23,7 @@ qt_add_executable(TilesEditor WIN32 MACOSX_BUNDLE
     EditExternalNPC.cpp EditExternalNPC.h EditExternalNPC.ui
     EditLinkDialog.cpp EditLinkDialog.h EditLinkDialog.ui
     EditSignsDialog.cpp EditSignsDialog.h EditSignsDialog.ui
-    EditTilesetDialog.cpp EditTilesetDialog.h
+    EditTilesetDialog.cpp EditTilesetDialog.h EditTilesetDialog.ui
     EditorTabWidget.cpp EditorTabWidget.h EditorTabWidget.ui
     EntitySpatialGrid.cpp EntitySpatialGrid.h
     GraphicsView.cpp GraphicsView.h
@@ -72,6 +72,7 @@ qt_add_executable(TilesEditor WIN32 MACOSX_BUNDLE
     ResourceManager.cpp ResourceManager.h
     ResourceType.h
     SaveOverworldDialog.cpp SaveOverworldDialog.h SaveOverworldDialog.ui
+    ScreenshotDialog.cpp ScreenshotDialog.h ScreenshotDialog.ui
     SelectionType.h
     Selector.h
     StringTools.h
@@ -126,6 +127,7 @@ set(MainWindow_resource_files
     "icons/fugue/eye.png"
     "icons/fugue/folder-open-document.png"
     "icons/fugue/function.png"
+    "icons/fugue/image-export.png"
     "icons/fugue/information-octagon.png"
     "icons/fugue/layers.png"
     "icons/fugue/magnifier.png"
