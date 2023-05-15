@@ -29,7 +29,8 @@ namespace TilesEditor
             QGraphicsView(parent)
         {
             setFocusPolicy(Qt::StrongFocus);
-            m_antialias = false;
+
+            m_antialias = true;
             this->setScene(new QGraphicsScene());
 
 

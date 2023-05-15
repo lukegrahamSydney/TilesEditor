@@ -68,15 +68,13 @@ namespace TilesEditor
         right = right > m_hcount - 1 ? m_hcount - 1 : right;
         bottom = bottom > m_vcount - 1 ? m_vcount - 1 : bottom;
 
-        auto image = tilesetImage;
 
-        if (image != nullptr)
+        if (tilesetImage != nullptr)
         {
             int currentTranslucency = 0;
-            auto& pixmap = image->pixmap();
+            auto& pixmap = tilesetImage->pixmap();
 
-            QRectF dstRect(0, 0, -1, -1),
-                srcRect(0, 0, tileWidth, tileHeight);
+            QRect srcRect(0, 0, tileWidth, tileHeight);
 
             for (int y2 = top; y2 <= bottom; ++y2)
             {
@@ -93,10 +91,10 @@ namespace TilesEditor
                             painter->setOpacity(1.0 - (translucency / 15.0));
                         }
 
-                        dstRect.moveTo(x + (x2 * tileWidth), y + (y2 * tileHeight));
-                        srcRect.moveTo(Tilemap::GetTileX(tile) * tileWidth, Tilemap::GetTileY(tile) * tileHeight);
 
-                        painter->drawPixmap(dstRect, pixmap, srcRect);
+                        srcRect.moveTo(Tilemap::GetTileX(tile) * tileWidth, Tilemap::GetTileY(tile) * tileHeight);
+             
+                        painter->drawPixmap(QPoint(x + (x2 * tileWidth), y + (y2 * tileHeight)), pixmap, srcRect);
                     }
                 }
             }
