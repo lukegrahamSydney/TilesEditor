@@ -93,6 +93,8 @@ namespace TilesEditor
 		void deleteEdgeLinksClicked(bool checked);
 		void trimScriptEndingsClicked(bool checked);
 		void trimSignEndingsClicked(bool checked);
+
+		void test(bool checked);
 		//When the selector goes (he we will disable the button to create link/sign)
 		void selectorGone();
 

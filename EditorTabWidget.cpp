@@ -137,6 +137,8 @@ namespace TilesEditor
 		connect(ui.pasteButton, &QToolButton::pressed, this, &EditorTabWidget::pastePressed);
 		connect(ui.deleteButton, &QToolButton::clicked, this, &EditorTabWidget::deleteClicked);
 		connect(ui.screenshotButton, &QToolButton::clicked, this, &EditorTabWidget::screenshotClicked);
+
+		//connect(ui.toolButton, &QToolButton::clicked, this, &EditorTabWidget::test);
 		auto selectMenu = new QMenu();
 		m_selectNPCs = selectMenu->addAction("Npcs");
 		m_selectNPCs->setCheckable(true);
@@ -200,10 +202,15 @@ namespace TilesEditor
 
 	void EditorTabWidget::renderScene(QPainter * painter, const QRectF & rect)
 	{
-		//Rectangle viewRect(int(rect.x()), int(rect.y()), rect.width(), rect.height());
-
 		Rectangle viewRect(rect.x(), rect.y(), rect.width(), rect.height());
 	
+		painter->fillRect(rect, QColorConstants::Black);
+
+		//forcing the view x/y offset as a whole number prevents tile alignment errors
+		auto transform = painter->transform();
+		QTransform newTransform(transform.m11(), transform.m12(), transform.m21(), transform.m22(), std::floor(transform.dx()), std::floor(transform.dy()));
+		painter->setTransform(newTransform);
+
 
 		auto mousePos = m_graphicsView->mapToScene(m_graphicsView->mapFromGlobal(QCursor::pos()));
 
@@ -231,7 +238,7 @@ namespace TilesEditor
 						else {
 							tilemap->draw(painter, viewRect, m_tilesetImage, tilemap->getX(), tilemap->getY());
 
-							if (ui.floodFillButton->isChecked()/* && QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ShiftModifier)*/)
+							if (tilemap->getLayerIndex() == m_selectedTilesLayer && ui.floodFillButton->isChecked())
 							{
 
 								auto viewLevels = getLevelsInRect(viewRect);
@@ -3011,6 +3018,14 @@ namespace TilesEditor
 				}
 			}
 		}
+	}
+
+	void EditorTabWidget::test(bool checked)
+	{
+		auto transform = m_graphicsView->transform();
+		QTransform newTransform(transform.m11(), transform.m12(), transform.m21(), transform.m22(), (transform.dx()) + 0.1, transform.dy());
+		m_graphicsView->setTransform(newTransform);
+
 	}
 
 	void EditorTabWidget::selectorGone()

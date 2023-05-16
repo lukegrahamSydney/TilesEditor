@@ -54,11 +54,8 @@ namespace TilesEditor
 	{
 		m_zoomLevel = value;
 
-		if (m_zoomLevel > 1.0)
-			ui.graphicsView->setAntiAlias(false);
-		else ui.graphicsView->setAntiAlias(true);
 
-		//ui.graphicsView->setAntiAlias(true);
+		ui.graphicsView->setAntiAlias(true);
 		ui.graphicsView->resetTransform();
 		ui.graphicsView->scale(m_zoomLevel, m_zoomLevel);
 
@@ -79,7 +76,7 @@ namespace TilesEditor
 			QPainter* painter = new QPainter(&output);
 
 
-			painter->setRenderHint(QPainter::SmoothPixmapTransform, m_zoomLevel < 4);
+			painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
 
 			painter->scale(m_zoomLevel, m_zoomLevel);
 			renderScene(painter, QRectF(0, 0, m_world->getWidth(), m_world->getHeight()));
@@ -159,7 +156,7 @@ namespace TilesEditor
 	{
 		Rectangle viewRect(rect.x(), rect.y(), rect.width(), rect.height());
 
-		//painter->fillRect(rect, QColorConstants::Svg::black);
+
 
 
 		auto levels = m_world->getLevelsInRect(viewRect);
