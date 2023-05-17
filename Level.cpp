@@ -590,9 +590,10 @@ namespace TilesEditor
             cJSON* retval = nullptr;
             for (int top = 0; top < tilemap->getVCount(); ++top)
             {
+                //Start scanning from left until we hit a NON-invisible title
                 for (int left = 0; left < tilemap->getHCount(); ++left)
                 {
-                    //Start scanning from left until we hit a NON-invisible title
+                    //A visible tile has been found, now lets find the right end of the chunk
                     if (!Tilemap::IsInvisibleTile(tilemap->getTile(left, top)))
                     {
                         //Continue scanning until we hit the end, or an invisible tile
@@ -730,6 +731,7 @@ namespace TilesEditor
                     auto jsonNPC = cJSON_CreateObject();
                     if (jsonNPC)
                     {
+                        cJSON_AddStringToObject(jsonNPC, "type", "npcV1");
                         cJSON_AddNumberToObject(jsonNPC, "x", int(npc->getX() - this->getX()));
                         cJSON_AddNumberToObject(jsonNPC, "y", int(npc->getY() - this->getY()));
 
@@ -742,6 +744,7 @@ namespace TilesEditor
             }
 
             cJSON_AddItemToObject(jsonRoot, "objects", jsonObjects);
+
             auto levelText = cJSON_Print(jsonRoot);
             QTextStream stream(&file);
             stream << levelText;
@@ -863,7 +866,6 @@ namespace TilesEditor
         auto right = entity->getRight();
         auto bottom = entity->getBottom();
 
-        //Keep our new duplicated object within the level bounds
         left = std::max(left, this->getX());
         top = std::max(top, this->getY());
         right = std::min(right, this->getRight());

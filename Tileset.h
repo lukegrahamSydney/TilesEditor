@@ -3,6 +3,7 @@
 
 #include <QVector>
 #include <QString>
+#include <QStandardItem>
 #include "Image.h"
 #include "cJSON/cJSON.h"
 #include "ResourceType.h"
@@ -10,7 +11,8 @@
 namespace TilesEditor
 {
 	class ResourceManager;
-	class Tileset
+	class Tileset:
+		public QStandardItem
 	{
 	private:
 		QString m_imageName;
