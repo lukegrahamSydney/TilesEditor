@@ -474,24 +474,49 @@ namespace TilesEditor
 
 	void EditorTabWidget::setTileset(const QString& name)
 	{
-		QString imageName = "";
-		if (name.indexOf(".") == -1)
+		if (name == "")
+			return;
+
+		auto index = ui_tilesetsClass.tilesetsCombo->findText(name);
+		if (index >= 0)
 		{
-			QString fileName;
-			if (m_resourceManager.locateFile(name + ".json", &fileName))
+			auto tileset = static_cast<Tileset*>(static_cast<QStandardItemModel*>(ui_tilesetsClass.tilesetsCombo->model())->item(index));
+
+			if (tileset)
 			{
-				m_tilesetFileName = fileName;
-				m_tileset.loadFromFile(m_tilesetFileName);
+				ui_tilesetsClass.tilesetsCombo->blockSignals(true);
+				ui_tilesetsClass.tilesetsCombo->setCurrentIndex(index);
+				ui_tilesetsClass.tilesetsCombo->blockSignals(false);
 
-				imageName = m_tileset.getImageName();
-
-				ui_tilesetsClass.editButton->setEnabled(true);
+				setTileset(tileset);
 			}
+
 		}
 		else {
-			imageName = name;
-			ui_tilesetsClass.editButton->setEnabled(false);
+			auto tileset = Tileset::loadTileset(name, m_resourceManager);
+			if (tileset)
+			{
+				auto newIndex = static_cast<QStandardItemModel*>(ui_tilesetsClass.tilesetsCombo->model())->rowCount();
+				static_cast<QStandardItemModel*>(ui_tilesetsClass.tilesetsCombo->model())->appendRow(tileset);
+				ui_tilesetsClass.tilesetsCombo->blockSignals(true);
+				ui_tilesetsClass.tilesetsCombo->setCurrentIndex(newIndex);
+				ui_tilesetsClass.tilesetsCombo->blockSignals(false);
+
+				setTileset(tileset);
+			}
 		}
+	}
+
+	void EditorTabWidget::setTileset(Tileset* tileset)
+	{
+
+		m_tileset = tileset;
+
+		ui_tilesetsClass.editButton->setEnabled(tileset->hasTileTypes());
+	
+
+
+		auto imageName = m_tileset->getImageName();
 
 		if (m_tilesetImage != nullptr)
 		{
@@ -514,17 +539,17 @@ namespace TilesEditor
 
 	}
 
-	void EditorTabWidget::changeTileset(const QString& name)
+	void EditorTabWidget::changeTileset(Tileset* tileset)
 	{
-		setTileset(name);
+		setTileset(tileset);
 
 		if (m_overworld)
 		{
-			m_overworld->setTilesetName(name);
+			m_overworld->setTilesetName(tileset->text());
 			setModified(nullptr);
 		}
 		else if (m_level) {
-			m_level->setTilesetName(name);
+			m_level->setTilesetName(tileset->text());
 			setModified(m_level);
 		}
 	}
@@ -644,6 +669,7 @@ namespace TilesEditor
 
 		return nullptr;
 	}
+
 
 	bool EditorTabWidget::selectingLevel()
 	{
@@ -790,11 +816,13 @@ namespace TilesEditor
 		return m_level;
 	}
 
-	void EditorTabWidget::init(QStringListModel* tilesetList, TileGroupListModel* tileGroupList)
+	void EditorTabWidget::init(QStandardItemModel* tilesetList, TileGroupListModel* tileGroupList)
 	{
 		ui_tilesetsClass.tilesetsCombo->setModel(tilesetList);
 
 		ui_tileObjectsClass.groupCombo->setModel(tileGroupList);
+
+		setTileset(ui_tilesetsClass.tilesetsCombo->currentText());
 
 	}
 
@@ -1012,25 +1040,8 @@ namespace TilesEditor
 		m_level = new Level(0, 0, 64 * 16, 64 * 16, nullptr, name);
 		m_level->setFileName(fileName);
 		m_level->loadFile(m_resourceManager);
-		//m_level->loadNWFile(m_resourceManager);
 
-		if (!m_level->getTilesetName().isEmpty())
-		{
-			auto index = ui_tilesetsClass.tilesetsCombo->findText(m_level->getTilesetName());
-			if (index >= 0) {
-				ui_tilesetsClass.tilesetsCombo->blockSignals(true);
-				ui_tilesetsClass.tilesetsCombo->setCurrentIndex(index);
-				setTileset(m_level->getTilesetName());
-				ui_tilesetsClass.tilesetsCombo->blockSignals(false);
-			}
-			else {
-				ui_tilesetsClass.tilesetsCombo->setEditText(m_level->getTilesetName());
-				setTileset(m_level->getTilesetName());
-			}
-		}
-		else {
-			setTileset(ui_tilesetsClass.tilesetsCombo->currentText());;
-		}
+		setTileset(m_level->getTilesetName());
 
 		m_graphicsView->setSceneRect(QRect(0, 0, m_level->getWidth(), m_level->getHeight()));
 
@@ -1062,23 +1073,7 @@ namespace TilesEditor
 
 		m_overworld->loadFile(m_resourceManager);
 		
-		if (!m_overworld->getTilesetName().isEmpty())
-		{
-			auto index = ui_tilesetsClass.tilesetsCombo->findText(m_overworld->getTilesetName());
-			if (index >= 0) {
-				ui_tilesetsClass.tilesetsCombo->blockSignals(true);
-				ui_tilesetsClass.tilesetsCombo->setCurrentIndex(index);
-				setTileset(m_overworld->getTilesetName());
-				ui_tilesetsClass.tilesetsCombo->blockSignals(false);
-			}
-			else {
-				ui_tilesetsClass.tilesetsCombo->setEditText(m_overworld->getTilesetName());
-				setTileset(m_overworld->getTilesetName());
-			}
-		}
-		else {
-			setTileset(ui_tilesetsClass.tilesetsCombo->currentText());;
-		}
+		setTileset(m_overworld->getTilesetName());
 
 		m_graphicsView->setSceneRect(QRect(0, 0, m_overworld->getWidth(), m_overworld->getHeight()));
 
@@ -1408,9 +1403,11 @@ namespace TilesEditor
 
 	void EditorTabWidget::tilesetEditClicked(bool checked)
 	{
-	
-		EditTilesetDialog dialog(m_tilesetFileName, m_resourceManager);
-		dialog.exec();
+		if (m_tileset)
+		{
+			EditTilesetDialog dialog(m_tileset, m_resourceManager);
+			dialog.exec();
+		}
 	}
 
 	void EditorTabWidget::tileObjectsMousePress(QMouseEvent* event)
@@ -2623,14 +2620,18 @@ namespace TilesEditor
 
 	void EditorTabWidget::tilesetsIndexChanged(int index)
 	{
-		auto imageName = ui_tilesetsClass.tilesetsCombo->currentText();
-		changeTileset(imageName);
+		if (index >= 0)
+		{
+			changeTileset(static_cast<Tileset*>(static_cast<QStandardItemModel*>(ui_tilesetsClass.tilesetsCombo->model())->item(index)));
+		}
+
+		if (m_tilesetImage)
+			ui_tilesetsClass.graphicsView->setSceneRect(0, 0, m_tilesetImage->width(), m_tilesetImage->height());
 
 		m_graphicsView->redraw();
 		ui_tilesetsClass.graphicsView->redraw();
 
-		if (m_tilesetImage)
-			ui_tilesetsClass.graphicsView->setSceneRect(0, 0, m_tilesetImage->width(), m_tilesetImage->height());
+
 	}
 
 
@@ -2657,12 +2658,16 @@ namespace TilesEditor
 
 		if (!imageName.isEmpty())
 		{
+			auto tileset = Tileset::loadTileset(imageName, m_resourceManager);
 
-			ui_tilesetsClass.tilesetsCombo->model()->insertRow(ui_tilesetsClass.tilesetsCombo->model()->rowCount());
-			ui_tilesetsClass.tilesetsCombo->model()->setData(ui_tilesetsClass.tilesetsCombo->model()->index(ui_tilesetsClass.tilesetsCombo->model()->rowCount() - 1, 0), imageName);
+			if (tileset)
+			{
+				auto model = static_cast<QStandardItemModel*>(ui_tilesetsClass.tilesetsCombo->model());
+				model->appendRow(tileset);
 
-			if(ui_tilesetsClass.tilesetsCombo->model()->rowCount() == 1)
-				tilesetsIndexChanged(0);
+				if (ui_tilesetsClass.tilesetsCombo->model()->rowCount() == 1)
+					ui_tilesetsClass.tilesetsCombo->setCurrentIndex(0);
+			}
 		}
 	}
 

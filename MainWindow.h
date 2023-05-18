@@ -2,7 +2,7 @@
 #define MAINWINDOWH
 
 #include <QtWidgets/QMainWindow>
-#include <QStringListModel>
+#include <QStandardItemModel>
 #include "ui_MainWindow.h"
 #include "TileGroupListModel.h"
 #include "ResourceManager.h"
@@ -33,7 +33,7 @@ namespace TilesEditor
         Ui::MainWindowClass ui;
 
         ResourceManager m_resourceManager;
-        QStringListModel m_tilesetList;
+        QStandardItemModel m_tilesetList;
         TileGroupListModel m_tileGroupsList;
 
         QLabel* m_statusLeft;

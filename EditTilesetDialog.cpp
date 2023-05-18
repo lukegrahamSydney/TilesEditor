@@ -3,7 +3,7 @@
 
 namespace TilesEditor
 {
-	EditTilesetDialog::EditTilesetDialog(const QString& fileName, ResourceManager& resourceManager, QWidget* parent)
+	EditTilesetDialog::EditTilesetDialog(const Tileset* tileset, ResourceManager& resourceManager, QWidget* parent)
 		: QDialog(parent), m_resourceManager(resourceManager)
 	{
 		ui.setupUi(this);
@@ -28,17 +28,17 @@ namespace TilesEditor
 		connect(ui.radioButtonType10, &QAbstractButton::clicked, this, &EditTilesetDialog::tileTypeClicked);
 		connect(ui.radioButtonType11, &QAbstractButton::clicked, this, &EditTilesetDialog::tileTypeClicked);
 
-		m_tileset.loadFromFile(fileName);
+		m_tileset = *tileset;
 
 		m_tilesetImage = static_cast<Image*>(resourceManager.loadResource(m_tileset.getImageName(), ResourceType::RESOURCE_IMAGE));
-			
+
 
 		if (m_tilesetImage)
 		{
 			ui.graphicsView->setSceneRect(0, 0, m_tilesetImage->width(), m_tilesetImage->height());
 		}
-
 	}
+
 
 	EditTilesetDialog::~EditTilesetDialog()
 	{

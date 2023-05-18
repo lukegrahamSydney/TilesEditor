@@ -1,4 +1,5 @@
-#pragma once
+#ifndef EDITTILESETDIALOGH
+#define EDITTILESETDIALOGH
 
 #include <QDialog>
 #include <QString>
@@ -27,10 +28,11 @@ namespace TilesEditor
 		int m_selectedType;
 
 	public:
-		EditTilesetDialog(const QString& fileName, ResourceManager& resourceManager, QWidget* parent = nullptr);
+		EditTilesetDialog(const Tileset* tileset, ResourceManager& resourceManager, QWidget* parent = nullptr);
 		~EditTilesetDialog();
 
 	private:
 		Ui::EditTilesetDialogClass ui;
 	};
 };
+#endif

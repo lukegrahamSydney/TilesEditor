@@ -113,21 +113,35 @@ namespace TilesEditor
 	}
 
 
-	Tileset* Tileset::loadTileset(const QString& resName, const QString& fileName, ResourceManager& resourceManager)
+	Tileset* Tileset::loadTileset(const QString& name, ResourceManager& resourceManager)
 	{
-		auto text = resourceManager.getFileSystem().readAllToString(fileName);
-		QByteArray ba = text.toLocal8Bit();
-
-		auto cJSON = cJSON_Parse(ba.data());
-		if (cJSON != nullptr)
-		{
-			auto tileset = new Tileset();
-			tileset->readFromJSONNode(cJSON);
-
-			cJSON_Delete(cJSON);
-			return tileset;
-
+		if (name.endsWith(".png")) {
+			return new Tileset(name);
 		}
+		else {
+			QString fullPath;
+
+			if (resourceManager.locateFile(name + ".json", &fullPath))
+			{
+				auto text = resourceManager.getFileSystem().readAllToString(fullPath);
+
+				auto cJSON = cJSON_Parse(text.toLocal8Bit().data());
+				if (cJSON != nullptr)
+				{
+					auto tileset = new Tileset();
+					tileset->setFileName(fullPath);
+					tileset->readFromJSONNode(cJSON);
+
+					cJSON_Delete(cJSON);
+
+					tileset->setText(name);
+					return tileset;
+
+				}
+			}
+			
+		}
+
 		return nullptr;
 	}
 

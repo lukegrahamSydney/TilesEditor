@@ -134,7 +134,7 @@ namespace TilesEditor
 		Level* m_level;
 
 		QString m_tilesetFileName;
-		Tileset	m_tileset;
+		Tileset* m_tileset;
 		Image* m_tilesetImage;
 
 		Overworld* m_overworld;
@@ -164,8 +164,9 @@ namespace TilesEditor
 
 		void loadLevel(Level* level);
 		bool selectingLevel();
+		void setTileset(Tileset* tileset);
 		void setTileset(const QString& name);
-		void changeTileset(const QString& name);
+		void changeTileset(Tileset* tileset);
 		void setUnmodified();
 		void setDefaultTile(int tile);
 
@@ -176,9 +177,10 @@ namespace TilesEditor
 		Tilemap* getTilesetSelection();
 		Tilemap* getSelectionTiles();
 
+
 	public:
 
-		void init(QStringListModel* tilesetList, TileGroupListModel* tileGroupList);
+		void init(QStandardItemModel* tilesetList, TileGroupListModel* tileGroupList);
 		QWidget* getTilesetsContainer() {
 			return m_tilesetsContainer;
 		}
