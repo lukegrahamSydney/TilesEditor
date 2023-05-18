@@ -310,6 +310,7 @@ namespace TilesEditor
 
                     m_width = hcount * 16;
                     m_height = vcount * 16;
+                    m_tilesetName = jsonGetChildString(jsonRoot, "tileset", "");
 
                     m_unitWidth = 1;
                     m_unitHeight = 1;
@@ -657,6 +658,10 @@ namespace TilesEditor
             cJSON_AddStringToObject(jsonRoot, "version", "1.0");
             cJSON_AddNumberToObject(jsonRoot, "hcount", getWidth() / 16);
             cJSON_AddNumberToObject(jsonRoot, "vcount", getHeight() / 16);
+
+            if (!m_tilesetName.isEmpty())
+                cJSON_AddStringToObject(jsonRoot, "tileset", m_tilesetName.toLocal8Bit().data());
+            
 
             if (m_tileLayers.size() > 0)
             {

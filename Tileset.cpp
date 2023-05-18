@@ -54,6 +54,24 @@ namespace TilesEditor
 			m_tileTypes[index] = type;
 	}
 
+	void Tileset::resize(int hcount, int vcount)
+	{
+		QVector<int> newTileTypes(hcount * vcount);
+
+		for (auto y = 0; y < std::min(m_vcount, vcount); ++y)
+		{
+			for (auto x = 0; x < std::min(m_hcount, hcount); ++x)
+			{
+				newTileTypes[y * hcount + x] = getTileType(x, y);
+
+			}
+		}
+
+		m_hcount = hcount;
+		m_vcount = vcount;
+		m_tileTypes = newTileTypes;
+	}
+
 	void Tileset::loadFromFile(const QString& fileName)
 	{
 		QFile f(fileName);
@@ -70,6 +88,11 @@ namespace TilesEditor
 
 			}
 		}
+	}
+
+	void Tileset::saveToFile()
+	{
+		saveToFile(getFileName());
 	}
 
 	void Tileset::saveToFile(const QString& fileName)

@@ -1,3 +1,4 @@
+#include <QFileDialog>
 #include "EditTilesetDialog.h"
 
 
@@ -7,6 +8,10 @@ namespace TilesEditor
 		: QDialog(parent), m_resourceManager(resourceManager)
 	{
 		ui.setupUi(this);
+
+		this->setWindowFlag(Qt::Window);
+		this->setWindowFlag(Qt::WindowMaximizeButtonHint);
+
 		m_selectedType = 0;
 		connect(ui.graphicsView, &GraphicsView::renderView, this, &EditTilesetDialog::renderScene);
 		connect(ui.graphicsView, &GraphicsView::mouseWheelEvent, this, &EditTilesetDialog::graphicsMouseWheel);
@@ -14,6 +19,7 @@ namespace TilesEditor
 		connect(ui.graphicsView, &GraphicsView::mousePress, this, &EditTilesetDialog::graphicsMouseMove);
 
 		connect(ui.overlayButton, &QAbstractButton::clicked, ui.graphicsView, &GraphicsView::redraw);
+		connect(ui.browseButton, &QAbstractButton::clicked, this, &EditTilesetDialog::browseButtonClicked);
 
 		connect(ui.radioButtonType0, &QAbstractButton::clicked, this, &EditTilesetDialog::tileTypeClicked);
 		connect(ui.radioButtonType1, &QAbstractButton::clicked, this, &EditTilesetDialog::tileTypeClicked);
@@ -27,6 +33,8 @@ namespace TilesEditor
 		connect(ui.radioButtonType9, &QAbstractButton::clicked, this, &EditTilesetDialog::tileTypeClicked);
 		connect(ui.radioButtonType10, &QAbstractButton::clicked, this, &EditTilesetDialog::tileTypeClicked);
 		connect(ui.radioButtonType11, &QAbstractButton::clicked, this, &EditTilesetDialog::tileTypeClicked);
+
+		ui.imageTextBox->setText(tileset->getImageName());
 
 		m_tileset = *tileset;
 
@@ -115,12 +123,16 @@ namespace TilesEditor
 		{
 			auto pos = ui.graphicsView->mapToScene(event->pos());
 
-			auto tileXPos = int(pos.x() / 16.0);
-			auto tileYPos = int(pos.y() / 16.0);
+			if (pos.x() >= 0 && pos.x() < ui.graphicsView->sceneRect().width() && pos.y() >= 0 && pos.y() < ui.graphicsView->sceneRect().height())
+			{
 
-			m_tileset.setTileType(tileXPos, tileYPos, m_selectedType);
+				auto tileXPos = int(pos.x() / 16.0);
+				auto tileYPos = int(pos.y() / 16.0);
 
-			ui.graphicsView->redraw();
+				m_tileset.setTileType(tileXPos, tileYPos, m_selectedType);
+
+				ui.graphicsView->redraw();
+			}
 		}
 	}
 
@@ -135,4 +147,39 @@ namespace TilesEditor
 		}
 	}
 
+	void EditTilesetDialog::browseButtonClicked(bool checked)
+	{
+		auto fileName = QFileDialog::getOpenFileName(nullptr, "Select Image", m_resourceManager.getRootDir(), "Image Files (*.png *.gif)");
+		if (!fileName.isEmpty())
+		{
+			QFileInfo fi(fileName);
+			auto directory = fi.absolutePath() + "/";
+
+			m_resourceManager.addSearchDir(directory);
+
+			ui.imageTextBox->setText(fi.fileName());
+
+			if (m_tilesetImage)
+				m_resourceManager.freeResource(m_tilesetImage);
+
+			m_tilesetImage = static_cast<Image*>(m_resourceManager.loadResource(ui.imageTextBox->text(), ResourceType::RESOURCE_IMAGE));
+
+			if (m_tilesetImage)
+			{
+				auto hcount = m_tilesetImage->width() / 16;
+				auto vcount = m_tilesetImage->height() / 16;
+
+				m_tileset.resize(hcount, vcount);
+				ui.graphicsView->setSceneRect(0, 0, m_tilesetImage->width(), m_tilesetImage->height());
+			}
+		}
+	}
+
+	void EditTilesetDialog::accept()
+	{
+		m_tileset.setImageName(ui.imageTextBox->text());
+
+		m_tileset.saveToFile();
+		QDialog::accept();
+	}
 };

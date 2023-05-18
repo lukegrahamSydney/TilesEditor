@@ -89,6 +89,7 @@ namespace TilesEditor
 		connect(ui_tilesetsClass.deleteButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetDeleteClicked);
 		connect(ui_tilesetsClass.refreshButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetRefreshClicked);
 		connect(ui_tilesetsClass.newButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetNewClicked);
+		connect(ui_tilesetsClass.openButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetOpenClicked);
 		connect(ui_tilesetsClass.editButton, &QAbstractButton::clicked, this, &EditorTabWidget::tilesetEditClicked);
 
 		connect(ui_tileObjectsClass.graphicsView, &GraphicsView::renderView, this, &EditorTabWidget::renderTileObjects);
@@ -507,16 +508,16 @@ namespace TilesEditor
 		}
 	}
 
-	void EditorTabWidget::setTileset(Tileset* tileset)
+	void EditorTabWidget::setTileset(const Tileset* tileset)
 	{
 
-		m_tileset = tileset;
+		m_tileset = *tileset;
 
 		ui_tilesetsClass.editButton->setEnabled(tileset->hasTileTypes());
 	
 
 
-		auto imageName = m_tileset->getImageName();
+		auto imageName = m_tileset.getImageName();
 
 		if (m_tilesetImage != nullptr)
 		{
@@ -607,8 +608,9 @@ namespace TilesEditor
 			{
 				auto tileLeft = int(rect.getX() / 16) + x;
 				auto tileTop = int(rect.getY() / 16) + y;
+				auto typeType = m_tileset.getTileType(tileLeft, tileTop);
 
-				auto tile = Tilemap::MakeTile(tileLeft, tileTop, 0);
+				auto tile = Tilemap::MakeTile(tileLeft, tileTop, typeType);
 				tilemap->setTile(x, y, tile);
 			}
 		}
@@ -1293,8 +1295,9 @@ namespace TilesEditor
 						{
 							auto tileLeft = int(rect.getX() / 16) + x;
 							auto tileTop = int(rect.getY() / 16) + y;
+							auto tileType = m_tileset.getTileType(tileLeft, tileTop);
 
-							auto tile = Tilemap::MakeTile(tileLeft, tileTop, 0);
+							auto tile = Tilemap::MakeTile(tileLeft, tileTop, tileType);
 							tileSelection->setTile(x, y, tile);
 						}
 					}
@@ -1327,7 +1330,12 @@ namespace TilesEditor
 		{
 			m_tilesSelector.setVisible(false);
 			ui.floodFillPatternButton->setEnabled(hasSelectionTiles());
-			setDefaultTile(Tilemap::MakeTile(int(pos.x() / 16), int(pos.y() / 16), 0));
+
+			auto tileLeft = int(pos.x() / 16);
+			auto tileTop = int(pos.y() / 16);
+			auto tileType = m_tileset.getTileType(tileLeft, tileTop);
+
+			setDefaultTile(Tilemap::MakeTile(tileLeft, tileTop, tileType));
 			ui_tilesetsClass.graphicsView->redraw();
 
 
@@ -1347,7 +1355,11 @@ namespace TilesEditor
 				auto vcount = 1;
 				auto tileSelection = new TileSelection(-1000000, -1000000, hcount, vcount);
 
-				auto tile = Tilemap::MakeTile(int(pos.x() / 16.0), int(pos.y() / 16.0), 0);
+				auto tileLeft = int(pos.x() / 16);
+				auto tileTop = int(pos.y() / 16);
+				auto tileType = m_tileset.getTileType(tileLeft, tileTop);
+
+				auto tile = Tilemap::MakeTile(tileLeft, tileTop, tileType);
 
 				tileSelection->setTile(0, 0, tile);
 
@@ -1403,11 +1415,26 @@ namespace TilesEditor
 
 	void EditorTabWidget::tilesetEditClicked(bool checked)
 	{
-		if (m_tileset)
+
+		EditTilesetDialog dialog(&m_tileset, m_resourceManager);
+		if (dialog.exec() == QDialog::Accepted)
 		{
-			EditTilesetDialog dialog(m_tileset, m_resourceManager);
-			dialog.exec();
+			m_tileset = dialog.getTileset();
+
+			
+			//update this tileset globally
+			auto index = ui_tilesetsClass.tilesetsCombo->findText(m_tileset.text());
+			if (index >= 0) {
+				auto globalTileset = static_cast<Tileset*>(static_cast<QStandardItemModel*>(ui_tilesetsClass.tilesetsCombo->model())->item(index));
+				if (globalTileset) {
+					*globalTileset = m_tileset;
+					qDebug() << "YES";
+				}
+			
+			}
+			setTileset(&m_tileset);
 		}
+		
 	}
 
 	void EditorTabWidget::tileObjectsMousePress(QMouseEvent* event)
@@ -2645,20 +2672,61 @@ namespace TilesEditor
 
 	void EditorTabWidget::tilesetRefreshClicked(bool checked)
 	{
-		auto imageName = ui_tilesetsClass.tilesetsCombo->currentText();
+		auto tilesetName = ui_tilesetsClass.tilesetsCombo->currentText();
 
-		m_resourceManager.updateResource(imageName);
+		setTileset(tilesetName);
+
+		m_resourceManager.updateResource(m_tileset.getImageName());
 		ui_tilesetsClass.graphicsView->redraw();
 		m_graphicsView->redraw();
 	}
 
 	void EditorTabWidget::tilesetNewClicked(bool checked)
 	{
-		auto imageName = QInputDialog::getText(nullptr, "Add new tileset", "Image File: ");
+		auto tilesetName = QInputDialog::getText(nullptr, "Add new tileset", "Tileset Name: ");
 
-		if (!imageName.isEmpty())
+		if (!tilesetName.isEmpty())
 		{
-			auto tileset = Tileset::loadTileset(imageName, m_resourceManager);
+			auto tileset = new Tileset();
+			tileset->setText(tilesetName);
+
+			tileset->setFileName("./" + tilesetName + ".json");
+
+			if (tileset)
+			{
+				EditTilesetDialog frm(tileset, m_resourceManager);
+				if (frm.exec() == QDialog::Accepted)
+				{
+					*tileset = frm.getTileset();
+
+					auto model = static_cast<QStandardItemModel*>(ui_tilesetsClass.tilesetsCombo->model());
+					model->appendRow(tileset);
+
+					if (ui_tilesetsClass.tilesetsCombo->model()->rowCount() == 1)
+						ui_tilesetsClass.tilesetsCombo->setCurrentIndex(0);
+				}
+				else delete tileset;
+			}
+		}
+	}
+
+	void EditorTabWidget::tilesetOpenClicked(bool checked)
+	{
+		auto fileName = QFileDialog::getOpenFileName(nullptr, "Select Tileset", m_resourceManager.getRootDir(), "Image Files (*.png *.gif);;JSON File (*.json)");
+		if (!fileName.isEmpty())
+		{
+			QFileInfo fi(fileName);
+			auto directory = fi.absolutePath() + "/";
+
+			m_resourceManager.addSearchDir(directory);
+
+			QString name = fi.fileName();
+
+			if (fi.suffix() == "json")
+				name = fi.baseName();
+
+
+			auto tileset = Tileset::loadTileset(name, m_resourceManager);
 
 			if (tileset)
 			{

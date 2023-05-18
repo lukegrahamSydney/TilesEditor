@@ -30,6 +30,47 @@
     <number>1</number>
    </property>
    <item>
+    <widget class="QWidget" name="widget_3" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>40</height>
+      </size>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Image:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="imageTextBox"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="browseButton">
+        <property name="text">
+         <string>Browse</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QWidget" name="widget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -44,16 +85,19 @@
       </size>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="3">
-       <widget class="QRadioButton" name="radioButtonType10">
+      <item row="1" column="1">
+       <widget class="QRadioButton" name="radioButtonType8">
         <property name="toolTip">
-         <string>10</string>
+         <string>8</string>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color: rgb(192, 255, 255);</string>
+         <string notr="true">background-color: red;</string>
         </property>
         <property name="text">
-         <string>Bed (10)</string>
+         <string>Lava (8)</string>
+        </property>
+        <property name="shortcut">
+         <string>8</string>
         </property>
        </widget>
       </item>
@@ -83,89 +127,6 @@
         </property>
         <property name="shortcut">
          <string>4</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="6">
-       <widget class="QRadioButton" name="radioButtonType6">
-        <property name="toolTip">
-         <string>6</string>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: green</string>
-        </property>
-        <property name="text">
-         <string>Swamp (6)</string>
-        </property>
-        <property name="shortcut">
-         <string>6</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QRadioButton" name="radioButtonType0">
-        <property name="toolTip">
-         <string>0</string>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: lime</string>
-        </property>
-        <property name="text">
-         <string>Non-Blocking (0)</string>
-        </property>
-        <property name="shortcut">
-         <string>0</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QRadioButton" name="radioButtonType7">
-        <property name="toolTip">
-         <string>7</string>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(128, 128, 255);</string>
-        </property>
-        <property name="text">
-         <string>Shallow Water (7)</string>
-        </property>
-        <property name="shortcut">
-         <string>7</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QRadioButton" name="radioButtonType2">
-        <property name="toolTip">
-         <string>2</string>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: yellow</string>
-        </property>
-        <property name="text">
-         <string>Throw Through (2)</string>
-        </property>
-        <property name="shortcut">
-         <string>2</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QRadioButton" name="radioButtonType1">
-        <property name="toolTip">
-         <string>1</string>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: gray</string>
-        </property>
-        <property name="text">
-         <string>Blocking (1)</string>
-        </property>
-        <property name="shortcut">
-         <string>1</string>
         </property>
        </widget>
       </item>
@@ -201,19 +162,83 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QRadioButton" name="radioButtonType8">
+      <item row="1" column="3">
+       <widget class="QRadioButton" name="radioButtonType10">
         <property name="toolTip">
-         <string>8</string>
+         <string>10</string>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color: red;</string>
+         <string notr="true">background-color: rgb(192, 255, 255);</string>
         </property>
         <property name="text">
-         <string>Lava (8)</string>
+         <string>Bed (10)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="6">
+       <widget class="QRadioButton" name="radioButtonType6">
+        <property name="toolTip">
+         <string>6</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: green</string>
+        </property>
+        <property name="text">
+         <string>Swamp (6)</string>
         </property>
         <property name="shortcut">
-         <string>8</string>
+         <string>6</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QRadioButton" name="radioButtonType2">
+        <property name="toolTip">
+         <string>2</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: yellow</string>
+        </property>
+        <property name="text">
+         <string>Throw Through (2)</string>
+        </property>
+        <property name="shortcut">
+         <string>2</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="radioButtonType7">
+        <property name="toolTip">
+         <string>7</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(128, 128, 255);</string>
+        </property>
+        <property name="text">
+         <string>Shallow Water (7)</string>
+        </property>
+        <property name="shortcut">
+         <string>7</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="radioButtonType0">
+        <property name="toolTip">
+         <string>0</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: lime</string>
+        </property>
+        <property name="text">
+         <string>Non-Blocking (0)</string>
+        </property>
+        <property name="shortcut">
+         <string>0</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -230,6 +255,22 @@
         </property>
         <property name="shortcut">
          <string>9</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QRadioButton" name="radioButtonType1">
+        <property name="toolTip">
+         <string>1</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: gray</string>
+        </property>
+        <property name="text">
+         <string>Blocking (1)</string>
+        </property>
+        <property name="shortcut">
+         <string>1</string>
         </property>
        </widget>
       </item>
@@ -278,23 +319,6 @@
         </property>
         <property name="autoRaise">
          <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Image:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="lineEdit"/>
-      </item>
-      <item>
-       <widget class="QPushButton" name="browseButton">
-        <property name="text">
-         <string>Browse</string>
         </property>
        </widget>
       </item>

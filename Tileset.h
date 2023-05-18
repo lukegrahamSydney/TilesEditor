@@ -22,7 +22,6 @@ namespace TilesEditor
 		int m_vcount;
 
 		QVector<int> m_tileTypes;
-		bool m_editable;
 
 	public:
 		Tileset();
@@ -38,13 +37,27 @@ namespace TilesEditor
 		int getTileType(size_t index) const;
 		int getTileType(int left, int top) const;
 
+		void resize(int hcount, int vcount);
 		void setTileType(int left, int top, int type);
 
 		const QString& getImageName() const { return m_imageName; }
 		void setImageName(const QString& name) { m_imageName = name; }
 		void loadFromFile(const QString& fileName);
+
+		void saveToFile();
 		void saveToFile(const QString& fileName);
 		cJSON* serializeJSON();
+
+		Tileset& operator=(const Tileset& other) {
+			m_fileName = other.m_fileName;
+			m_imageName = other.m_imageName;
+			m_hcount = other.m_hcount;
+			m_vcount = other.m_vcount;
+			m_tileTypes = other.m_tileTypes;
+
+			setText(other.text());
+			return *this;
+		}
 
 		static Tileset* loadTileset(const QString& name, ResourceManager& resourceManager);
 	};

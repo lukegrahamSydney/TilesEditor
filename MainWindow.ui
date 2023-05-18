@@ -85,13 +85,13 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>200</width>
+     <width>150</width>
      <height>90</height>
     </size>
    </property>
    <property name="baseSize">
     <size>
-     <width>200</width>
+     <width>0</width>
      <height>0</height>
     </size>
    </property>

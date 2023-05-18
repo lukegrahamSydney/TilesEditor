@@ -19,6 +19,7 @@ namespace TilesEditor
 		void graphicsMouseWheel(QWheelEvent* event);
 		void graphicsMouseMove(QMouseEvent* event);
 		void tileTypeClicked(bool checked);
+		void browseButtonClicked(bool checked);
 
 	private:
 		ResourceManager& m_resourceManager;
@@ -31,8 +32,13 @@ namespace TilesEditor
 		EditTilesetDialog(const Tileset* tileset, ResourceManager& resourceManager, QWidget* parent = nullptr);
 		~EditTilesetDialog();
 
+		const Tileset& getTileset() const { return m_tileset; }
+
 	private:
 		Ui::EditTilesetDialogClass ui;
+
+	protected:
+		void accept() override;
 	};
 };
 #endif
