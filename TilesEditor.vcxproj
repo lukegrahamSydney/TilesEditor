@@ -102,6 +102,7 @@
     <ClCompile Include="AbstractSelection.cpp" />
     <ClCompile Include="cJSON\cJSON.c" />
     <ClCompile Include="EditAnonymousNPC.cpp" />
+    <ClCompile Include="EditChestDialog.cpp" />
     <ClCompile Include="EditExternalNPC.cpp" />
     <ClCompile Include="EditLinkDialog.cpp" />
     <ClCompile Include="EditorTabWidget.cpp" />
@@ -111,6 +112,7 @@
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImageDimensions.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LevelChest.cpp" />
     <ClCompile Include="LevelCommands.cpp" />
     <ClCompile Include="LevelLink.cpp" />
     <ClCompile Include="LevelNPC.cpp" />
@@ -146,6 +148,7 @@
     <QtRcc Include="MainWindow.qrc" />
     <QtUic Include="AboutDialog.ui" />
     <QtUic Include="EditAnonymousNPC.ui" />
+    <QtUic Include="EditChestDialog.ui" />
     <QtUic Include="EditExternalNPC.ui" />
     <QtUic Include="EditLinkDialog.ui" />
     <QtUic Include="EditorTabWidget.ui" />
@@ -177,6 +180,8 @@
     <ClInclude Include="cJSON\cJSON.h" />
     <ClInclude Include="cJSON\JsonHelper.h" />
     <QtMoc Include="EditTilesetDialog.h" />
+    <QtMoc Include="EditChestDialog.h" />
+    <ClInclude Include="LevelChest.h" />
     <ClInclude Include="LevelCommands.h" />
     <ClInclude Include="LevelLink.h" />
     <ClInclude Include="LevelNPC.h" />

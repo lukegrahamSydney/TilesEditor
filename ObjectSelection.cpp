@@ -67,16 +67,15 @@ namespace TilesEditor
                 auto undoCommand = new QUndoCommand();
                 for (auto object : m_selectedObjects)
                 {
-                    if (object->getEntityType() == LevelEntityType::ENTITY_NPC)
-                    {
-                        auto level = world->getLevelAt(object->getCenterX(), object->getCenterY());
 
-                        if (level != nullptr)
-                        {
-                            object->setLevel(level);
-                            new CommandAddEntity(world, object, undoCommand);
-                        }
+                    auto level = world->getLevelAt(object->getCenterX(), object->getCenterY());
+
+                    if (level != nullptr)
+                    {
+                        object->setLevel(level);
+                        new CommandAddEntity(world, object, undoCommand);
                     }
+                    
                 }
 
 
@@ -87,12 +86,8 @@ namespace TilesEditor
                 auto undoCommand = new QUndoCommand();
                 for (auto object : m_selectedObjects)
                 {
-                    if (object->getEntityType() == LevelEntityType::ENTITY_NPC)
+                    if (object->getEntityType() == LevelEntityType::ENTITY_LINK || object->getEntityType() == LevelEntityType::ENTITY_SIGN)
                     {
-                        new CommandMoveEntity(world, object->getStartRect(), *object, object, undoCommand);
-
-                    }
-                    else if (object->getEntityType() == LevelEntityType::ENTITY_LINK || object->getEntityType() == LevelEntityType::ENTITY_SIGN) {
 
                         //Links and signs will be split up across overlapping levels
 
@@ -141,7 +136,13 @@ namespace TilesEditor
                             new CommandDeleteEntity(world, object, undoCommand);
                         }
 
+                    }else 
+                    {
+                        //Npc,chest, etc
+                        new CommandMoveEntity(world, object->getStartRect(), *object, object, undoCommand);
+
                     }
+          
                 }
 
                 world->addUndoCommand(undoCommand);

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>273</width>
+    <width>152</width>
     <height>590</height>
    </rect>
   </property>
@@ -65,6 +65,32 @@
        <property name="icon">
         <iconset resource="MainWindow.qrc">
          <normaloff>:/MainWindow/icons/npc.png</normaloff>:/MainWindow/icons/npc.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>48</width>
+         <height>48</height>
+        </size>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="newChestButton">
+       <property name="geometry">
+        <rect>
+         <x>56</x>
+         <y>4</y>
+         <width>55</width>
+         <height>54</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="MainWindow.qrc">
+         <normaloff>:/MainWindow/icons/chest.png</normaloff>:/MainWindow/icons/chest.png</iconset>
        </property>
        <property name="iconSize">
         <size>

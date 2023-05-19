@@ -21,6 +21,7 @@
 #include "LevelCommands.h"
 #include "EditTilesetDialog.h"
 #include "ScreenshotDialog.h"
+#include "LevelChest.h"
 
 namespace TilesEditor
 {
@@ -75,8 +76,11 @@ namespace TilesEditor
 		ui_objectClass.objectsTable->setColumnWidth(2, 70);
 
 		connect(ui_objectClass.newNPCButton, &QAbstractButton::clicked, this, &EditorTabWidget::objectsNewNPCClicked);
+		connect(ui_objectClass.newChestButton, &QAbstractButton::clicked, this, &EditorTabWidget::objectsNewChestClicked);
 		connect(ui_objectClass.refreshButton, &QAbstractButton::clicked, this, &EditorTabWidget::objectsRefreshClicked);
 		connect(ui_objectClass.objectsTable, &QTableView::doubleClicked, this, &EditorTabWidget::objectsDoubleClick);
+
+		
 
 		connect(ui_tilesetsClass.tileIcon, &CustomPaintWidget::paint, this, &EditorTabWidget::paintDefaultTile);
 		connect(ui_tilesetsClass.graphicsView, &GraphicsView::renderView, this, &EditorTabWidget::renderTilesetSelection);
@@ -586,7 +590,7 @@ namespace TilesEditor
 			case LevelEntityType::ENTITY_SIGN:
 				return m_selectSigns->isChecked();
 		}
-		return false;
+		return true;
 	}
 
 	bool EditorTabWidget::hasSelectionTiles() const
@@ -735,7 +739,7 @@ namespace TilesEditor
 	bool EditorTabWidget::doObjectSelection(int x, int y, bool allowAppend)
 	{
 
-		AbstractLevelEntity* entity = getEntityAt(x, y, true);
+		auto entity = getEntityAt(x, y, true);
 
 
 		if (entity != nullptr)
@@ -1961,6 +1965,10 @@ namespace TilesEditor
 							return;
 						}
 					}
+					else {
+						entity->openEditor(this);
+						m_graphicsView->redraw();
+					}
 
 
 				}
@@ -2907,8 +2915,6 @@ namespace TilesEditor
 
 	void EditorTabWidget::objectsNewNPCClicked(bool checked)
 	{
-		auto viewRect = getViewRect();
-
 		auto selection = new ObjectSelection(0, 0);
 
 		auto npc = new LevelNPC(nullptr, 0, 0, 48, 48);
@@ -2916,10 +2922,22 @@ namespace TilesEditor
 		selection->addObject(npc);
 		selection->setAlternateSelectionMethod(true);
 		selection->setSelectMode(ObjectSelection::SelectMode::MODE_INSERT);
-
 		setSelection(selection);
 
 	}
+
+	void EditorTabWidget::objectsNewChestClicked(bool checked)
+	{
+		auto selection = new ObjectSelection(0, 0);
+
+		auto chest = new LevelChest(nullptr, 0, 0, "greenrupee", -1);
+		selection->addObject(chest);
+		selection->setAlternateSelectionMethod(true);
+		selection->setSelectMode(ObjectSelection::SelectMode::MODE_INSERT);
+		setSelection(selection);
+
+	}
+
 
 	void EditorTabWidget::objectsRefreshClicked(bool checked)
 	{

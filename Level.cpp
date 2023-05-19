@@ -10,6 +10,8 @@
 #include "LevelNPC.h"
 #include "LevelLink.h"
 #include "LevelSign.h"
+#include "LevelChest.h"
+
 #include "cJSON/JsonHelper.h"
 
 namespace TilesEditor
@@ -174,10 +176,10 @@ namespace TilesEditor
                         }
                         else if (words[0] == "LINK" && wordCount >= 8)
                         {
-                            double x = words[2].toInt() * 16;
-                            double y = words[3].toInt() * 16;
-                            int width = words[4].toInt() * 16;
-                            int height = words[5].toInt() * 16;
+                            auto x = words[2].toDouble() * 16;
+                            auto y = words[3].toDouble() * 16;
+                            auto width = words[4].toInt() * 16;
+                            auto height = words[5].toInt() * 16;
 
                             auto& nextX = words[6];
                             auto& nextY = words[7];
@@ -197,30 +199,22 @@ namespace TilesEditor
                         }
                         else if (words[0] == "CHEST" && wordCount >= 5)
                         {
-                            auto itemName = words[3].toLower();
-                            /*
-                             for (unsigned int ii = 0; ii < sizeof(ITEM_NAMES) / sizeof(*ITEM_NAMES); ++ii)
-                             {
-                                 if (itemName == ITEM_NAMES[ii])
-                                 {
-                                     Chest* chest = new Chest();
-                                     chest->m_x = atoi(words[1].c_str());
-                                     chest->m_y = atoi(words[2].c_str());
-                                     chest->m_signIndex = atoi(words[4].c_str());
-                                     chest->m_itemId = ii;
-                                     this->AddChest(chest);
-                                     break;
-                                 }
-                             }*/
+                            auto& itemName = words[3];
 
+                            auto x = words[1].toDouble() * 16;
+                            auto y = words[2].toDouble() * 16;
+
+                            auto signIndex = words[4].toInt();
+
+                            addObject(new LevelChest(this, x + getX(), y + getY(), itemName, signIndex));
 
                         }
                         else if (words[0] == "SIGN" && wordCount >= 3)
                         {
                             
                             auto sign = new LevelSign(this,
-                                getX() + words[1].toInt() * 16,
-                                getY() + words[2].toInt() * 16,
+                                getX() + words[1].toDouble() * 16,
+                                getY() + words[2].toDouble() * 16,
                                 32,
                                 16);
 
@@ -558,21 +552,33 @@ namespace TilesEditor
 
             for (auto obj : m_objects)
             {
-                if (obj->getEntityType() == LevelEntityType::ENTITY_NPC)
+                switch (obj->getEntityType())
                 {
-                    auto npc = static_cast<LevelNPC*>(obj);
+                    case LevelEntityType::ENTITY_NPC:
+                    {
+                        auto npc = static_cast<LevelNPC*>(obj);
 
-                    auto imageName = npc->getImageName();
-                    if (imageName.isEmpty())
-                        imageName = "-";
+                        auto imageName = npc->getImageName();
+                        if (imageName.isEmpty())
+                            imageName = "-";
 
-                    stream << "NPC " << imageName << " " << std::floor(((npc->getX() - getX()) / 16.0) * 1000.0) / 1000.0 << " " << std::floor(((npc->getY() - getY()) / 16.0) * 1000.0) / 1000.0 << Qt::endl;
+                        stream << "NPC " << imageName << " " << std::floor(((npc->getX() - getX()) / 16.0) * 1000.0) / 1000.0 << " " << std::floor(((npc->getY() - getY()) / 16.0) * 1000.0) / 1000.0 << Qt::endl;
 
-                    stream << npc->getCode();
+                        stream << npc->getCode();
 
-                    if (!npc->getCode().endsWith('\n'))
-                        stream << Qt::endl;
-                    stream << "NPCEND" << Qt::endl << Qt::endl;
+                        if (!npc->getCode().endsWith('\n'))
+                            stream << Qt::endl;
+                        stream << "NPCEND" << Qt::endl << Qt::endl;
+                    }
+                    break;
+
+                    case LevelEntityType::ENTITY_CHEST:
+                    {
+                        auto chest = static_cast<LevelChest*>(obj);
+
+                        stream << "CHEST " << int((chest->getX() - getX()) / 16.0) << " " << int((chest->getY() - getY()) / 16.0) << " " << chest->getItemName() << " " << chest->getSignIndex() << Qt::endl;
+                    }
+                    break;
                 }
 
             }

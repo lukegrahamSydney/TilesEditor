@@ -8,6 +8,8 @@ namespace TilesEditor
 		ENTITY_TILEMAP,
 		ENTITY_SIGN,
 		ENTITY_LINK,
+		ENTITY_CHEST,
+		ENTITY_BADDY,
 		ENTITY_INVALID
 	};
 };

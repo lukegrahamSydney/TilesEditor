@@ -20,6 +20,7 @@ namespace TilesEditor
 
 		connect(ui.overlayButton, &QAbstractButton::clicked, ui.graphicsView, &GraphicsView::redraw);
 		connect(ui.browseButton, &QAbstractButton::clicked, this, &EditTilesetDialog::browseButtonClicked);
+		connect(ui.imageTextBox, &QLineEdit::editingFinished, this, &EditTilesetDialog::reloadImage);
 
 		connect(ui.radioButtonType0, &QAbstractButton::clicked, this, &EditTilesetDialog::tileTypeClicked);
 		connect(ui.radioButtonType1, &QAbstractButton::clicked, this, &EditTilesetDialog::tileTypeClicked);
@@ -149,7 +150,7 @@ namespace TilesEditor
 
 	void EditTilesetDialog::browseButtonClicked(bool checked)
 	{
-		auto fileName = QFileDialog::getOpenFileName(nullptr, "Select Image", m_resourceManager.getRootDir(), "Image Files (*.png *.gif)");
+		auto fileName = QFileDialog::getOpenFileName(nullptr, "Select Image", QString(), "Image Files (*.png *.gif)");
 		if (!fileName.isEmpty())
 		{
 			QFileInfo fi(fileName);
@@ -159,19 +160,25 @@ namespace TilesEditor
 
 			ui.imageTextBox->setText(fi.fileName());
 
-			if (m_tilesetImage)
-				m_resourceManager.freeResource(m_tilesetImage);
+			reloadImage();
+		}
+	}
 
-			m_tilesetImage = static_cast<Image*>(m_resourceManager.loadResource(ui.imageTextBox->text(), ResourceType::RESOURCE_IMAGE));
 
-			if (m_tilesetImage)
-			{
-				auto hcount = m_tilesetImage->width() / 16;
-				auto vcount = m_tilesetImage->height() / 16;
+	void EditTilesetDialog::reloadImage()
+	{
+		if (m_tilesetImage)
+			m_resourceManager.freeResource(m_tilesetImage);
 
-				m_tileset.resize(hcount, vcount);
-				ui.graphicsView->setSceneRect(0, 0, m_tilesetImage->width(), m_tilesetImage->height());
-			}
+		m_tilesetImage = static_cast<Image*>(m_resourceManager.loadResource(ui.imageTextBox->text(), ResourceType::RESOURCE_IMAGE));
+
+		if (m_tilesetImage)
+		{
+			auto hcount = m_tilesetImage->width() / 16;
+			auto vcount = m_tilesetImage->height() / 16;
+
+			m_tileset.resize(hcount, vcount);
+			ui.graphicsView->setSceneRect(0, 0, m_tilesetImage->width(), m_tilesetImage->height());
 		}
 	}
 

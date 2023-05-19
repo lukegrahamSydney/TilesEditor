@@ -14,12 +14,13 @@ namespace TilesEditor
 	{
 		Q_OBJECT
 
-	public slots:
+	private slots:
 		void renderScene(QPainter* painter, const QRectF& rect);
 		void graphicsMouseWheel(QWheelEvent* event);
 		void graphicsMouseMove(QMouseEvent* event);
 		void tileTypeClicked(bool checked);
 		void browseButtonClicked(bool checked);
+		void reloadImage();
 
 	private:
 		ResourceManager& m_resourceManager;
@@ -27,6 +28,8 @@ namespace TilesEditor
 		Image* m_tilesetImage;
 
 		int m_selectedType;
+
+
 
 	public:
 		EditTilesetDialog(const Tileset* tileset, ResourceManager& resourceManager, QWidget* parent = nullptr);

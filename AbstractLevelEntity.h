@@ -80,6 +80,7 @@ namespace TilesEditor
 		virtual bool update(double delta) { return false; };
 		virtual void draw(QPainter* painter, const IRectangle& viewRect, double x, double y) = 0;
 
+		virtual void openEditor(IWorld* world) {}
 		virtual double getX() const {
 			return m_x;
 		}
