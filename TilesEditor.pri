@@ -10,6 +10,7 @@ message("You are running qmake on a generated .pro file. This may not work!")
 HEADERS += ./AbstractFileSystem.h \
     ./AbstractLevelEntity.h \
     ./AbstractSelection.h \
+    ./LevelChest.h \
     ./LevelCommands.h \
     ./LevelLink.h \
     ./LevelNPC.h \
@@ -49,9 +50,11 @@ HEADERS += ./AbstractFileSystem.h \
     ./CustomPaintWidget.h \
     ./EditExternalNPC.h \
     ./EditTilesetDialog.h \
+    ./EditChestDialog.h \
     ./ListLinksDialog.h \
     ./SaveOverworldDialog.h \
     ./ObjectsWidget.h \
+    ./ScreenshotDialog.h \
     ./TileObjectsWidget.h \
     ./GraphicsView.h \
     ./EditorTabWidget.h \
@@ -66,12 +69,12 @@ HEADERS += ./AbstractFileSystem.h \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditor.hpp \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorHighlighter.hpp \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorLineWidget.hpp \
-    ./QCodeEditor/include/KGL/Widgets/QCodeEditorPopup.hpp \
-    ./ScreenshotDialog.h
+    ./QCodeEditor/include/KGL/Widgets/QCodeEditorPopup.hpp
 SOURCES += ./AboutDialog.cpp \
     ./AbstractLevelEntity.cpp \
     ./AbstractSelection.cpp \
     ./EditAnonymousNPC.cpp \
+    ./EditChestDialog.cpp \
     ./EditExternalNPC.cpp \
     ./EditLinkDialog.cpp \
     ./EditorTabWidget.cpp \
@@ -81,6 +84,7 @@ SOURCES += ./AboutDialog.cpp \
     ./Image.cpp \
     ./ImageDimensions.cpp \
     ./Level.cpp \
+    ./LevelChest.cpp \
     ./LevelCommands.cpp \
     ./LevelLink.cpp \
     ./LevelNPC.cpp \
@@ -93,6 +97,7 @@ SOURCES += ./AboutDialog.cpp \
     ./Overworld.cpp \
     ./ResourceManager.cpp \
     ./SaveOverworldDialog.cpp \
+    ./ScreenshotDialog.cpp \
     ./TileGroupListModel.cpp \
     ./TileGroupModel.cpp \
     ./Tilemap.cpp \
@@ -115,10 +120,10 @@ SOURCES += ./AboutDialog.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorHighlighter.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorLineWidget.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorPopup.cpp \
-    ./QCodeEditor/src/Widgets/QCodeEditorSlots.cpp \
-    ./ScreenshotDialog.cpp
+    ./QCodeEditor/src/Widgets/QCodeEditorSlots.cpp
 FORMS += ./AboutDialog.ui \
     ./EditAnonymousNPC.ui \
+    ./EditChestDialog.ui \
     ./EditExternalNPC.ui \
     ./EditLinkDialog.ui \
     ./EditorTabWidget.ui \
@@ -128,7 +133,7 @@ FORMS += ./AboutDialog.ui \
     ./MainWindow.ui \
     ./ObjectsWidget.ui \
     ./SaveOverworldDialog.ui \
+    ./ScreenshotDialog.ui \
     ./TileObjectsWidget.ui \
-    ./TilesetsWidget.ui \
-    ./ScreenshotDialog.ui
+    ./TilesetsWidget.ui
 RESOURCES += MainWindow.qrc
