@@ -30,6 +30,8 @@ namespace TilesEditor
 		void reinsertIntoWorld(IWorld* world, int layer) override;
 		void clearSelection(IWorld* world) override;
 
+		int getWidth() const override;
+		int getHeight() const override;
 		bool canResize() const override;
 		bool clipboardCopy() override;
 		void deserializeJSON(cJSON* json, IWorld* world) override;

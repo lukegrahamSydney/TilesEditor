@@ -90,6 +90,7 @@ namespace TilesEditor
 
 		void objectsNewNPCClicked(bool checked);
 		void objectsNewChestClicked(bool checked);
+		void objectsNewBaddyClicked(bool checked);
 		void objectsRefreshClicked(bool checked);
 		void objectsDoubleClick(const QModelIndex& index);
 

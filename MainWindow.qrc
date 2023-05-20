@@ -37,5 +37,7 @@
         <file>icons/fugue/eye-close.png</file>
         <file>icons/npc.png</file>
         <file>icons/chest.png</file>
+        <file>icons/opps.png</file>
+        <file>icons/baddy.png</file>
     </qresource>
 </RCC>

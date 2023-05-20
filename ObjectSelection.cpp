@@ -168,6 +168,20 @@ namespace TilesEditor
         m_selectedObjects.clear();
     }
 
+    int ObjectSelection::getWidth() const
+    {
+        if (m_selectedObjects.size() == 1)
+            return m_selectedObjects.first()->getWidth();
+        return 0;
+    }
+
+    int ObjectSelection::getHeight() const
+    {
+        if (m_selectedObjects.size() == 1)
+            return m_selectedObjects.first()->getHeight();
+        return 0;
+    }
+
     bool ObjectSelection::canResize() const
     {
         if (m_selectedObjects.size() == 1)

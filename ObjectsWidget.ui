@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>152</width>
-    <height>590</height>
+    <height>425</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -79,7 +79,7 @@
       <widget class="QToolButton" name="newChestButton">
        <property name="geometry">
         <rect>
-         <x>56</x>
+         <x>64</x>
          <y>4</y>
          <width>55</width>
          <height>54</height>
@@ -96,6 +96,32 @@
         <size>
          <width>48</width>
          <height>48</height>
+        </size>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="newBaddyButton">
+       <property name="geometry">
+        <rect>
+         <x>4</x>
+         <y>60</y>
+         <width>69</width>
+         <height>73</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="MainWindow.qrc">
+         <normaloff>:/MainWindow/icons/baddy.png</normaloff>:/MainWindow/icons/baddy.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>44</width>
+         <height>66</height>
         </size>
        </property>
        <property name="autoRaise">

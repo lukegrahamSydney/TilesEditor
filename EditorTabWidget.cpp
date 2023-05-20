@@ -22,6 +22,7 @@
 #include "EditTilesetDialog.h"
 #include "ScreenshotDialog.h"
 #include "LevelChest.h"
+#include "LevelGraalBaddy.h"
 
 namespace TilesEditor
 {
@@ -77,6 +78,8 @@ namespace TilesEditor
 
 		connect(ui_objectClass.newNPCButton, &QAbstractButton::clicked, this, &EditorTabWidget::objectsNewNPCClicked);
 		connect(ui_objectClass.newChestButton, &QAbstractButton::clicked, this, &EditorTabWidget::objectsNewChestClicked);
+		connect(ui_objectClass.newBaddyButton, &QAbstractButton::clicked, this, &EditorTabWidget::objectsNewBaddyClicked);
+
 		connect(ui_objectClass.refreshButton, &QAbstractButton::clicked, this, &EditorTabWidget::objectsRefreshClicked);
 		connect(ui_objectClass.objectsTable, &QTableView::doubleClicked, this, &EditorTabWidget::objectsDoubleClick);
 
@@ -1821,11 +1824,13 @@ namespace TilesEditor
 
 			if (m_selection->getAlternateSelectionMethod())
 			{
-				m_selection->drag(
+				/*m_selection->drag(
 					std::round((pos.x() - m_selection->getWidth() / 2) / 16.0) * 16.0,
 					std::round((pos.y() - m_selection->getHeight() / 2) / 16.0) * 16.0,
-					true, this);
+					true, this);*/
 
+				m_selection->drag(pos.x() - m_selection->getWidth() / 2, pos.y() - m_selection->getHeight() / 2,
+					true, this);
 				m_graphicsView->redraw();
 				return;
 
@@ -2936,6 +2941,17 @@ namespace TilesEditor
 		selection->setSelectMode(ObjectSelection::SelectMode::MODE_INSERT);
 		setSelection(selection);
 
+	}
+
+	void EditorTabWidget::objectsNewBaddyClicked(bool checked)
+	{
+		auto selection = new ObjectSelection(0, 0);
+
+		auto chest = new LevelGraalBaddy(nullptr, 0.0, 0.0, 0);
+		selection->addObject(chest);
+		selection->setAlternateSelectionMethod(true);
+		selection->setSelectMode(ObjectSelection::SelectMode::MODE_INSERT);
+		setSelection(selection);
 	}
 
 

@@ -11,6 +11,7 @@
 #include "LevelLink.h"
 #include "LevelSign.h"
 #include "LevelChest.h"
+#include "LevelGraalBaddy.h"
 
 #include "cJSON/JsonHelper.h"
 
@@ -209,6 +210,22 @@ namespace TilesEditor
                             addObject(new LevelChest(this, x + getX(), y + getY(), itemName, signIndex));
 
                         }
+                        else if (words[0] == "BADDY" && wordCount >= 3)
+                        {
+                            auto x = words[1].toDouble() * 16;
+                            auto y = words[2].toDouble() * 16;
+                            auto type = words[3].toInt();
+
+                            auto baddy = new LevelGraalBaddy(this, x + getX(), y + getY(), type);
+                            int verseIndex = 0;
+                            for (++i; i < lineCount && lines[i] != "BADDYEND"; ++i)
+                            {
+                                baddy->setBaddyVerse(verseIndex++, lines[i].trimmed());
+                            }
+
+                            addObject(baddy);
+
+                        }
                         else if (words[0] == "SIGN" && wordCount >= 3)
                         {
                             
@@ -227,26 +244,6 @@ namespace TilesEditor
                             addObject(sign);
                             //m_otherEntities->add(sign);
 
-                        }
-                        else if (words[0] == "BADDY" && wordCount >= 3)
-                        {
-                            /*
-                            float x = atof(words[1].c_str());
-                            float y = atof(words[2].c_str());
-                            int type = atoi(words[3].c_str());
-
-                            if (Server::Instance()->IsEventRegistered(GMEVENT_LEVEL_BADDY_ADDED))
-                            {
-                                gmVariable params[] = {
-                                    gmVariable(this->GetUserObject()),
-                                    gmVariable(type),
-                                    gmVariable(x),
-                                    gmVariable(y)
-                                };
-                                Server::Instance()->CallGMEvent(GMEVENT_LEVEL_BADDY_ADDED, params, 4);
-                            }
-                            for (++i; i < lineCount && lines[i] != "BADDYEND"; ++i) {}
-                            */
                         }
                         else if (words[0] == "NPC" && wordCount >= 4)
                         {
@@ -577,6 +574,19 @@ namespace TilesEditor
                         auto chest = static_cast<LevelChest*>(obj);
 
                         stream << "CHEST " << int((chest->getX() - getX()) / 16.0) << " " << int((chest->getY() - getY()) / 16.0) << " " << chest->getItemName() << " " << chest->getSignIndex() << Qt::endl;
+                    }
+                    break;
+
+                    case LevelEntityType::ENTITY_BADDY:
+                    {
+                        auto baddy = static_cast<LevelGraalBaddy*>(obj);
+
+                        stream << "BADDY " << int((baddy->getX() - getX()) / 16.0) << " " << int((baddy->getY() - getY()) / 16.0) << " " << baddy->getBaddyType() << Qt::endl;
+                        for (auto i = 0; i < 3; ++i)
+                        {
+                            stream << baddy->getBaddyVerse(i) << Qt::endl;
+                        }
+                        stream << "BADDYEND" << Qt::endl << Qt::endl;
                     }
                     break;
                 }
