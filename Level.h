@@ -73,10 +73,12 @@ namespace TilesEditor
 
 		bool loadFile(ResourceManager& resourceManager);
 		bool loadNWFile(ResourceManager& resourceManager);
+		bool loadGraalFile(ResourceManager& resourceManager);
 		bool loadLVLFile(ResourceManager& resourceManager);
 
 		bool saveFile();
 		bool saveNWFile();
+		bool saveGraalFile();
 		bool saveLVLFile();
 
 		bool getLoaded() const { return m_loaded; }

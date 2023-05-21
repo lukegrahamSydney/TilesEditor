@@ -49,6 +49,9 @@ namespace TilesEditor
 		if (m_fileName.endsWith(".gmap"))
 			return loadGMapFile(resourceManager);
 
+		else if (m_fileName.endsWith(".txt"))
+			return loadTXTFile(resourceManager);
+
 		else if (m_fileName.endsWith(".world"))
 			return loadWorldFile(resourceManager);
 		return false;
@@ -130,6 +133,56 @@ namespace TilesEditor
 			}
 			return true;
 		}
+		return false;
+	}
+
+	bool Overworld::loadTXTFile(ResourceManager& resourceManager)
+	{
+		QStringList lines;
+
+		if (resourceManager.getFileSystem().readAllLines(m_fileName, lines) && lines.size() > 0)
+		{
+			bool sizeSet = false;
+			bool retval = false;
+			for (auto y = 0; y < lines.size(); ++y)
+			{
+				size_t namesCount = 0;
+				QStringList namesList;
+				if ((namesCount = StringTools::ParseCSV(lines[y], namesList)) > 0)
+				{
+					if (!sizeSet)
+					{
+						auto width = namesList.size();
+						auto height = lines.size();
+
+						sizeSet = true;
+						setSize(width * 16 * 64, height * 16 * 64);
+						retval = true;
+					}
+
+					for (size_t x = 0; x < namesList.count(); ++x)
+					{
+						auto& levelName = namesList[x];
+
+						if (levelName != "")
+						{
+							auto levelX = x * (64.0 * 16);
+							auto levelY = y * (64.0 * 16);
+
+							auto level = new Level(levelX, levelY, 64 * 16, 64 * 16, this, levelName);
+
+							m_levelMap->add(level);
+
+							m_levelNames[levelName] = level;
+						}
+					}
+				}
+
+			}
+
+			return retval;
+		}
+
 		return false;
 	}
 

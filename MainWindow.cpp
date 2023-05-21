@@ -36,8 +36,8 @@ namespace TilesEditor
 
 
         m_resourceManager.addSearchDir("./");
-        m_resourceManager.addSearchDirRecursive("./levels/");
-        m_resourceManager.addSearchDirRecursive("./world/");
+        m_resourceManager.addSearchDir("./levels/");
+        m_resourceManager.addSearchDir("./world/");
 
         auto tilesets = settings.value("tilesets").toStringList();
         for (auto& tilesetName : tilesets)
@@ -147,7 +147,7 @@ namespace TilesEditor
         return tabPage;
     }
 
-    void MainWindow::openLevelFilename(const QString & fileName)
+    EditorTabWidget* MainWindow::openLevelFilename(const QString & fileName)
     {
         auto tabPage = createNewTab();
 
@@ -158,15 +158,17 @@ namespace TilesEditor
         ui.levelsTab->addTab(tabPage, fi.fileName());
         ui.levelsTab->setCurrentWidget(tabPage);
 
-        if (fi.suffix() == "gmap" || fi.suffix() == "world")
+        if (fi.suffix() == "gmap" || fi.suffix() == "world" || fi.suffix() == "txt")
             tabPage->loadOverworld(fi.fileName(), fileName);
         else tabPage->loadLevel(fi.fileName(), fileName);
+
+        return tabPage;
 
     }
 
     void MainWindow::openFile(bool checked)
     {
-        auto fileName = QFileDialog::getOpenFileName(nullptr, "Select level", QString(), "All supported files (*.nw *.gmap *.lvl *.world)");
+        auto fileName = QFileDialog::getOpenFileName(nullptr, "Select level", QString(), "All supported files (*.nw *.graal *.zelda *.gmap *.lvl *.world *.txt)");
         
         if (!fileName.isEmpty())
         {
@@ -186,6 +188,7 @@ namespace TilesEditor
 
     void MainWindow::openLevel(const QString& levelName)
     {
+
         for (auto i = 0; i < ui.levelsTab->count(); ++i)
         {
             auto tabPage = static_cast<EditorTabWidget*>(ui.levelsTab->widget(i));
@@ -204,7 +207,12 @@ namespace TilesEditor
         QString fullPath;
         if (sourceTab->getResourceManager().locateFile(levelName, &fullPath))
         {
-            openLevelFilename(fullPath);
+            auto tab = openLevelFilename(fullPath);
+
+            if (tab && tab != sourceTab)
+            {
+                tab->getResourceManager().mergeSearchDirectories(sourceTab->getResourceManager());
+            }
         }
         
     }

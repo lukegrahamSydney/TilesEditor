@@ -2643,7 +2643,7 @@ namespace TilesEditor
 	{
 		if (m_level)
 		{
-			auto fullPath = QFileDialog::getSaveFileName(nullptr, "Save Level As", QString(), "All Level Files (*.nw *.lvl)");
+			auto fullPath = QFileDialog::getSaveFileName(nullptr, "Save Level As", QString(), "All Level Files (*.nw *.lvl *.graal *.zelda)");
 
 			if (!fullPath.isEmpty())
 			{
@@ -3175,7 +3175,7 @@ namespace TilesEditor
 		qDebug() << level->getFileName();
 		if (level->getFileName().isEmpty())
 		{
-			auto fullPath = QFileDialog::getSaveFileName(nullptr, "Save Level", QString(), "All Level Files (*.nw *.lvl)");
+			auto fullPath = QFileDialog::getSaveFileName(nullptr, "Save Level", QString(), "All Level Files (*.nw *.lvl *.graal *.zelda)");
 
 			if (!fullPath.isEmpty())
 			{

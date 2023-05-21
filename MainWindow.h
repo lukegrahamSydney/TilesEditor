@@ -27,7 +27,7 @@ namespace TilesEditor
         MainWindow(QWidget* parent = nullptr);
         ~MainWindow();
 
-        void openLevelFilename(const QString& fileName);
+        EditorTabWidget* openLevelFilename(const QString& fileName);
 
     private:
         Ui::MainWindowClass ui;

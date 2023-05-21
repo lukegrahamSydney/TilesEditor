@@ -47,6 +47,7 @@ namespace TilesEditor
 
 		bool loadFile(ResourceManager& resourceManager);
 		bool loadGMapFile(ResourceManager& resourceManager);
+		bool loadTXTFile(ResourceManager& resourceManager);
 		bool loadWorldFile(ResourceManager& resourceManager);
 
 		bool saveFile();
