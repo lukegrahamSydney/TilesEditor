@@ -425,8 +425,8 @@ namespace TilesEditor
                     {
                         auto x = words[1].toDouble() * 16;
                         auto y = words[2].toDouble() * 16;
-                        auto width = words[3].toInt() * 16;
-                        auto height = words[4].toInt() * 16;
+                        auto width = int(words[3].toDouble() * 16);
+                        auto height = int(words[4].toDouble() * 16);
 
                         auto& nextX = words[5];
                         auto& nextY = words[6];
@@ -1170,17 +1170,8 @@ namespace TilesEditor
                             int code = signText.indexOf(letter);
                             if (letter == '#') code = 86;
 
-                            if (letter == '\n')
-                            {
-                                qDebug() << letter;
-;                            }
-
                             if (code != -1) {
                                 retVal.push_back(32 + code);
-                            }
-                            else
-                            {
-                                qDebug() << letter;
                             }
                         }
                         return retVal;

@@ -36,10 +36,10 @@ namespace TilesEditor
 			auto newIndex = ui.linksTable->rowCount();
 			ui.linksTable->insertRow(newIndex);
 
-			ui.linksTable->setItem(newIndex, 0, new QTableWidgetItem(QString::number(link->getX())));
-			ui.linksTable->setItem(newIndex, 1, new QTableWidgetItem(QString::number(link->getY())));
-			ui.linksTable->setItem(newIndex, 2, new QTableWidgetItem(QString::number(link->getWidth())));
-			ui.linksTable->setItem(newIndex, 3, new QTableWidgetItem(QString::number(link->getHeight())));
+			ui.linksTable->setItem(newIndex, 0, new QTableWidgetItem(QString::number(link->getX() / m_level->getUnitWidth())));
+			ui.linksTable->setItem(newIndex, 1, new QTableWidgetItem(QString::number(link->getY() / m_level->getUnitHeight())));
+			ui.linksTable->setItem(newIndex, 2, new QTableWidgetItem(QString::number(link->getWidth() / m_level->getUnitWidth())));
+			ui.linksTable->setItem(newIndex, 3, new QTableWidgetItem(QString::number(link->getHeight() / m_level->getUnitHeight())));
 			ui.linksTable->setItem(newIndex, 4, new QTableWidgetItem(link->getNextX()));
 			ui.linksTable->setItem(newIndex, 5, new QTableWidgetItem(link->getNextY()));
 			ui.linksTable->setItem(newIndex, 6, new QTableWidgetItem(link->getNextLevel()));

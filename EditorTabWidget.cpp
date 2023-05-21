@@ -1043,6 +1043,7 @@ namespace TilesEditor
 	{
 		QFileInfo fi(fileName);
 
+
 		m_resourceManager.addSearchDirRecursive(fi.absolutePath());
 		m_resourceManager.setRootDir(fi.absolutePath());
 

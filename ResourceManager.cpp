@@ -9,10 +9,14 @@ namespace TilesEditor
 {
 	void ResourceManager::populateDirectories(const QString& searchPath, int level, const QString& rootDir)
 	{ 
-		if (m_searchDirectories.count() < 100 && level <= 2 && !m_searchDirectories.contains(searchPath))
+		if (m_searchDirectories.count() < 100 && level <= 2)
 		{
+			if (!m_searchDirectories.contains(searchPath))
+				m_searchDirectoriesList.push_back(searchPath);
+
 			m_searchDirectories.insert(searchPath);
-			m_searchDirectoriesList.push_back(searchPath);
+
+
 
 			QDir dir(searchPath);
 
