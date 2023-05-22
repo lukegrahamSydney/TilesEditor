@@ -4,7 +4,7 @@
 #include <QByteArray>
 #include "ui_EditAnonymousNPC.h"
 #include "LevelNPC.h"
-#include "ResourceManager.h"
+#include "IWorld.h"
 
 namespace TilesEditor
 {
@@ -27,17 +27,19 @@ namespace TilesEditor
 
 
 		LevelNPC* m_npc;
-
+		IWorld* m_world;
 		bool	m_modified;
-		ResourceManager& m_resourceManager;
+		
 
 	public:
 		static QByteArray savedGeometry;
 
-		EditAnonymousNPC(LevelNPC* npc, ResourceManager& resourceManager, QWidget* parent = nullptr);
+		EditAnonymousNPC(LevelNPC* npc, IWorld* world, QWidget* parent = nullptr);
 		~EditAnonymousNPC();
 
 		bool getModified() const { return m_modified; }
+
+	
 
 	private:
 		Ui::EditAnonymousNPCClass ui;

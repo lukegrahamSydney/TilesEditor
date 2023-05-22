@@ -1902,86 +1902,20 @@ namespace TilesEditor
 
 				if(entity)
 				{
-					if (entity->getEntityType() == LevelEntityType::ENTITY_NPC)
-					{
-
-						EditAnonymousNPC frm(static_cast<LevelNPC*>(entity), m_resourceManager);
-						if (frm.exec() == QDialog::Accepted)
-						{
-							if (frm.getModified())
-							{
-								setModified(entity->getLevel());
-
-								updateMovedEntity(entity);
-							}
-						}
-						else if (frm.result() == -1)
-						{
-							deleteEntity(entity);
-
-							m_graphicsView->setCursor(Qt::CursorShape::ArrowCursor);
-							m_graphicsView->redraw();
-							return;
-						}
-
-					}
-
-					else if (entity->getEntityType() == LevelEntityType::ENTITY_LINK)
+					if (entity->getEntityType() == LevelEntityType::ENTITY_LINK && QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ShiftModifier))
 					{
 						auto link = static_cast<LevelLink*>(entity);
-						if (QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ShiftModifier))
-						{
-							emit openLevel(link->getNextLevel());
+						emit openLevel(link->getNextLevel());
 
-							return;
-						}
-
-						EditLinkDialog frm(link);
-						if (frm.exec() == QDialog::Accepted)
-						{
-							if (frm.getModified())
-							{
-								setModified(entity->getLevel());
-								updateMovedEntity(entity);
-							}
-						}
-						else if (frm.result() == -1)
-						{
-							//setModified(entity->getLevel());
-							deleteEntity(entity);
-
-							m_graphicsView->setCursor(Qt::CursorShape::ArrowCursor);
-							m_graphicsView->redraw();
-							return;
-						}
-					}
-					else if (entity->getEntityType() == LevelEntityType::ENTITY_SIGN)
-					{
-						auto sign = static_cast<LevelSign*>(entity);
-
-						EditSignsDialog frm(sign->getLevel(), this, sign);
-						if (frm.exec() == QDialog::Accepted)
-						{
-						}
-						else if (frm.result() == -1)
-						{
-							deleteEntity(entity);
-							m_graphicsView->setCursor(Qt::CursorShape::ArrowCursor);
-							m_graphicsView->redraw();
-							return;
-						}
+						return;
+						
 					}
 					else {
 						entity->openEditor(this);
 						m_graphicsView->redraw();
 					}
-
-
 				}
 			}
-
-
-			
 		}
 	}
 
@@ -2364,7 +2298,7 @@ namespace TilesEditor
 		{
 			auto link = new LevelLink(rootLinkLevel, rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), false);
 
-			EditLinkDialog frm(link);
+			EditLinkDialog frm(link, this);
 			if (frm.exec() == QDialog::Accepted)
 			{
 				auto undoCommand = new QUndoCommand();

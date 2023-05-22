@@ -1,6 +1,7 @@
 #include <QDebug>
 #include "LevelNPC.h"
 #include "cJSON/JsonHelper.h"
+#include "EditAnonymousNPC.h"
 
 namespace TilesEditor
 {
@@ -85,6 +86,12 @@ namespace TilesEditor
 			setWidth(48);
 			setHeight(48);
 		}
+	}
+
+	void LevelNPC::openEditor(IWorld* world)
+	{
+		EditAnonymousNPC frm(this, world);
+		frm.exec();
 	}
 
 	cJSON* LevelNPC::serializeJSON()

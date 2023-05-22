@@ -1,8 +1,10 @@
-#pragma once
+#ifndef EDITLINKDIALOGH
+#define EDITLINKDIALOGH
 
 #include <QDialog>
 #include "ui_EditLinkDialog.h"
 #include "LevelLink.h"
+#include "IWorld.h"
 
 namespace TilesEditor
 {
@@ -18,10 +20,11 @@ namespace TilesEditor
 
 	private:
 		LevelLink* m_link;
+		IWorld* m_world;
 		bool m_modified;
 
 	public:
-		EditLinkDialog(LevelLink* link, QWidget* parent = nullptr);
+		EditLinkDialog(LevelLink* link, IWorld* world, QWidget* parent = nullptr);
 		~EditLinkDialog();
 
 		bool getModified() const { return m_modified; }
@@ -30,3 +33,6 @@ namespace TilesEditor
 		Ui::EditLinkDialogClass ui;
 	};
 };
+
+#endif
+

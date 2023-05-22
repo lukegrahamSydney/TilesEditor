@@ -18,6 +18,7 @@ namespace TilesEditor
 	public:
 
 		LevelChest(Level* level, double x, double y, const QString& itemName, int signIndex);
+		LevelChest(Level* level, cJSON* json, IWorld* world);
 
 		void setItemName(const QString& name) {
 			m_itemName = name;

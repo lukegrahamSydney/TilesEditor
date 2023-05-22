@@ -12,6 +12,7 @@ HEADERS += ./AbstractFileSystem.h \
     ./AbstractSelection.h \
     ./LevelChest.h \
     ./LevelCommands.h \
+    ./LevelGraalBaddy.h \
     ./LevelLink.h \
     ./LevelNPC.h \
     ./LevelSign.h \
@@ -51,6 +52,7 @@ HEADERS += ./AbstractFileSystem.h \
     ./EditExternalNPC.h \
     ./EditTilesetDialog.h \
     ./EditChestDialog.h \
+    ./EditBaddy.h \
     ./ListLinksDialog.h \
     ./SaveOverworldDialog.h \
     ./ObjectsWidget.h \
@@ -74,6 +76,7 @@ SOURCES += ./AboutDialog.cpp \
     ./AbstractLevelEntity.cpp \
     ./AbstractSelection.cpp \
     ./EditAnonymousNPC.cpp \
+    ./EditBaddy.cpp \
     ./EditChestDialog.cpp \
     ./EditExternalNPC.cpp \
     ./EditLinkDialog.cpp \
@@ -86,6 +89,7 @@ SOURCES += ./AboutDialog.cpp \
     ./Level.cpp \
     ./LevelChest.cpp \
     ./LevelCommands.cpp \
+    ./LevelGraalBaddy.cpp \
     ./LevelLink.cpp \
     ./LevelNPC.cpp \
     ./LevelSign.cpp \
@@ -123,6 +127,7 @@ SOURCES += ./AboutDialog.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorSlots.cpp
 FORMS += ./AboutDialog.ui \
     ./EditAnonymousNPC.ui \
+    ./EditBaddy.ui \
     ./EditChestDialog.ui \
     ./EditExternalNPC.ui \
     ./EditLinkDialog.ui \

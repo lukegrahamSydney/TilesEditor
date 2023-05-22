@@ -1,5 +1,6 @@
 #include <QDoubleValidator>
 #include "EditSignsDialog.h"
+#include "LevelCommands.h"
 
 namespace TilesEditor
 {
@@ -159,10 +160,7 @@ namespace TilesEditor
 		auto signX = m_level->getX();
 		auto signY = m_level->getY();
 
-		auto sign = new LevelSign(m_level, signX, signY, 32, 16);
-		m_level->addObject(sign);
-
-		m_world->setModified(m_level);
+		m_world->addUndoCommand(new CommandAddEntity(m_world, new LevelSign(m_level, signX, signY, 32, 16)));
 		populateTable();
 		ui.signsTable->selectRow(ui.signsTable->rowCount() - 1);
 

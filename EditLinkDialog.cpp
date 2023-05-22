@@ -19,6 +19,9 @@ namespace TilesEditor
 			m_link->setWidth(ui.widthText->text().toInt() * m_link->getUnitWidth());
 			m_link->setHeight(ui.heightText->text().toInt() * m_link->getUnitHeight());
 
+			m_world->updateMovedEntity(m_link);
+
+
 		}
 		QDialog::accept();
 	}
@@ -39,9 +42,9 @@ namespace TilesEditor
 	{
 		if (QMessageBox::question(nullptr, "Warning", "Are you sure you want to delete this link?") == QMessageBox::Yes)
 		{
+			m_modified = false;
+			m_world->deleteEntity(m_link);
 			QDialog::reject();
-			this->setResult(-1);
-
 		}
 	}
 
@@ -51,13 +54,13 @@ namespace TilesEditor
 		m_modified = true;
 	}
 
-	EditLinkDialog::EditLinkDialog(LevelLink* link, QWidget* parent)
+	EditLinkDialog::EditLinkDialog(LevelLink* link, IWorld* world, QWidget* parent)
 		: QDialog(parent)
 	{
 		ui.setupUi(this);
 
 		m_link = link;
-
+		m_world = world;
 
 		ui.xText->setValidator(new QDoubleValidator(-1000000000, 1000000000, 2, this));
 		ui.yText->setValidator(new QDoubleValidator(-1000000000, 1000000000, 2, this));

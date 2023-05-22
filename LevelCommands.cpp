@@ -78,6 +78,7 @@ namespace TilesEditor
 		m_entity->setWidth(m_oldRect.getWidth());
 		m_entity->setHeight(m_oldRect.getHeight());
 
+
 		auto level = m_world->getLevelAt(m_entity->getCenterX(), m_entity->getCenterY());
 
 		if (level != nullptr)
@@ -94,7 +95,6 @@ namespace TilesEditor
 			}
 			//ONLY add it to the spatial map
 			else level->addEntityToSpatialMap(m_entity);
-
 		}
 	}
 

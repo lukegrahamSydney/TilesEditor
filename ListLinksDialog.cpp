@@ -79,18 +79,7 @@ namespace TilesEditor
 
 				if (link)
 				{
-					EditLinkDialog frm(link);
-					if (frm.exec() == -1)
-					{
-						m_level->removeObject(link);
-						delete link;
-						m_world->setModified(m_level);
-					}else if (frm.getModified())
-					{
-						m_world->setModified(m_level);
-					}
-
-
+					link->openEditor(m_world);
 					populateTable();
 				}
 			}

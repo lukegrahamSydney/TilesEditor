@@ -5,6 +5,7 @@
 #include "ImageDimensions.h"
 #include "Level.h"
 #include "LevelNPC.h"
+#include "LevelCommands.h"
 
 namespace TilesEditor
 {
@@ -14,14 +15,14 @@ namespace TilesEditor
 		{
 			m_npc->setCode(ui.plainTextEdit->toPlainText());
 
-
 			m_npc->setX(ui.xText->text().toDouble() * m_npc->getUnitWidth());
 			m_npc->setY(ui.yText->text().toDouble() * m_npc->getUnitHeight());
 
-			m_npc->setImageName(ui.imageText->text(), m_resourceManager);
-			m_npc->loadResources(m_resourceManager);
+			m_npc->setImageName(ui.imageText->text(), m_world->getResourceManager());
 
+			m_world->setModified(m_npc->getLevel());
 
+			m_world->updateMovedEntity(m_npc);
 		}
 		QDialog::accept();
 	}
@@ -40,13 +41,13 @@ namespace TilesEditor
 	void EditAnonymousNPC::imageBrowsePressed()
 	{
 
-		auto fileName = QFileDialog::getOpenFileName(nullptr, "Select Image", m_resourceManager.getRootDir(), "Image Files (*.png *.gif)");
+		auto fileName = QFileDialog::getOpenFileName(nullptr, "Select Image", m_world->getResourceManager().getRootDir(), "Image Files (*.png *.gif)");
 		if (!fileName.isEmpty())
 		{
 			QFileInfo fi(fileName);
 			auto directory = fi.absolutePath() + "/";
 
-			m_resourceManager.addSearchDir(directory);
+			m_world->getResourceManager().addSearchDir(directory);
 
 			ui.imageText->setText(fi.fileName());
 
@@ -78,8 +79,9 @@ namespace TilesEditor
 	{
 		if (QMessageBox::question(nullptr, "Warning", "Are you sure you want to delete this NPC?") == QMessageBox::Yes)
 		{
+			m_modified = false;
+			m_world->deleteEntity(m_npc);
 			QDialog::reject();
-			this->setResult(-1);
 			
 		}
 	}
@@ -90,14 +92,14 @@ namespace TilesEditor
 	}
 
 	QByteArray EditAnonymousNPC::savedGeometry;
-	EditAnonymousNPC::EditAnonymousNPC(LevelNPC* npc, ResourceManager& resourceManager, QWidget* parent)
-		: QDialog(parent), m_resourceManager(resourceManager)
+	EditAnonymousNPC::EditAnonymousNPC(LevelNPC* npc, IWorld* world, QWidget* parent)
+		: QDialog(parent)
 	{
 		using namespace kgl;
 		m_modified = false;
 
 		m_npc = npc;
-
+		m_world = world;
 		ui.setupUi(this);
 
 		this->setWindowFlag(Qt::Window);

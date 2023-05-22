@@ -2,6 +2,7 @@
 #include "LevelLink.h"
 #include "AbstractSelection.h"
 #include "cJSON/JsonHelper.h"
+#include "EditLinkDialog.h"
 
 namespace TilesEditor
 {
@@ -83,6 +84,12 @@ namespace TilesEditor
 
 	void LevelLink::drag(double x, double y, bool snap, IWorld* world) {
 		AbstractLevelEntity::drag(x, y, true, world);
+	}
+
+	void LevelLink::openEditor(IWorld* world)
+	{
+		EditLinkDialog form(this, world);
+		form.exec();
 	}
 
 	AbstractLevelEntity* LevelLink::duplicate() {

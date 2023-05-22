@@ -23,10 +23,40 @@ namespace TilesEditor
 
 	};
 
-	LevelGraalBaddy::LevelGraalBaddy(Level* level, double x, double y, int type):
+	LevelGraalBaddy::LevelGraalBaddy(Level* level, double x, double y, int type) :
 		AbstractLevelEntity(level, x, y)
 	{
 		m_baddyType = type;
+	}
+
+	LevelGraalBaddy::LevelGraalBaddy(Level* level, cJSON* json, IWorld* world) :
+		LevelGraalBaddy(level, 0.0, 0.0, 0)
+	{
+		deserializeJSON(json, world);
+	}
+
+	cJSON* LevelGraalBaddy::serializeJSON()
+	{
+		auto json = cJSON_CreateObject();
+
+		cJSON_AddStringToObject(json, "type", "levelBaddy");
+		cJSON_AddNumberToObject(json, "x", getX());
+		cJSON_AddNumberToObject(json, "y", getY());
+		cJSON_AddNumberToObject(json, "baddyType", getBaddyType());
+		cJSON_AddStringToObject(json, "verse0", getBaddyVerse(0).toLocal8Bit().data());
+		cJSON_AddStringToObject(json, "verse1", getBaddyVerse(1).toLocal8Bit().data());
+		cJSON_AddStringToObject(json, "verse2", getBaddyVerse(2).toLocal8Bit().data());
+		return json;
+
+	}
+	void LevelGraalBaddy::deserializeJSON(cJSON* json, IWorld* world)
+	{
+		setX(jsonGetChildDouble(json, "x"));
+		setY(jsonGetChildDouble(json, "y"));
+		setBaddyType(jsonGetChildInt(json, "baddyType"));
+		setBaddyVerse(0, jsonGetChildString(json, "verse0"));
+		setBaddyVerse(1, jsonGetChildString(json, "verse1"));
+		setBaddyVerse(2, jsonGetChildString(json, "verse2"));
 	}
 
 
@@ -49,13 +79,5 @@ namespace TilesEditor
 		dialog.exec();
 	}
 
-	cJSON* LevelGraalBaddy::serializeJSON()
-	{
-		return nullptr;
-	}
-
-	void LevelGraalBaddy::deserializeJSON(cJSON* json, IWorld* world)
-	{
-	}
 
 };

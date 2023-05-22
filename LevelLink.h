@@ -51,6 +51,7 @@ namespace TilesEditor
 		bool canResize() const override { return true; }
 		void drag(double x, double y, bool snap, IWorld* world) override;
 
+		void openEditor(IWorld* world) override;
 		QString toString() const override { return QString("[Link: %1, %2, %3]").arg(getNextLevel()).arg(getNextX()).arg(getNextY()); }
 		AbstractLevelEntity* duplicate() override;
 

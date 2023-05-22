@@ -5,7 +5,7 @@
 #include "Rectangle.h"
 #include "AbstractLevelEntity.h"
 #include "LevelEntityType.h"
-
+#include "cJSON/JsonHelper.h"
 
 namespace TilesEditor
 {
@@ -22,6 +22,10 @@ namespace TilesEditor
 	public:
 
 		LevelGraalBaddy(Level* level, double x, double y, int type);
+		LevelGraalBaddy(Level* level, cJSON* json, IWorld* world);
+
+		cJSON* serializeJSON() override;
+		void deserializeJSON(cJSON* json, IWorld* world) override;
 
 		int getBaddyType() const { return m_baddyType; }
 		void setBaddyType(int type) { m_baddyType = type; }
@@ -64,8 +68,6 @@ namespace TilesEditor
 			return nullptr;
 		}
 
-		cJSON* serializeJSON() override;
-		void deserializeJSON(cJSON* json, IWorld* world) override;
 
 		static Image* getBaddyImage() {
 			static auto retval = new Image("", QPixmap(":/MainWindow/icons/opps.png"));

@@ -1,5 +1,6 @@
 #include "LevelChest.h"
 #include "EditChestDialog.h"
+#include "cJSON/JsonHelper.h"
 
 namespace TilesEditor
 {
@@ -8,6 +9,12 @@ namespace TilesEditor
 	{
 		m_itemName = itemName;
 		m_signIndex = signIndex;
+	}
+
+	LevelChest::LevelChest(Level* level, cJSON* json, IWorld* world):
+		LevelChest(level, 0.0, 0.0, "", 0)
+	{
+		deserializeJSON(json, world);
 	}
 
 	void LevelChest::draw(QPainter* painter, const IRectangle& viewRect, double x, double y)
@@ -27,10 +34,21 @@ namespace TilesEditor
 
 	cJSON* LevelChest::serializeJSON()
 	{
-		return nullptr;
+		auto json = cJSON_CreateObject();
+
+		cJSON_AddStringToObject(json, "type", "levelChest");
+		cJSON_AddNumberToObject(json, "x", getX());
+		cJSON_AddNumberToObject(json, "y", getY());
+		cJSON_AddStringToObject(json, "item", getItemName().toLocal8Bit().data());
+		cJSON_AddNumberToObject(json, "sign", getSignIndex());
+		return json;
 	}
 
 	void LevelChest::deserializeJSON(cJSON* json, IWorld* world)
 	{
+		setX(jsonGetChildDouble(json, "x"));
+		setY(jsonGetChildDouble(json, "y"));
+		setItemName(jsonGetChildString(json, "item"));
+		setSignIndex(jsonGetChildInt(json, "sign"));
 	}
 };

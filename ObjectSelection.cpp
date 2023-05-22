@@ -6,6 +6,9 @@
 #include "ObjectSelection.h"
 #include "LevelCommands.h"
 #include "Selector.h"
+#include "LevelChest.h"
+#include "LevelSign.h"
+#include "LevelGraalBaddy.h"
 
 namespace TilesEditor
 {
@@ -237,35 +240,31 @@ namespace TilesEditor
                 if (jsonObj)
                 {
                     auto objectType = jsonGetChildString(jsonObj, "type");
+
+                    AbstractLevelEntity* entity = nullptr;
+
                     if (objectType == "levelNPCv1")
-                    {
-                        auto npc = new LevelNPC(nullptr, jsonObj, world);
-                        
-
-                        auto offsetX = npc->getX() - x;
-                        auto offsetY = npc->getY() - y;
-
-                        npc->setX(getX() + offsetX);
-                        npc->setY(getY() + offsetY);
-                        addObject(npc);
-
-                        npc->loadResources(world->getResourceManager());
-                    }
+                        entity = new LevelNPC(nullptr, jsonObj, world);
                     else if (objectType == "levelLink")
+                        entity = new LevelLink(nullptr, jsonObj, world);
+                    else if (objectType == "levelChest")
+                        entity = new LevelChest(nullptr, jsonObj, world);
+
+                    else if (objectType == "levelSign")
+                        entity = new LevelSign(nullptr, jsonObj, world);
+
+                    else if(objectType == "levelBaddy")
+                        entity = new LevelGraalBaddy(nullptr, jsonObj, world);
+                    if (entity)
                     {
-                        
-                        auto link = new LevelLink(nullptr, jsonObj, world);
+                        auto offsetX = entity->getX() - x;
+                        auto offsetY = entity->getY() - y;
 
+                        entity->setX(getX() + offsetX);
+                        entity->setY(getY() + offsetY);
+                        addObject(entity);
 
-                        auto offsetX = link->getX() - x;
-                        auto offsetY = link->getY() - y;
-
-                        link->setX(getX() + offsetX);
-                        link->setY(getY() + offsetY);
-                        addObject(link);
-
-                        link->loadResources(world->getResourceManager());
-
+                        entity->loadResources(world->getResourceManager());
                     }
                 }
             }

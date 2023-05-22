@@ -53,6 +53,8 @@ namespace TilesEditor
 			m_height = value;
 		};
 
+		void openEditor(IWorld* world) override;
+
 		QString toString() const override { return QString("[Npc: %1, %2, %3]").arg(getImageName()).arg(getX()).arg(getY()); }
 		Image* getIcon() override { return m_image; }
 		AbstractLevelEntity* duplicate() override {
