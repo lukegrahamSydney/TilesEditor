@@ -53,7 +53,7 @@ namespace TilesEditor
 		bool loadTXTStream(QIODevice* stream, ResourceManager& resourceManager);
 		bool loadWorldStream(QIODevice* stream, ResourceManager& resourceManager);
 
-		bool saveFile();
+		bool saveFile(ResourceManager& resourceManager);
 		bool saveStream(QIODevice* stream);
 		bool saveGMapStream(QIODevice* stream);
 		bool saveTXTStream(QIODevice* stream);

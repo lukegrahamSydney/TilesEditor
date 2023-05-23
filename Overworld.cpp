@@ -19,7 +19,6 @@ namespace TilesEditor
 		m_unitWidth = m_unitHeight = 16;
 
 		setSize(64, 64);
-
 	}
 
 	Overworld::~Overworld()
@@ -298,14 +297,18 @@ namespace TilesEditor
 		return false;
 	}
 
-	bool Overworld::saveFile()
+	bool Overworld::saveFile(ResourceManager& resourceManager)
 	{
-		QFile file(m_fileName);
+		auto stream = resourceManager.getFileSystem()->openStream(m_fileName, QIODevice::WriteOnly);
 
-		if (file.open(QIODevice::WriteOnly))
+		if (stream)
 		{
-			return saveStream(&file);
+			auto retval = saveStream(stream);
+			resourceManager.getFileSystem()->endWrite(m_fileName, stream);
+
+			return retval;
 		}
+
 		return false;
 	}
 

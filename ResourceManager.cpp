@@ -7,31 +7,9 @@
 
 namespace TilesEditor
 {
-	void ResourceManager::populateDirectories(const QString& searchPath, int level, const QString& rootDir)
-	{ 
-		if (m_searchDirectories.count() < 100 && level <= 2)
-		{
-			if (!m_searchDirectories.contains(searchPath))
-				m_searchDirectoriesList.push_back(searchPath);
-
-			m_searchDirectories.insert(searchPath);
-
-
-
-			QDir dir(searchPath);
-
-			auto list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-
-			for (auto& folder : list)
-			{
-				populateDirectories(QString("%1%2/").arg(searchPath, folder), level + 1, rootDir + folder + "/");
-			}
-			
-		}
-	}
-
-	ResourceManager::ResourceManager()
+	ResourceManager::ResourceManager(AbstractFileSystem* fileSystem)
 	{
+		m_fileSystem = fileSystem;
 	}
 
 	ResourceManager::~ResourceManager()
@@ -69,8 +47,17 @@ namespace TilesEditor
 
 	void ResourceManager::addSearchDirRecursive(const QString& dir)
 	{
-		QDir absoluteDir(dir);
-		populateDirectories(absoluteDir.absolutePath() + "/", 0);
+		auto folders = m_fileSystem->getFolders(dir);
+
+		for(auto folder: folders)
+		{
+			qDebug() << "FOLDER: " << folder;
+			if (!m_searchDirectories.contains(folder))
+			{
+				m_searchDirectories.insert(folder);
+				m_searchDirectoriesList.push_back(folder);
+			}
+		}
 
 	}
 
@@ -81,8 +68,8 @@ namespace TilesEditor
 			for (auto& dir : m_searchDirectoriesList)
 			{
 				QString fullPath = dir + name;
-				qDebug() << fullPath;
-				if (QFile::exists(fullPath))
+
+				if(m_fileSystem->fileExists(fullPath))
 				{
 					*outPath = fullPath;
 					return true;
@@ -152,8 +139,15 @@ namespace TilesEditor
 
 			if (locateFile(resourceName, &fileName))
 			{
-				if (type == ResourceType::RESOURCE_IMAGE)
-					res = Image::load(resourceName, fileName);
+				auto stream = m_fileSystem->openStream(fileName, QIODevice::ReadOnly);
+
+				if (stream != nullptr)
+				{
+					if (type == ResourceType::RESOURCE_IMAGE)
+						res = Image::load(resourceName, stream);
+				}
+
+				delete stream;
 
 				if (res == nullptr)
 				{
@@ -201,7 +195,6 @@ namespace TilesEditor
 			auto resource = it.value();
 
 			auto fileName = resource->getFileName();
-			qDebug() << "F: " << fileName;
 			resource->replace(fileName);
 		}
 	}

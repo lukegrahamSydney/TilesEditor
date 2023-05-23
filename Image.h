@@ -37,7 +37,7 @@ namespace TilesEditor
 
 		void replace(QIODevice* stream) override;
 		void draw(QPainter* painter, double x, double y);
-		static Image* load(const QString& assetName, const QString& fileName);
+		static Image* load(const QString& assetName, QIODevice* stream);
 	};
 };
 

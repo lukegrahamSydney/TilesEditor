@@ -27,8 +27,8 @@
 namespace TilesEditor
 {
 
-	EditorTabWidget::EditorTabWidget(QWidget* parent, ResourceManager& resourceManager)
-		: QWidget(parent), m_fillPattern(nullptr, 0.0, 0.0, 1, 1, 0)
+	EditorTabWidget::EditorTabWidget(QWidget* parent, AbstractFileSystem* fileSystem)
+		: QWidget(parent), m_fillPattern(nullptr, 0.0, 0.0, 1, 1, 0), m_resourceManager(fileSystem)
 	{
 		ui.setupUi(this);
 
@@ -45,7 +45,6 @@ namespace TilesEditor
 		ui_objectClass.setupUi(m_objectsContainer);
 
 		m_modified = false;
-		m_resourceManager.mergeSearchDirectories(resourceManager);
 
 		//QPixmap a(":/MainWindow/icons/npc.png");
 
@@ -2553,7 +2552,7 @@ namespace TilesEditor
 					else resetModification = false;
 				}
 
-				m_overworld->saveFile();
+				m_overworld->saveFile(m_resourceManager);
 				if(resetModification)
 					setUnmodified();
 			}
@@ -3107,7 +3106,6 @@ namespace TilesEditor
 
 	bool EditorTabWidget::saveLevel(Level* level)
 	{
-		qDebug() << level->getFileName();
 		if (level->getFileName().isEmpty())
 		{
 			auto fullPath = QFileDialog::getSaveFileName(nullptr, "Save Level", QString(), "All Level Files (*.nw *.lvl *.graal *.zelda)");
@@ -3126,7 +3124,7 @@ namespace TilesEditor
 			QMessageBox::critical(nullptr, "Unable to save file", "Invalid file path");
 		}
 		else {
-			level->saveFile();
+			level->saveFile(m_resourceManager);
 			return true;
 		}
 		return false;

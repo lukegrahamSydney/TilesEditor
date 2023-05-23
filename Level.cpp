@@ -819,14 +819,18 @@ namespace TilesEditor
         return false;
     }
 
-    bool Level::saveFile()
+    bool Level::saveFile(ResourceManager& resourceManager)
     {
-        QFile file(m_fileName);
+        auto stream = resourceManager.getFileSystem()->openStream(m_fileName, QIODevice::WriteOnly);
 
-        if (file.open(QIODevice::WriteOnly))
+        if (stream)
         {
-            return saveStream(&file);
+            auto retval = saveStream(stream);
+            resourceManager.getFileSystem()->endWrite(m_fileName, stream);
+
+            return retval;
         }
+
         return false;
     }
 

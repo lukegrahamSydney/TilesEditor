@@ -3,37 +3,50 @@
 
 namespace TilesEditor
 {
+
 	MainFileSystem::MainFileSystem()
 	{
 
 	}
 
-
-	bool MainFileSystem::readAllLines(const QString& fileName, QStringList& lines)
+	void MainFileSystem::getFoldersRecursive(const QString& searchPath, QStringList& output, int level, const QString& rootDir)
 	{
-		QFile textFile(fileName);
-		if (textFile.open(QIODevice::ReadOnly))
+		if (output.count() < 100 && level <= 2)
 		{
-			//... (open the file for reading, etc.)
-			QTextStream textStream(&textFile);
-			while (true)
+			output.push_back(searchPath);
+
+			QDir dir(searchPath);
+
+			auto list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+			for (auto& folder : list)
 			{
-				QString line = textStream.readLine();
-				if (line.isNull())
-					break;
-				else
-					lines.append(line);
+				getFoldersRecursive(QString("%1%2/").arg(searchPath, folder), output, level + 1, rootDir + folder + "/");
 			}
-			return true;
+
 		}
-		return false;
 	}
 
-	QIODevice* MainFileSystem::openStream(const QString& fileName)
+
+	QStringList MainFileSystem::getFolders(const QString& parent)
+	{
+		QDir absoluteDir(parent);
+
+		QStringList retval;
+		getFoldersRecursive(absoluteDir.absolutePath() + "/", retval, 0, "");
+		return retval;
+	}
+
+	bool MainFileSystem::fileExists(const QString& fileName)
+	{
+		return QFile::exists(fileName);
+	}
+
+	QIODevice* MainFileSystem::openStream(const QString& fileName, QIODeviceBase::OpenModeFlag mode)
 	{
 
 		QFile* file = new QFile(fileName);
-		if (file->open(QIODevice::ReadOnly))
+		if (file->open(mode))
 			return file;
 
 		delete file;

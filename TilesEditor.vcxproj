@@ -121,6 +121,7 @@
     <ClCompile Include="LevelSign.cpp" />
     <ClCompile Include="ListLinksDialog.cpp" />
     <ClCompile Include="MainFileSystem.cpp" />
+    <ClCompile Include="NewOverworldDialog.cpp" />
     <ClCompile Include="ObjectListModel.cpp" />
     <ClCompile Include="ObjectSelection.cpp" />
     <ClCompile Include="ObjectsWidget.cpp" />
@@ -163,6 +164,7 @@
     <ClCompile Include="EntitySpatialGrid.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="main.cpp" />
+    <QtUic Include="NewOverworldDialog.ui" />
     <QtUic Include="ObjectsWidget.ui" />
     <QtUic Include="SaveOverworldDialog.ui" />
     <QtUic Include="ScreenshotDialog.ui" />
@@ -192,6 +194,7 @@
     <ClInclude Include="LevelNPC.h" />
     <ClInclude Include="LevelSign.h" />
     <QtMoc Include="ListLinksDialog.h" />
+    <QtMoc Include="NewOverworldDialog.h" />
     <ClInclude Include="ObjectListModel.h" />
     <ClInclude Include="ObjectSelection.h" />
     <QtMoc Include="QCodeEditor\include\KGL\Design\QCodeEditorDesign.hpp" />

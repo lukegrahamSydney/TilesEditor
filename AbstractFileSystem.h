@@ -4,6 +4,8 @@
 #include <QByteArray>
 #include <QString>
 #include <QIODevice>
+#include <QTextStream>
+#include <QStringList>
 
 namespace TilesEditor
 {
@@ -11,10 +13,26 @@ namespace TilesEditor
 	{
 
 	public:
-		virtual QByteArray readAllToBytes(const QString& name) = 0;
-		virtual QString readAllToString(const QString& name) = 0;
-		virtual QIODevice* openStream(const QString& name) = 0;
-		virtual void close() = 0;
+
+		QString readAllToString(const QString& name) {
+			auto stream = openStream(name, QIODevice::ReadOnly);
+			if (stream != nullptr)
+			{
+				QTextStream textStream(stream);
+				QString retval = textStream.readAll();
+				delete stream;
+
+				return retval;
+			}
+			return "";
+		}
+
+		virtual QStringList getFolders(const QString& parent) = 0;
+		virtual bool fileExists(const QString& fileName) = 0;
+		virtual QIODevice* openStream(const QString& fileName, QIODeviceBase::OpenModeFlag mode) = 0;
+
+		//this is called when a file has finished being written to. also delete the stream object in this function
+		virtual void endWrite(const QString& fileName, QIODevice* stream) = 0;
 	};
 }
 #endif

@@ -112,7 +112,7 @@ namespace TilesEditor
 		void selectionGone();
 
 	public:
-		EditorTabWidget(QWidget* parent, ResourceManager& rootResourceManager);
+		EditorTabWidget(QWidget* parent, AbstractFileSystem* fileSystem);
 		~EditorTabWidget();
 
 	private:

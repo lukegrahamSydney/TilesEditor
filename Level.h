@@ -79,7 +79,7 @@ namespace TilesEditor
 		bool loadGraalStream(QIODevice* stream, ResourceManager& resourceManager);
 		bool loadLVLStream(QIODevice* stream, ResourceManager& resourceManager);
 
-		bool saveFile();
+		bool saveFile(ResourceManager& resourceManager);
 		bool saveStream(QIODevice* stream);
 		bool saveNWStream(QIODevice* stream);
 		bool saveGraalStream(QIODevice* stream);

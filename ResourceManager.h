@@ -11,7 +11,7 @@
 #include "Resource.h"
 #include "ResourceType.h"
 
-#include "MainFileSystem.h"
+#include "AbstractFileSystem.h"
 
 namespace TilesEditor
 {
@@ -26,7 +26,7 @@ namespace TilesEditor
 		QList<QString> m_searchDirectoriesList;
 		QSet<QString> m_failedResources;
 
-		MainFileSystem m_fileSystem;
+		AbstractFileSystem* m_fileSystem;
 
 		static QString getResourceExt(const QString& resName) {
 			auto pos = resName.lastIndexOf('.');
@@ -38,11 +38,10 @@ namespace TilesEditor
 		}
 
 
-		void populateDirectories(const QString& searchPath, int level, const QString& rootDir = "");
 
 	public:
 
-		ResourceManager();
+		ResourceManager(AbstractFileSystem* fileSystem);
 		~ResourceManager();
 
 		void setRootDir(const QString& dir) { m_rootDir = dir + "/"; }
@@ -57,7 +56,7 @@ namespace TilesEditor
 		bool writeTextFile(const QString& fileName, const QString& contents);
 		QString readTextFile(const QString& fileName);
 
-		MainFileSystem& getFileSystem() { return m_fileSystem; }
+		AbstractFileSystem* getFileSystem() { return m_fileSystem; }
 		Resource* loadResource(const QString& name, ResourceType type);
 		void freeResource(Resource* resource);
 		void updateResource(const QString& name);

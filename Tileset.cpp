@@ -146,7 +146,7 @@ namespace TilesEditor
 
 			if (resourceManager.locateFile(name + ".json", &fullPath))
 			{
-				auto text = resourceManager.getFileSystem().readAllToString(fullPath);
+				auto text = resourceManager.getFileSystem()->readAllToString(fullPath);
 
 				auto cJSON = cJSON_Parse(text.toLocal8Bit().data());
 				if (cJSON != nullptr)
