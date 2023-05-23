@@ -115,6 +115,7 @@
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelChest.cpp" />
     <ClCompile Include="LevelCommands.cpp" />
+    <ClCompile Include="LevelConverter.cpp" />
     <ClCompile Include="LevelGraalBaddy.cpp" />
     <ClCompile Include="LevelLink.cpp" />
     <ClCompile Include="LevelNPC.cpp" />
@@ -158,6 +159,7 @@
     <QtUic Include="EditorTabWidget.ui" />
     <QtUic Include="EditSignsDialog.ui" />
     <QtUic Include="EditTilesetDialog.ui" />
+    <QtUic Include="LevelConverter.ui" />
     <QtUic Include="ListLinksDialog.ui" />
     <QtUic Include="MainWindow.ui" />
     <QtMoc Include="MainWindow.h" />
@@ -189,6 +191,7 @@
     <QtMoc Include="EditBaddy.h" />
     <ClInclude Include="LevelChest.h" />
     <ClInclude Include="LevelCommands.h" />
+    <QtMoc Include="LevelConverter.h" />
     <ClInclude Include="LevelGraalBaddy.h" />
     <ClInclude Include="LevelLink.h" />
     <ClInclude Include="LevelNPC.h" />

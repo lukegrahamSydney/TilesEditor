@@ -44,7 +44,6 @@ namespace TilesEditor
 
 	QIODevice* MainFileSystem::openStream(const QString& fileName, QIODeviceBase::OpenModeFlag mode)
 	{
-
 		QFile* file = new QFile(fileName);
 		if (file->open(mode))
 			return file;

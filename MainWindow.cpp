@@ -7,6 +7,7 @@
 #include "cJSON/JsonHelper.h"
 #include "EditAnonymousNPC.h"
 #include "MainFileSystem.h"
+#include "LevelConverter.h"
 
 namespace TilesEditor
 {
@@ -55,6 +56,7 @@ namespace TilesEditor
         connect(ui.actionOpen, &QAction::triggered, this, &MainWindow::openFile);
         connect(ui.actionNew, &QAction::triggered, this, &MainWindow::newLevel);
         connect(ui.actionAbout, &QAction::triggered, this, &MainWindow::aboutClicked);
+        connect(ui.actionLevelConverter, &QAction::triggered, this, &MainWindow::levelConvert);
 
         connect(ui.levelsTab, &QTabWidget::currentChanged, this, &MainWindow::tabChanged);
         connect(ui.levelsTab, &QTabWidget::tabCloseRequested, this, &MainWindow::closeTabIndexSlot);
@@ -271,6 +273,12 @@ namespace TilesEditor
     {
         closeTabIndex(index);
         
+    }
+
+    void MainWindow::levelConvert(bool checked)
+    {
+        LevelConverter converter;
+        converter.exec();
     }
 
     void MainWindow::takeWidgetIntoDock(QWidget* dockContainer, QWidget* target)

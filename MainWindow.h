@@ -14,7 +14,7 @@ namespace TilesEditor
     class MainWindow : public QMainWindow
     {
         Q_OBJECT
-    public slots:
+    private slots:
         void openFile(bool checked);
         void newLevel(bool checked);
         void openLevel(const QString& levelName);
@@ -23,6 +23,7 @@ namespace TilesEditor
         void tabChanged(int index);
         void aboutClicked(bool checked);
         void closeTabIndexSlot(int index);
+        void levelConvert(bool checked);
 
     public:
         MainWindow(QWidget* parent = nullptr);

@@ -51,7 +51,6 @@ namespace TilesEditor
 
 		for(auto folder: folders)
 		{
-			qDebug() << "FOLDER: " << folder;
 			if (!m_searchDirectories.contains(folder))
 			{
 				m_searchDirectories.insert(folder);

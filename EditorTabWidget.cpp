@@ -1435,7 +1435,6 @@ namespace TilesEditor
 				auto globalTileset = static_cast<Tileset*>(static_cast<QStandardItemModel*>(ui_tilesetsClass.tilesetsCombo->model())->item(index));
 				if (globalTileset) {
 					*globalTileset = m_tileset;
-					qDebug() << "YES";
 				}
 			
 			}

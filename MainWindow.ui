@@ -74,6 +74,8 @@
    <addaction name="actionNew"/>
    <addaction name="actionOpen"/>
    <addaction name="actionAbout"/>
+   <addaction name="separator"/>
+   <addaction name="actionLevelConverter"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="tilesetsPanel">
@@ -197,6 +199,18 @@
    </property>
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionLevelConverter">
+   <property name="icon">
+    <iconset resource="MainWindow.qrc">
+     <normaloff>:/MainWindow/icons/fugue/application-sidebar-collapse.png</normaloff>:/MainWindow/icons/fugue/application-sidebar-collapse.png</iconset>
+   </property>
+   <property name="text">
+    <string>Level Converter</string>
+   </property>
+   <property name="toolTip">
+    <string>Level Converter</string>
    </property>
   </action>
  </widget>
