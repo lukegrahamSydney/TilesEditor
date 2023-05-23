@@ -35,7 +35,7 @@ namespace TilesEditor
 			return m_pixmap.height();
 		}
 
-		void replace(const QString& fileName) override;
+		void replace(QIODevice* stream) override;
 		void draw(QPainter* painter, double x, double y);
 		static Image* load(const QString& assetName, const QString& fileName);
 	};

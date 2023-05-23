@@ -5,6 +5,7 @@
 #include <QMap>
 #include <QList>
 #include <QSet>
+#include <QIODevice>
 #include "IEntitySpatialMap.h"
 #include "Rectangle.h"
 #include "Level.h"
@@ -20,6 +21,7 @@ namespace TilesEditor
 		QString m_fileName;
 		QString m_tilesetName;
 		QStringList m_gmapFileLines;
+		 
 		cJSON* m_json;
 
 		int m_width;
@@ -46,13 +48,16 @@ namespace TilesEditor
 		void setTilesetName(const QString& name) { m_tilesetName = name; }
 
 		bool loadFile(ResourceManager& resourceManager);
-		bool loadGMapFile(ResourceManager& resourceManager);
-		bool loadTXTFile(ResourceManager& resourceManager);
-		bool loadWorldFile(ResourceManager& resourceManager);
+		bool loadStream(QIODevice* stream, ResourceManager& resourceManager);
+		bool loadGMapStream(QIODevice* stream, ResourceManager& resourceManager);
+		bool loadTXTStream(QIODevice* stream, ResourceManager& resourceManager);
+		bool loadWorldStream(QIODevice* stream, ResourceManager& resourceManager);
 
 		bool saveFile();
-		bool saveGMapFile();
-		bool saveWorldFile();
+		bool saveStream(QIODevice* stream);
+		bool saveGMapStream(QIODevice* stream);
+		bool saveTXTStream(QIODevice* stream);
+		bool saveWorldStream(QIODevice* stream);
 
 		void setSize(int width, int height);
 		void searchLevels(const IRectangle& rect, QSet<Level*>& output);

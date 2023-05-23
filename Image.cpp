@@ -9,11 +9,11 @@ namespace TilesEditor
         m_pixmap = pixmap;
     }
 
-    void Image::replace(const QString& fileName)
+    void Image::replace(QIODevice* stream)
     {
         QPixmap pixmap;
 
-        if (pixmap.load(fileName))
+        if (pixmap.loadFromData(stream->readAll()))
         {
             m_pixmap = pixmap;
         }

@@ -14,10 +14,12 @@ namespace TilesEditor
 	{
 		m_json = nullptr;
 		m_name = name;
-		m_entitySpatialMap = nullptr;
 		m_levelMap = nullptr;
 
 		m_unitWidth = m_unitHeight = 16;
+
+		setSize(64, 64);
+
 	}
 
 	Overworld::~Overworld()
@@ -38,7 +40,6 @@ namespace TilesEditor
 
 	void Overworld::release(ResourceManager& resourceManager)
 	{
-
 		for (auto level : m_levelNames)
 			level->release(resourceManager);
 	}
@@ -46,24 +47,39 @@ namespace TilesEditor
 
 	bool Overworld::loadFile(ResourceManager& resourceManager)
 	{
-		if (m_fileName.endsWith(".gmap"))
-			return loadGMapFile(resourceManager);
+		QFile file(m_fileName);
 
-		else if (m_fileName.endsWith(".txt"))
-			return loadTXTFile(resourceManager);
-
-		else if (m_fileName.endsWith(".world"))
-			return loadWorldFile(resourceManager);
+		if (file.open(QIODeviceBase::ReadOnly))
+		{
+			return loadStream(&file, resourceManager);
+		}
 		return false;
 	}
 
-	bool Overworld::loadGMapFile(ResourceManager& resourceManager)
+	bool Overworld::loadStream(QIODevice* stream, ResourceManager& resourceManager)
+	{
+		if (m_name.endsWith(".gmap"))
+			return loadGMapStream(stream, resourceManager);
+
+		else if (m_name.endsWith(".txt"))
+			return loadTXTStream(stream, resourceManager);
+
+		else if (m_name.endsWith(".world"))
+			return loadWorldStream(stream, resourceManager);
+		return false;
+	}
+
+	bool Overworld::loadGMapStream(QIODevice* stream, ResourceManager& resourceManager)
 	{
 		QStringList lines;
+		QTextStream textStream(stream);
+		for (QString line = textStream.readLine(); !line.isNull(); line = textStream.readLine())
+			lines.push_back(line);
 
-		if (resourceManager.getFileSystem().readAllLines(m_fileName, lines) && lines.size() > 0)
+		if (lines.size() > 0)
 		{
-		
+			m_gmapFileLines.clear();
+
 			int width = 0,
 				height = 0;
 
@@ -136,11 +152,16 @@ namespace TilesEditor
 		return false;
 	}
 
-	bool Overworld::loadTXTFile(ResourceManager& resourceManager)
+	bool Overworld::loadTXTStream(QIODevice* stream, ResourceManager& resourceManager)
 	{
 		QStringList lines;
 
-		if (resourceManager.getFileSystem().readAllLines(m_fileName, lines) && lines.size() > 0)
+		QTextStream textStream(stream);
+		for (QString line = textStream.readLine(); !line.isNull(); line = textStream.readLine())
+			lines.push_back(line);
+		
+
+		if (lines.size() > 0)
 		{
 			bool sizeSet = false;
 			bool retval = false;
@@ -148,6 +169,9 @@ namespace TilesEditor
 			{
 				size_t namesCount = 0;
 				QStringList namesList;
+
+				m_gmapFileLines.append(lines[y]);
+
 				if ((namesCount = StringTools::ParseCSV(lines[y], namesList)) > 0)
 				{
 					if (!sizeSet)
@@ -186,14 +210,16 @@ namespace TilesEditor
 		return false;
 	}
 
-	bool Overworld::loadWorldFile(ResourceManager& resourceManager)
+	bool Overworld::loadWorldStream(QIODevice* stream, ResourceManager& resourceManager)
 	{
 		if (m_json) {
 			cJSON_Delete(m_json);
 			m_json = nullptr;
 		}
 
-		QString text = resourceManager.getFileSystem().readAllToString(m_fileName);
+		QTextStream textStream(stream);
+		QString text = textStream.readAll();
+
 		if (!text.isEmpty())
 		{
 			m_json = cJSON_Parse(text.toLocal8Bit().data());
@@ -274,53 +300,75 @@ namespace TilesEditor
 
 	bool Overworld::saveFile()
 	{
-		if (m_fileName.endsWith(".gmap"))
-			return saveGMapFile();
+		QFile file(m_fileName);
 
-		else if (m_fileName.endsWith(".world"))
-			return saveWorldFile();
+		if (file.open(QIODevice::WriteOnly))
+		{
+			return saveStream(&file);
+		}
 		return false;
 	}
 
-	bool Overworld::saveGMapFile()
+	bool Overworld::saveStream(QIODevice* stream)
 	{
-		QFile file(m_fileName);
-		if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+		if (m_name.endsWith(".gmap"))
+			return saveGMapStream(stream);
+
+		else if (m_name.endsWith(".world"))
+			return saveWorldStream(stream);
+
+		else if (m_name.endsWith(".txt"))
 		{
-			QTextStream stream(&file);
+			return saveTXTStream(stream);
+		}
+		return false;
+	}
 
-			stream << "GRMAP001" << Qt::endl;
+	bool Overworld::saveGMapStream(QIODevice* _stream)
+	{
 
-			for (auto& line : m_gmapFileLines)
-			{
-				stream << line << Qt::endl;
-			}
+		QTextStream stream(_stream);
 
-			if(!m_tilesetName.isEmpty())
-				stream << "TILESET " << m_tilesetName << Qt::endl;
+		stream << "GRMAP001" << Qt::endl;
+
+		for (auto& line : m_gmapFileLines)
+		{
+			stream << line << Qt::endl;
 		}
 
-		return false;
+		if(!m_tilesetName.isEmpty())
+			stream << "TILESET " << m_tilesetName << Qt::endl;
+		
+		return true;
 	}
 
-	bool Overworld::saveWorldFile()
+	bool Overworld::saveTXTStream(QIODevice* _stream)
+	{
+		QTextStream stream(_stream);
+
+		for (auto& line : m_gmapFileLines)
+		{
+			stream << line << Qt::endl;
+		}
+
+		return true;
+	}
+
+	bool Overworld::saveWorldStream(QIODevice* _stream)
 	{
 		if (m_json)
 		{
-			QFile file(m_fileName);
-			if (file.open(QIODevice::WriteOnly | QIODevice::Text))
-			{
-				cJSON_DeleteItemFromObject(m_json, "tileset");
-				if (!m_tilesetName.isEmpty())
-					cJSON_AddStringToObject(m_json, "tileset", m_tilesetName.toLocal8Bit().data());
+			cJSON_DeleteItemFromObject(m_json, "tileset");
+			if (!m_tilesetName.isEmpty())
+				cJSON_AddStringToObject(m_json, "tileset", m_tilesetName.toLocal8Bit().data());
 
-				auto levelText = cJSON_Print(m_json);
-				QTextStream stream(&file);
-				stream << levelText;
-				free(levelText);
+			auto levelText = cJSON_Print(m_json);
+			QTextStream stream(_stream);
+			stream << levelText;
+			free(levelText);
 
-				return true;
-			}
+			return true;
+			
 		}
 		return false;
 	}
@@ -376,7 +424,7 @@ namespace TilesEditor
 				if (resourceManager.locateFile(level->getName(), &fullPath))
 				{
 					level->setFileName(fullPath);
-					level->loadNWFile(resourceManager);
+					level->loadFile(resourceManager);
 				}
 			}
 		}

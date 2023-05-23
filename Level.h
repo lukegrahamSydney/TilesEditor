@@ -5,6 +5,7 @@
 #include <QString>
 #include <QSet>
 #include <QVector>
+#include <QIODevice>
 #include "ISpatialMapItem.h"
 #include "ResourceManager.h"
 #include "EntitySpatialGrid.h"
@@ -72,14 +73,17 @@ namespace TilesEditor
 		const QString& getFileName() const { return m_fileName; }
 
 		bool loadFile(ResourceManager& resourceManager);
-		bool loadNWFile(ResourceManager& resourceManager);
-		bool loadGraalFile(ResourceManager& resourceManager);
-		bool loadLVLFile(ResourceManager& resourceManager);
+
+		bool loadStream(QIODevice* stream, ResourceManager& resourceManager);
+		bool loadNWStream(QIODevice* stream, ResourceManager& resourceManager);
+		bool loadGraalStream(QIODevice* stream, ResourceManager& resourceManager);
+		bool loadLVLStream(QIODevice* stream, ResourceManager& resourceManager);
 
 		bool saveFile();
-		bool saveNWFile();
-		bool saveGraalFile();
-		bool saveLVLFile();
+		bool saveStream(QIODevice* stream);
+		bool saveNWStream(QIODevice* stream);
+		bool saveGraalStream(QIODevice* stream);
+		bool saveLVLStream(QIODevice* stream);
 
 		bool getLoaded() const { return m_loaded; }
 		void setLoaded(bool val) { m_loaded = val; }

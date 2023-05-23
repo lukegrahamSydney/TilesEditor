@@ -3,6 +3,8 @@
 
 #include <cstdio>
 #include <QString>
+#include <QIODevice>
+#include <QFile>
 #include "ResourceType.h"
 
 namespace TilesEditor
@@ -61,7 +63,15 @@ namespace TilesEditor
 		}
 
 		void setFileName(const QString& name) { m_fileName = name; }
-		virtual void replace(const QString& fileName) {}
+
+		void replace(const QString& fileName) {
+			QFile file(fileName);
+			if (file.open(QIODeviceBase::ReadOnly))
+				replace(&file);
+		}
+
+		virtual void replace(QIODevice* stream) {}
+		
 		virtual void release(ResourceManager& resourceManager) {};
 		virtual ResourceType getResourceType() const = 0;
 	};
