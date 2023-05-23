@@ -26,6 +26,7 @@ namespace TilesEditor
 
 	void ListLinksDialog::populateTable()
 	{
+		//Clear existing entries
 		while (ui.linksTable->rowCount() > 0)
 			ui.linksTable->removeRow(ui.linksTable->rowCount() - 1);
 

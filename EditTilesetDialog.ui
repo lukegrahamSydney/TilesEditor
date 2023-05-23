@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>728</width>
-    <height>441</height>
+    <width>694</width>
+    <height>424</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,6 +31,12 @@
    </property>
    <item>
     <widget class="QWidget" name="widget_3" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -84,7 +90,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>64</height>
+       <height>0</height>
       </size>
      </property>
      <layout class="QGridLayout" name="gridLayout">
@@ -282,6 +288,12 @@
    </item>
    <item>
     <widget class="TilesEditor::GraphicsView" name="graphicsView">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
      </property>
@@ -298,7 +310,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>50</height>
+       <height>0</height>
       </size>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">

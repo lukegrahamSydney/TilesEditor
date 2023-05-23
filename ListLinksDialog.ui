@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>445</width>
-    <height>325</height>
+    <width>567</width>
+    <height>271</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,7 +30,7 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QWidget" name="widget_2" native="true">
-       <layout class="QGridLayout" name="gridLayout_2">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="leftMargin">
          <number>2</number>
         </property>
@@ -43,8 +43,14 @@
         <property name="bottomMargin">
          <number>2</number>
         </property>
-        <item row="0" column="0">
+        <item>
          <widget class="QTableWidget" name="linksTable">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
@@ -100,7 +106,7 @@
           </column>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item>
          <widget class="QWidget" name="widget" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -111,7 +117,7 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>40</height>
+            <height>0</height>
            </size>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout">
