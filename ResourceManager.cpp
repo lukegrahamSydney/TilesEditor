@@ -195,7 +195,13 @@ namespace TilesEditor
 			auto resource = it.value();
 
 			auto fileName = resource->getFileName();
-			resource->replace(fileName);
+
+			auto stream = m_fileSystem->openStream(fileName, QIODevice::ReadOnly);
+
+			if (stream) {
+				resource->replace(stream);
+				delete stream;
+			}
 		}
 	}
 

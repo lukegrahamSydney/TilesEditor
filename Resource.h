@@ -64,11 +64,6 @@ namespace TilesEditor
 
 		void setFileName(const QString& name) { m_fileName = name; }
 
-		void replace(const QString& fileName) {
-			QFile file(fileName);
-			if (file.open(QIODeviceBase::ReadOnly))
-				replace(&file);
-		}
 
 		virtual void replace(QIODevice* stream) {}
 		
