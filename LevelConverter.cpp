@@ -52,7 +52,7 @@ namespace TilesEditor
 			{
 				auto nextLevel = link->getNextLevel();
 
-				if (m_filesSet.contains(nextLevel))
+				if (m_levelNames.contains(nextLevel))
 				{
 					auto i = nextLevel.lastIndexOf('.');
 
@@ -91,14 +91,14 @@ namespace TilesEditor
 		QDirIterator it(ui.inputEdit->text(), filters, QDir::Files, ui.subFoldersCheckBox->checkState() == Qt::CheckState::Checked ? QDirIterator::Subdirectories : QDirIterator::NoIteratorFlags);
 
 		m_files.clear();
-		m_filesSet.clear();
+		m_levelNames.clear();
 		while (it.hasNext())
 		{
 			auto fileName = it.next();
 
 			QFileInfo fi(fileName);
 			m_files.append(fileName);
-			m_filesSet.insert(fi.fileName());
+			m_levelNames.insert(fi.fileName());
 		}
 		
 		ui.progressBar->setValue(0);

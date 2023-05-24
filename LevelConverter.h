@@ -33,9 +33,10 @@ namespace TilesEditor
 	private:
 		Ui::LevelConverterClass ui;
 		QStringList m_files;
+		QSet<QString> m_levelNames;
 		MainFileSystem m_fileSystem;
 		EditorTabWidget* m_dummyTab;
-		QSet<QString> m_filesSet;
+		
 		void processDirectory(const QString& dir);
 	};
 };
