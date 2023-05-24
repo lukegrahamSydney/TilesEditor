@@ -2906,7 +2906,7 @@ namespace TilesEditor
 	{
 		auto selection = new ObjectSelection(0, 0);
 
-		auto chest = new LevelChest(nullptr, 0, 0, "greenrupee", -1);
+		auto chest = new LevelChest(this, 0, 0, "greenrupee", -1);
 		selection->addObject(chest);
 		selection->setAlternateSelectionMethod(true);
 		selection->setSelectMode(ObjectSelection::SelectMode::MODE_INSERT);
@@ -2918,7 +2918,7 @@ namespace TilesEditor
 	{
 		auto selection = new ObjectSelection(0, 0);
 
-		auto chest = new LevelGraalBaddy(nullptr, 0.0, 0.0, 0);
+		auto chest = new LevelGraalBaddy(this, 0.0, 0.0, 0);
 		selection->addObject(chest);
 		selection->setAlternateSelectionMethod(true);
 		selection->setSelectMode(ObjectSelection::SelectMode::MODE_INSERT);
