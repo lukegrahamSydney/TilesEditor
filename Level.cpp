@@ -97,12 +97,11 @@ namespace TilesEditor
 
     bool Level::loadFile()
     {
-        QFile file(m_fileName);
-
-        if (file.open(QIODeviceBase::ReadOnly))
+        auto stream = m_world->getResourceManager().getFileSystem()->openStream(m_fileName, QIODeviceBase::ReadOnly);
+        if (stream)
         {
-            loadStream(&file);
-            
+            loadStream(stream);
+            delete stream;
         }
         return !m_loadFail;
     }

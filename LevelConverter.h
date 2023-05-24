@@ -1,8 +1,15 @@
 #ifndef LEVELCONVERTERH
 #define LEVELCONVERTERH
 
+/*
+Experimental...seems to work though
+*/
 #include <QDialog>
+#include <QStringList>
+#include <QSet>
 #include "ui_LevelConverter.h"
+#include "EditorTabWidget.h"
+#include "MainFileSystem.h"
 
 namespace TilesEditor
 {
@@ -13,6 +20,7 @@ namespace TilesEditor
 	private slots:
 		void inputBrowseClicked(bool checked);
 		void outputBrowseClicked(bool checked);
+		void timer();
 
 	public:
 		LevelConverter(QWidget* parent = nullptr);
@@ -24,6 +32,11 @@ namespace TilesEditor
 
 	private:
 		Ui::LevelConverterClass ui;
+		QStringList m_files;
+		MainFileSystem m_fileSystem;
+		EditorTabWidget* m_dummyTab;
+		QSet<QString> m_filesSet;
+		void processDirectory(const QString& dir);
 	};
 };
 
