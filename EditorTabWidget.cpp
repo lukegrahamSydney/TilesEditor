@@ -1078,7 +1078,11 @@ namespace TilesEditor
 				{
 					level->setLoadFail(false);
 					loadLevel(level);
-					m_graphicsView->redraw();
+
+					//Only refresh the graphics view if the level is visible
+					auto viewRect = getViewRect();
+					if(viewRect.intersects(*level))
+						m_graphicsView->redraw();
 				}
 			}
 		}
