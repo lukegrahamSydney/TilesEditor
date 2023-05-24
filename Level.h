@@ -14,6 +14,8 @@
 #include "LevelNPC.h"
 #include "LevelLink.h"
 #include "LevelSign.h"
+#include "IWorld.h"
+#include "IFileRequester.h"
 
 namespace TilesEditor
 {
@@ -30,6 +32,8 @@ namespace TilesEditor
 		static QMap<QString, int> m_imageDimensionsCache;
 
 		static bool getImageDimensions(ResourceManager& resourceManager, const QString& imageName, int* w, int* h);
+
+		IWorld* m_world;
 
 		bool m_modified;
 
@@ -59,10 +63,10 @@ namespace TilesEditor
 
 	public:
 
-		Level(double x, double y, int width, int height, Overworld* overworld, const QString& name);
+		Level(IWorld* world, double x, double y, int width, int height, Overworld* overworld, const QString& name);
 		~Level();
 
-		void release(ResourceManager& resourceManager);
+		void release();
 
 		const QString& getTilesetName() const { return m_tilesetName; }
 		void setTilesetName(const QString& name) { m_tilesetName = name; }
@@ -72,14 +76,14 @@ namespace TilesEditor
 		void setFileName(const QString& fileName) { m_fileName = fileName; }
 		const QString& getFileName() const { return m_fileName; }
 
-		bool loadFile(ResourceManager& resourceManager);
+		bool loadFile();
 
-		bool loadStream(QIODevice* stream, ResourceManager& resourceManager);
-		bool loadNWStream(QIODevice* stream, ResourceManager& resourceManager);
-		bool loadGraalStream(QIODevice* stream, ResourceManager& resourceManager);
-		bool loadLVLStream(QIODevice* stream, ResourceManager& resourceManager);
+		bool loadStream(QIODevice* stream);
+		bool loadNWStream(QIODevice* stream);
+		bool loadGraalStream(QIODevice* stream);
+		bool loadLVLStream(QIODevice* stream);
 
-		bool saveFile(ResourceManager& resourceManager);
+		bool saveFile();
 		bool saveStream(QIODevice* stream);
 		bool saveNWStream(QIODevice* stream);
 		bool saveGraalStream(QIODevice* stream);
@@ -88,6 +92,7 @@ namespace TilesEditor
 		bool getLoaded() const { return m_loaded; }
 		void setLoaded(bool val) { m_loaded = val; }
 
+		void setLoadFail(bool value) { m_loadFail = value; }
 		bool getLoadFail() const { return m_loadFail; }
 		double getX() const { return m_x; }
 		double getY() const { return m_y; }
@@ -104,7 +109,7 @@ namespace TilesEditor
 		bool getModified() const { return m_modified; }
 		const QVector<LevelLink*>& getLinks()const { return m_links; }
 		const QVector<LevelSign*>& getSigns() const { return m_signs; }
-		Tilemap* getOrMakeTilemap(int layer, ResourceManager& resourceManager);
+		Tilemap* getOrMakeTilemap(int layer);
 		Tilemap* getTilemap(size_t layer);
 		IEntitySpatialMap<AbstractLevelEntity>* getEntitySpatialMap() { return m_entitySpatialMap; }
 		const QSet<AbstractLevelEntity*>& getObjects() const { return m_objects; }

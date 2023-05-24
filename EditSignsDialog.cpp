@@ -160,7 +160,10 @@ namespace TilesEditor
 		auto signX = m_level->getX();
 		auto signY = m_level->getY();
 
-		m_world->addUndoCommand(new CommandAddEntity(m_world, new LevelSign(m_level, signX, signY, 32, 16)));
+		auto sign = new LevelSign(m_world, signX, signY, 32, 16);
+		sign->setLevel(m_level);
+
+		m_world->addUndoCommand(new CommandAddEntity(m_world, sign));
 		populateTable();
 		ui.signsTable->selectRow(ui.signsTable->rowCount() - 1);
 

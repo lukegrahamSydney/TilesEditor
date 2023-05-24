@@ -20,11 +20,14 @@
 #include "IWorld.h"
 #include "TileGroupListModel.h"
 #include "Tileset.h"
+#include "IFileRequester.h"
 
 namespace TilesEditor
 {
-	class EditorTabWidget : public QWidget, 
-		public IWorld
+	class EditorTabWidget : 
+		public QWidget, 
+		public IWorld,
+		public IFileRequester
 	{
 		Q_OBJECT
 
@@ -236,5 +239,8 @@ namespace TilesEditor
 		void newLevel(int hcount, int vcount);
 		void loadOverworld(const QString& name, const QString& fileName);
 		void loadLevel(const QString& name, const QString& fileName);
+
+		void fileReady(const QString& fileName) override;
+		void fileWritten(const QString& fileName) override {}
 	};
 };

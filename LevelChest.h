@@ -17,8 +17,8 @@ namespace TilesEditor
 
 	public:
 
-		LevelChest(Level* level, double x, double y, const QString& itemName, int signIndex);
-		LevelChest(Level* level, cJSON* json, IWorld* world);
+		LevelChest(IWorld* world, double x, double y, const QString& itemName, int signIndex);
+		LevelChest(IWorld* world, cJSON* json);
 
 		void setItemName(const QString& name) {
 			m_itemName = name;
@@ -45,13 +45,13 @@ namespace TilesEditor
 
 		QString toString() const override { return QString("[Chest: %1, %2]").arg(getX()).arg(getY()); }
 
-		void openEditor(IWorld* world) override;
+		void openEditor() override;
 		AbstractLevelEntity* duplicate() override {
 			return nullptr;
 		}
 
 		cJSON* serializeJSON() override;
-		void deserializeJSON(cJSON* json, IWorld* world) override;
+		void deserializeJSON(cJSON* json) override;
 
 		static Image* getChestImage() {
 			static auto retval = new Image("", QPixmap(":/MainWindow/icons/chest.png"));

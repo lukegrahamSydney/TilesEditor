@@ -24,7 +24,7 @@ namespace TilesEditor
 	public:
 		Tilemap(const Tilemap& source);
 
-		Tilemap(Level* level, double x, double y, int hcount, int vcount, int layerIndex);
+		Tilemap(IWorld* world, double x, double y, int hcount, int vcount, int layerIndex);
 
 		~Tilemap() {
 			delete m_tiles;

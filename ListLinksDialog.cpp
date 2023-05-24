@@ -80,7 +80,7 @@ namespace TilesEditor
 
 				if (link)
 				{
-					link->openEditor(m_world);
+					link->openEditor();
 					populateTable();
 				}
 			}

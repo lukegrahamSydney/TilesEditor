@@ -6,8 +6,8 @@
 
 namespace TilesEditor
 {
-	LevelLink::LevelLink(Level* level, double x, double y, int width, int height, bool possibleEdgeLink):
-		AbstractLevelEntity(level, x, y)
+	LevelLink::LevelLink(IWorld* world, double x, double y, int width, int height, bool possibleEdgeLink):
+		AbstractLevelEntity(world, x, y)
 	{ 
 		m_width = width;
 		m_height = height;
@@ -15,10 +15,10 @@ namespace TilesEditor
 
 	}
 
-	LevelLink::LevelLink(Level* level, cJSON* json, IWorld* world):
-		LevelLink(level, 0, 0, 0, 0, false)
+	LevelLink::LevelLink(IWorld* world, cJSON* json):
+		LevelLink(world, 0, 0, 0, 0, false)
 	{
-		deserializeJSON(json, world);
+		deserializeJSON(json);
 	}
 
 	void LevelLink::setNextLevel(const QString& nextLevel)
@@ -51,7 +51,7 @@ namespace TilesEditor
 		return json;
 	}
 
-	void LevelLink::deserializeJSON(cJSON* json, IWorld* world)
+	void LevelLink::deserializeJSON(cJSON* json)
 	{
 		setX(jsonGetChildDouble(json, "x"));
 		setY(jsonGetChildDouble(json, "y"));
@@ -82,18 +82,18 @@ namespace TilesEditor
 		AbstractLevelEntity::setDragOffset(x, y, true);
 	}
 
-	void LevelLink::drag(double x, double y, bool snap, IWorld* world) {
-		AbstractLevelEntity::drag(x, y, true, world);
+	void LevelLink::drag(double x, double y, bool snap) {
+		AbstractLevelEntity::drag(x, y, true);
 	}
 
-	void LevelLink::openEditor(IWorld* world)
+	void LevelLink::openEditor()
 	{
-		EditLinkDialog form(this, world);
+		EditLinkDialog form(this, getWorld());
 		form.exec();
 	}
 
 	AbstractLevelEntity* LevelLink::duplicate() {
-		auto link = new LevelLink(this->getLevel(), getX(), getY(), getWidth(), getHeight(), false);
+		auto link = new LevelLink(this->getWorld(), getX(), getY(), getWidth(), getHeight(), false);
 		link->m_nextLevel = this->m_nextLevel;
 		link->m_nextX = this->m_nextX;
 		link->m_nextY = this->m_nextY;

@@ -46,8 +46,9 @@ namespace TilesEditor
         return false;
     }
 
-    Level::Level(double x, double y, int width, int height, Overworld* overworld, const QString& name)
+    Level::Level(IWorld* world, double x, double y, int width, int height, Overworld* overworld, const QString& name)
     {
+        m_world = world;
         m_loadFail = false;
         m_modified = false;
         m_x = x;
@@ -85,42 +86,42 @@ namespace TilesEditor
             delete tilemap;
     }
 
-    void Level::release(ResourceManager& resourceManager)
+    void Level::release()
     {
         for (auto entity : m_objects)
         {
-            entity->releaseResources(resourceManager);
+            entity->releaseResources();
         }
 
     }
 
-    bool Level::loadFile(ResourceManager& resourceManager)
+    bool Level::loadFile()
     {
         QFile file(m_fileName);
 
         if (file.open(QIODeviceBase::ReadOnly))
         {
-            loadStream(&file, resourceManager);
+            loadStream(&file);
             
         }
         return !m_loadFail;
     }
 
-    bool Level::loadStream(QIODevice* stream, ResourceManager& resourceManager)
+    bool Level::loadStream(QIODevice* stream)
     {
         if (m_name.endsWith(".nw"))
-            m_loadFail = !loadNWStream(stream, resourceManager);
+            m_loadFail = !loadNWStream(stream);
 
         else if (m_name.endsWith(".graal") || m_name.endsWith(".zelda") || m_name.endsWith(".editor"))
-            m_loadFail = !loadGraalStream(stream, resourceManager);
+            m_loadFail = !loadGraalStream(stream);
 
         else if (m_name.endsWith(".lvl"))
-            m_loadFail = !loadLVLStream(stream, resourceManager);
+            m_loadFail = !loadLVLStream(stream);
 
         return !m_loadFail;
     }
 
-    bool Level::loadNWStream(QIODevice* stream, ResourceManager& resourceManager)
+    bool Level::loadNWStream(QIODevice* stream)
     {
         
         QStringList lines;
@@ -172,7 +173,7 @@ namespace TilesEditor
                             unsigned int width = words[3].toInt();
                             unsigned int layer = words[4].toInt();
 
-                            auto tilemap = getOrMakeTilemap(layer, resourceManager);
+                            auto tilemap = getOrMakeTilemap(layer);
                             auto& tileData = words[5];
 
                             if (x < 64 && y < 64 && x + width <= 64)
@@ -212,7 +213,8 @@ namespace TilesEditor
                             else if ((y == 0 || y == 63 * 16) && height == 16)
                                 possibleEdgeLink = true;
 
-                            auto levelLink = new LevelLink(this, getX() + x, getY() + y, width, height, possibleEdgeLink);
+                            auto levelLink = new LevelLink(m_world, getX() + x, getY() + y, width, height, possibleEdgeLink);
+                            levelLink->setLevel(this);
                             levelLink->setNextLevel(words[1]);
                             levelLink->setNextX(nextX);
                             levelLink->setNextY(nextY);
@@ -227,8 +229,11 @@ namespace TilesEditor
                             auto y = words[2].toDouble() * 16;
 
                             auto signIndex = words[4].toInt();
+                            
+                            auto chest = new LevelChest(m_world, x + getX(), y + getY(), itemName, signIndex);
+                            chest->setLevel(this);
 
-                            addObject(new LevelChest(this, x + getX(), y + getY(), itemName, signIndex));
+                            addObject(chest);
 
                         }
                         else if (words[0] == "BADDY" && wordCount >= 3)
@@ -237,7 +242,9 @@ namespace TilesEditor
                             auto y = words[2].toDouble() * 16;
                             auto type = words[3].toInt();
 
-                            auto baddy = new LevelGraalBaddy(this, x + getX(), y + getY(), type);
+                            auto baddy = new LevelGraalBaddy(m_world, x + getX(), y + getY(), type);
+                            baddy->setLevel(this);
+
                             int verseIndex = 0;
                             for (++i; i < lineCount && lines[i] != "BADDYEND"; ++i)
                             {
@@ -250,11 +257,13 @@ namespace TilesEditor
                         else if (words[0] == "SIGN" && wordCount >= 3)
                         {
                             
-                            auto sign = new LevelSign(this,
+                            auto sign = new LevelSign(m_world,
                                 getX() + words[1].toDouble() * 16,
                                 getY() + words[2].toDouble() * 16,
                                 32,
                                 16);
+
+                            sign->setLevel(this);
 
                             QString text = "";
                             for (++i; i < lineCount && lines[i] != "SIGNEND"; ++i)
@@ -263,7 +272,6 @@ namespace TilesEditor
 
 
                             addObject(sign);
-                            //m_otherEntities->add(sign);
 
                         }
                         else if (words[0] == "NPC" && wordCount >= 4)
@@ -282,8 +290,10 @@ namespace TilesEditor
                             
                             QString className = "";
 
-                            auto levelNPC = new LevelNPC(this, x + getX(), y + getY(), width, height);
-                            levelNPC->setImageName(image, resourceManager);
+                            auto levelNPC = new LevelNPC(m_world, x + getX(), y + getY(), width, height);
+                            levelNPC->setLevel(this);
+
+                            levelNPC->setImageName(image);
                             levelNPC->setCode(code);
                             addObject(levelNPC);
                         }
@@ -300,7 +310,7 @@ namespace TilesEditor
     }
 
     //Ripped from graal reborn gserver2 code (TLevel.cpp)
-    bool Level::loadGraalStream(QIODevice* stream, ResourceManager& resourceManager)
+    bool Level::loadGraalStream(QIODevice* stream)
     {
 
         int v = -1;
@@ -339,7 +349,7 @@ namespace TilesEditor
             int count = 1;
             bool doubleMode = false;
 
-            auto tilemap = getOrMakeTilemap(0, resourceManager);
+            auto tilemap = getOrMakeTilemap(0);
 
             auto setTileIndex = [](Tilemap* tilemap, int boardIndex, int graalTile) {
                 auto tileX = boardIndex % 64;
@@ -451,7 +461,8 @@ namespace TilesEditor
                     else if ((y == 0 || y == 63 * 16) && height == 16)
                         possibleEdgeLink = true;
 
-                    auto levelLink = new LevelLink(this, getX() + x, getY() + y, width, height, possibleEdgeLink);
+                    auto levelLink = new LevelLink(m_world, getX() + x, getY() + y, width, height, possibleEdgeLink);
+                    levelLink->setLevel(this);
                     levelLink->setNextLevel(words[0]);
                     levelLink->setNextX(nextX);
                     levelLink->setNextY(nextY);
@@ -477,7 +488,9 @@ namespace TilesEditor
                 }
 
 
-                auto baddy = new LevelGraalBaddy(this, (x * 16) + getX(), (y * 16) + getY(), type);
+                auto baddy = new LevelGraalBaddy(m_world, (x * 16) + getX(), (y * 16) + getY(), type);
+                baddy->setLevel(this);
+
                 int verseIndex = 0;
 
                 auto verses = readString(stream, '\n').split('\\');
@@ -511,8 +524,10 @@ namespace TilesEditor
 
                     auto code = line.mid(lineIndex + 1).replace('\xa7', '\n');
 
-                    auto levelNPC = new LevelNPC(this, x + getX(), y + getY(), 32, 32);
-                    levelNPC->setImageName(image, resourceManager);
+                    auto levelNPC = new LevelNPC(m_world, x + getX(), y + getY(), 32, 32);
+                    levelNPC->setLevel(this);
+
+                    levelNPC->setImageName(image);
                     levelNPC->setCode(code);
                     addObject(levelNPC);
                 }
@@ -561,7 +576,12 @@ namespace TilesEditor
                     };
 
                     if (item >= 0 && item < sizeof(itemNames) / sizeof(itemNames[0]))
-                        addObject(new LevelChest(this, x + getX(), y + getY(), itemNames[item], signindex));
+                    {
+                        auto chest = new LevelChest(m_world, x + getX(), y + getY(), itemNames[item], signindex);
+                        chest->setLevel(this);
+
+                        addObject(chest);
+                    }
                 }
             }
         }
@@ -624,11 +644,13 @@ namespace TilesEditor
                 auto y = (line[1].unicode() - 32) * 16;
                 auto encodedText = line.mid(2);
 
-                auto sign = new LevelSign(this,
+                auto sign = new LevelSign(m_world,
                     getX() + x,
                     getY() + y,
                     32,
                     16);
+
+                sign->setLevel(this);
 
                 sign->setText(decodeSign(encodedText));
 
@@ -639,7 +661,7 @@ namespace TilesEditor
         return true;
     }
 
-    bool Level::loadLVLStream(QIODevice* stream, ResourceManager& resourceManager)
+    bool Level::loadLVLStream(QIODevice* stream)
     {
         static const QString base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -689,7 +711,8 @@ namespace TilesEditor
                                 auto jsonChunks = cJSON_GetObjectItem(jsonLayer, "chunks");
                                 if (jsonChunks)
                                 {
-                                    auto tilemap = new Tilemap(this, getX(), getY(), hcount, vcount, index);
+                                    auto tilemap = new Tilemap(m_world, getX(), getY(), hcount, vcount, index);
+                                    tilemap->setLevel(this);
                                     tilemap->clear(Tilemap::MakeInvisibleTile(0));
                                     for (int ii = 0; ii < cJSON_GetArraySize(jsonChunks); ++ii)
                                     {
@@ -745,7 +768,9 @@ namespace TilesEditor
                                 auto height = jsonGetChildInt(jsonSign, "height");
 
 
-                                auto sign = new LevelSign(this, x, y, width, height);
+                                auto sign = new LevelSign(m_world, x, y, width, height);
+                                sign->setLevel(this);
+
                                 sign->setText(jsonGetChildString(jsonSign, "text"));
 
                                 addObject(sign);
@@ -771,7 +796,9 @@ namespace TilesEditor
                                 auto height = jsonGetChildInt(jsonLink, "height");
 
 
-                                auto link = new LevelLink(this, x, y, width, height, false);
+                                auto link = new LevelLink(m_world, x, y, width, height, false);
+                                link->setLevel(this);
+
                                 link->setNextLevel(jsonGetChildString(jsonLink, "destination"));
                                 link->setNextX(jsonGetChildString(jsonLink, "destinationX"));
                                 link->setNextY(jsonGetChildString(jsonLink, "destinationY"));
@@ -795,14 +822,15 @@ namespace TilesEditor
 
                             int width, height;
                             if (image != "")
-                                getImageDimensions(resourceManager, image, &width, &height);
+                                getImageDimensions(m_world->getResourceManager(), image, &width, &height);
                             else {
                                 width = height = 48;
                             }
 
 
-                            auto npc = new LevelNPC(this, x, y, width, height);
-                            npc->setImageName(image, resourceManager);
+                            auto npc = new LevelNPC(m_world, x, y, width, height);
+                            npc->setLevel(this);
+                            npc->setImageName(image);
 
                             npc->setCode(jsonGetChildString(jsonObject, "code"));
                             addObject(npc);
@@ -819,14 +847,14 @@ namespace TilesEditor
         return false;
     }
 
-    bool Level::saveFile(ResourceManager& resourceManager)
+    bool Level::saveFile()
     {
-        auto stream = resourceManager.getFileSystem()->openStream(m_fileName, QIODevice::WriteOnly);
+        auto stream = m_world->getResourceManager().getFileSystem()->openStream(m_fileName, QIODevice::WriteOnly);
 
         if (stream)
         {
             auto retval = saveStream(stream);
-            resourceManager.getFileSystem()->endWrite(m_fileName, stream);
+            m_world->getResourceManager().getFileSystem()->endWrite(m_fileName, stream);
 
             return retval;
         }
@@ -1405,7 +1433,7 @@ namespace TilesEditor
         return nullptr;
     }
 
-    Tilemap* Level::getOrMakeTilemap(int index, ResourceManager& resourceManager)
+    Tilemap* Level::getOrMakeTilemap(int index)
     {
         Tilemap* retval = nullptr;
         if (index == 0)
@@ -1418,7 +1446,9 @@ namespace TilesEditor
 
         if (retval == nullptr)
         {
-            retval = new Tilemap(this, getX(), getY(), getWidth() / 16, getHeight() / 16, index);
+            retval = new Tilemap(m_world, getX(), getY(), getWidth() / 16, getHeight() / 16, index);
+            retval->setLevel(this);
+
             retval->clear(Tilemap::MakeInvisibleTile(0));
             setTileLayer(index, retval);
             return retval;

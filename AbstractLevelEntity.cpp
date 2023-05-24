@@ -26,7 +26,7 @@ namespace TilesEditor
 		}
 	}
 
-	void AbstractLevelEntity::drag(double x, double y, bool snap, IWorld* world) {
+	void AbstractLevelEntity::drag(double x, double y, bool snap) {
 		auto oldX = getX();
 		auto oldY = getY();
 
@@ -43,11 +43,11 @@ namespace TilesEditor
 		if (this->getLevel())
 		{
 			if (oldX != getX() || oldY != getY())
-				world->setModified(this->getLevel());
+				getWorld()->setModified(this->getLevel());
 		}
 	}
 
-	void AbstractLevelEntity::updateResize(int edges, int mouseX, int mouseY, bool snap, IWorld* world)
+	void AbstractLevelEntity::updateResize(int edges, int mouseX, int mouseY, bool snap)
 	{
 		if (edges & AbstractSelection::EDGE_LEFT)
 		{

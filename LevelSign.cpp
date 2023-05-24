@@ -5,17 +5,17 @@
 
 namespace TilesEditor
 {
-	LevelSign::LevelSign(Level* level, double x, double y, int width, int height) :
-		AbstractLevelEntity(level, x, y)
+	LevelSign::LevelSign(IWorld* world, double x, double y, int width, int height) :
+		AbstractLevelEntity(world, x, y)
 	{
 		m_width = width;
 		m_height = height;
 	}
 
-	LevelSign::LevelSign(Level* level, cJSON* json, IWorld* world):
-		LevelSign(level, 0.0, 0.0, 0, 0)
+	LevelSign::LevelSign(IWorld* world, cJSON* json):
+		LevelSign(world, 0.0, 0.0, 0, 0)
 	{
-		deserializeJSON(json, world);
+		deserializeJSON(json);
 	}
 
 	void LevelSign::setText(const QString& text)
@@ -36,7 +36,7 @@ namespace TilesEditor
 		return json;
 	}
 
-	void LevelSign::deserializeJSON(cJSON* json, IWorld* world)
+	void LevelSign::deserializeJSON(cJSON* json)
 	{
 		setX(jsonGetChildDouble(json, "x"));
 		setY(jsonGetChildDouble(json, "y"));
@@ -46,9 +46,9 @@ namespace TilesEditor
 		setText(jsonGetChildString(json, "text"));
 	}
 
-	void LevelSign::openEditor(IWorld* world)
+	void LevelSign::openEditor()
 	{
-		EditSignsDialog form(getLevel(), world, this);
+		EditSignsDialog form(getLevel(), getWorld(), this);
 		form.exec();
 	}
 

@@ -18,7 +18,7 @@ namespace TilesEditor
 			m_npc->setX(ui.xText->text().toDouble() * m_npc->getUnitWidth());
 			m_npc->setY(ui.yText->text().toDouble() * m_npc->getUnitHeight());
 
-			m_npc->setImageName(ui.imageText->text(), m_world->getResourceManager());
+			m_npc->setImageName(ui.imageText->text());
 
 			m_world->setModified(m_npc->getLevel());
 

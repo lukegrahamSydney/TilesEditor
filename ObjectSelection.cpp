@@ -46,7 +46,7 @@ namespace TilesEditor
 
         for (auto object : m_selectedObjects)
         {
-            object->drag(x, y, snap, world);
+            object->drag(x, y, snap);
 
         }
     }
@@ -244,17 +244,17 @@ namespace TilesEditor
                     AbstractLevelEntity* entity = nullptr;
 
                     if (objectType == "levelNPCv1")
-                        entity = new LevelNPC(nullptr, jsonObj, world);
+                        entity = new LevelNPC(world, jsonObj);
                     else if (objectType == "levelLink")
-                        entity = new LevelLink(nullptr, jsonObj, world);
+                        entity = new LevelLink(world, jsonObj);
                     else if (objectType == "levelChest")
-                        entity = new LevelChest(nullptr, jsonObj, world);
+                        entity = new LevelChest(world, jsonObj);
 
                     else if (objectType == "levelSign")
-                        entity = new LevelSign(nullptr, jsonObj, world);
+                        entity = new LevelSign(world, jsonObj);
 
                     else if(objectType == "levelBaddy")
-                        entity = new LevelGraalBaddy(nullptr, jsonObj, world);
+                        entity = new LevelGraalBaddy(world, jsonObj);
                     if (entity)
                     {
                         auto offsetX = entity->getX() - x;
@@ -264,7 +264,7 @@ namespace TilesEditor
                         entity->setY(getY() + offsetY);
                         addObject(entity);
 
-                        entity->loadResources(world->getResourceManager());
+                        entity->loadResources();
                     }
                 }
             }
@@ -300,7 +300,7 @@ namespace TilesEditor
     {
         if (canResize())
         {
-            m_selectedObjects.first()->updateResize(getResizeEdges(), mouseX, mouseY, snap, world);
+            m_selectedObjects.first()->updateResize(getResizeEdges(), mouseX, mouseY, snap);
 
             world->setModified(m_selectedObjects.first()->getLevel());
         }
@@ -311,7 +311,7 @@ namespace TilesEditor
         AbstractSelection::endResize(world);
         if (canResize())
         {
-            m_selectedObjects.first()->endResize(world);
+            m_selectedObjects.first()->endResize();
         }
     }
 

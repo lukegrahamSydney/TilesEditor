@@ -195,15 +195,17 @@ namespace TilesEditor
 
 		if (m_overworld)
 		{
-			m_overworld->release(m_resourceManager);
+			m_overworld->release();
 			delete m_overworld;
 		}
 
 		if (m_level)
 		{
-			m_level->release(m_resourceManager);
+			m_level->release();
 			delete m_level;
 		}
+
+		m_resourceManager.getFileSystem()->removeListener(this);
 
 	}
 
@@ -371,7 +373,7 @@ namespace TilesEditor
 
 		for (auto entity : sortedObjects)
 		{
-			entity->loadResources(m_resourceManager);
+			entity->loadResources();
 			entity->draw(painter, viewRect);
 		}
 
@@ -533,7 +535,7 @@ namespace TilesEditor
 			m_resourceManager.freeResource(m_tilesetImage);
 		}
 
-		m_tilesetImage = static_cast<Image*>(m_resourceManager.loadResource(imageName, ResourceType::RESOURCE_IMAGE));
+		m_tilesetImage = static_cast<Image*>(m_resourceManager.loadResource(nullptr, imageName, ResourceType::RESOURCE_IMAGE));
 
 		if (m_tilesetImage)
 		{
@@ -1031,8 +1033,8 @@ namespace TilesEditor
 
 	void EditorTabWidget::newLevel(int hcount, int vcount)
 	{
-		m_level = new Level(0, 0, hcount * 16, vcount * 16, nullptr, "");
-		m_level->getOrMakeTilemap(0, m_resourceManager)->clear(0);
+		m_level = new Level(this, 0, 0, hcount * 16, vcount * 16, nullptr, "");
+		m_level->getOrMakeTilemap(0)->clear(0);
 		m_level->setLoaded(true);
 		m_graphicsView->redraw();
 
@@ -1046,15 +1048,33 @@ namespace TilesEditor
 		m_resourceManager.addSearchDirRecursive(fi.absolutePath());
 		m_resourceManager.setRootDir(fi.absolutePath());
 
-		m_level = new Level(0, 0, 64 * 16, 64 * 16, nullptr, name);
+		m_level = new Level(this, 0, 0, 64 * 16, 64 * 16, nullptr, name);
 		m_level->setFileName(fileName);
-		m_level->loadFile(m_resourceManager);
+		m_level->loadFile();
 
 		setTileset(m_level->getTilesetName());
 
 		m_graphicsView->setSceneRect(QRect(0, 0, m_level->getWidth(), m_level->getHeight()));
 
 
+	}
+
+	void EditorTabWidget::fileReady(const QString& fileName)
+	{
+		QFileInfo fi(fileName);
+
+		auto name = fi.fileName();
+
+		if (m_overworld)
+		{
+			auto level = m_overworld->getLevel(name);
+			if (level)
+			{
+				level->setLoadFail(false);
+				loadLevel(level);
+				m_graphicsView->redraw();
+			}
+		}
 	}
 
 	void EditorTabWidget::loadLevel(Level* level)
@@ -1065,14 +1085,18 @@ namespace TilesEditor
 			if (m_resourceManager.locateFile(level->getName(), &fullPath))
 			{
 				level->setFileName(fullPath);
-				level->loadFile(m_resourceManager);
+				level->loadFile();
+			}
+			else
+			{
+				m_resourceManager.getFileSystem()->requestFile(this, level->getName());
 			}
 		}
 	}
 
 	void EditorTabWidget::loadOverworld(const QString& name, const QString & fileName)
 	{
-		m_overworld = new Overworld(name);
+		m_overworld = new Overworld(this, name);
 		m_overworld->setFileName(fileName);
 
 		QFileInfo fi(fileName);
@@ -1080,7 +1104,7 @@ namespace TilesEditor
 		m_resourceManager.addSearchDirRecursive(fi.absolutePath());
 		m_resourceManager.setRootDir(fi.absolutePath());
 
-		m_overworld->loadFile(m_resourceManager);
+		m_overworld->loadFile();
 		
 		setTileset(m_overworld->getTilesetName());
 
@@ -1210,7 +1234,7 @@ namespace TilesEditor
 
 		for (auto level : levels)
 		{ 
-			auto tilemap = level->getOrMakeTilemap(layer, this->getResourceManager());
+			auto tilemap = level->getOrMakeTilemap(layer);
 			if (tilemap != nullptr)
 			{
 				int destTileX = int((x - tilemap->getX()) / 16.0);
@@ -1909,7 +1933,7 @@ namespace TilesEditor
 						
 					}
 					else {
-						entity->openEditor(this);
+						entity->openEditor();
 						m_graphicsView->redraw();
 					}
 				}
@@ -2257,7 +2281,7 @@ namespace TilesEditor
 	{
 		if (m_overworld)
 		{
-			m_overworld->preloadLevels(m_resourceManager);
+			m_overworld->preloadLevels();
 		}
 	}
 
@@ -2294,7 +2318,8 @@ namespace TilesEditor
 
 		if (rootLinkLevel)
 		{
-			auto link = new LevelLink(rootLinkLevel, rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), false);
+			auto link = new LevelLink(this, rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), false);
+			link->setLevel(rootLinkLevel);
 
 			EditLinkDialog frm(link, this);
 			if (frm.exec() == QDialog::Accepted)
@@ -2333,8 +2358,9 @@ namespace TilesEditor
 
 		if (rootSignLevel)
 		{
-			auto sign = new LevelSign(rootSignLevel, rect.getX(), rect.getY(), 32, 16);
-			
+			auto sign = new LevelSign(this, rect.getX(), rect.getY(), 32, 16);
+			sign->setLevel(rootSignLevel);
+
 			addUndoCommand(new CommandAddEntity(this, sign));
 
 			EditSignsDialog frm(rootSignLevel, this, sign);
@@ -2551,7 +2577,7 @@ namespace TilesEditor
 					else resetModification = false;
 				}
 
-				m_overworld->saveFile(m_resourceManager);
+				m_overworld->saveFile();
 				if(resetModification)
 					setUnmodified();
 			}
@@ -2855,8 +2881,9 @@ namespace TilesEditor
 	{
 		auto selection = new ObjectSelection(0, 0);
 
-		auto npc = new LevelNPC(nullptr, 0, 0, 48, 48);
-		npc->setImageName("", m_resourceManager);
+		auto npc = new LevelNPC(this, 0, 0, 48, 48);
+		
+		npc->setImageName("");
 		selection->addObject(npc);
 		selection->setAlternateSelectionMethod(true);
 		selection->setSelectMode(ObjectSelection::SelectMode::MODE_INSERT);
@@ -3123,7 +3150,7 @@ namespace TilesEditor
 			QMessageBox::critical(nullptr, "Unable to save file", "Invalid file path");
 		}
 		else {
-			level->saveFile(m_resourceManager);
+			level->saveFile();
 			return true;
 		}
 		return false;

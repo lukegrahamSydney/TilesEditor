@@ -22,8 +22,8 @@ namespace TilesEditor
 		bool m_possibleEdgeLink;
 
 	public:
-		LevelLink(Level* level, double x, double y, int width, int height, bool possibleEdgeLink);
-		LevelLink(Level* level, cJSON* json, IWorld* world);
+		LevelLink(IWorld* world, double x, double y, int width, int height, bool possibleEdgeLink);
+		LevelLink(IWorld* world, cJSON* json);
 
 		void setNextLevel(const QString& nextLevel);
 		void setNextX(const QString& nextX);
@@ -36,8 +36,7 @@ namespace TilesEditor
 		LevelEntityType getEntityType() const override { return LevelEntityType::ENTITY_LINK; }
 
 		cJSON* serializeJSON() override;
-		void deserializeJSON(cJSON* json, IWorld* world) override;
-		void loadResources(ResourceManager& resourceManager) override {}
+		void deserializeJSON(cJSON* json) override;
 		void draw(QPainter* painter, const IRectangle& viewRect, double x, double y) override;
 
 		int getWidth() const override { return m_width; }
@@ -49,9 +48,9 @@ namespace TilesEditor
 		bool isPossibleEdgeLink() const { return m_possibleEdgeLink; }
 		void setDragOffset(double x, double y, bool snap) override;
 		bool canResize() const override { return true; }
-		void drag(double x, double y, bool snap, IWorld* world) override;
+		void drag(double x, double y, bool snap) override;
 
-		void openEditor(IWorld* world) override;
+		void openEditor() override;
 		QString toString() const override { return QString("[Link: %1, %2, %3]").arg(getNextLevel()).arg(getNextX()).arg(getNextY()); }
 		AbstractLevelEntity* duplicate() override;
 

@@ -6,6 +6,7 @@
 #include <QIODevice>
 #include <QTextStream>
 #include <QStringList>
+#include "IFileRequester.h"
 
 namespace TilesEditor
 {
@@ -26,6 +27,10 @@ namespace TilesEditor
 			}
 			return "";
 		}
+
+		//Filename should be name part only. not FULL PATH
+		virtual void requestFile(IFileRequester* requester, const QString& fileName) = 0;
+		virtual void removeListener(IFileRequester* requester) = 0;
 
 		virtual QStringList getFolders(const QString& parent) = 0;
 		virtual bool fileExists(const QString& fileName) = 0;

@@ -127,7 +127,7 @@ namespace TilesEditor
 							auto npc = static_cast<LevelNPC*>(entity);
 
 
-							entity->loadResources(m_world->getResourceManager());
+							entity->loadResources();
 							if (npc->hasValidImage())
 							{
 								entity->draw(painter, viewRect);
@@ -183,7 +183,7 @@ namespace TilesEditor
 					auto npc = static_cast<LevelNPC*>(entity);
 
 
-					entity->loadResources(m_world->getResourceManager());
+					entity->loadResources();
 					if (npc->hasValidImage())
 					{
 						entity->draw(painter, viewRect);

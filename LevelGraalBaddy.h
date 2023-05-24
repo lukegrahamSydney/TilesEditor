@@ -21,11 +21,11 @@ namespace TilesEditor
 
 	public:
 
-		LevelGraalBaddy(Level* level, double x, double y, int type);
-		LevelGraalBaddy(Level* level, cJSON* json, IWorld* world);
+		LevelGraalBaddy(IWorld* world, double x, double y, int type);
+		LevelGraalBaddy(IWorld* world, cJSON* json);
 
 		cJSON* serializeJSON() override;
-		void deserializeJSON(cJSON* json, IWorld* world) override;
+		void deserializeJSON(cJSON* json) override;
 
 		int getBaddyType() const { return m_baddyType; }
 		void setBaddyType(int type) { m_baddyType = type; }
@@ -63,7 +63,7 @@ namespace TilesEditor
 
 		QString toString() const override { return QString("[Baddy: %1, %2, %3]").arg(m_baddyType).arg(getX()).arg(getY()); }
 
-		void openEditor(IWorld* world) override;
+		void openEditor() override;
 		AbstractLevelEntity* duplicate() override {
 			return nullptr;
 		}

@@ -189,6 +189,7 @@
     <QtMoc Include="EditTilesetDialog.h" />
     <QtMoc Include="EditChestDialog.h" />
     <QtMoc Include="EditBaddy.h" />
+    <ClInclude Include="IFileRequester.h" />
     <ClInclude Include="LevelChest.h" />
     <ClInclude Include="LevelCommands.h" />
     <QtMoc Include="LevelConverter.h" />

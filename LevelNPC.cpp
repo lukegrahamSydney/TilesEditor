@@ -6,8 +6,8 @@
 namespace TilesEditor
 {
 
-	LevelNPC::LevelNPC(Level* level, double x, double y, int width, int height):
-		AbstractLevelEntity(level, x, y)
+	LevelNPC::LevelNPC(IWorld* world, double x, double y, int width, int height) :
+		AbstractLevelEntity(world, x, y)
 	{
 		m_width = width;
 		m_height = height;
@@ -16,30 +16,36 @@ namespace TilesEditor
 		m_loadImageFail = false;
 	}
 
-	LevelNPC::LevelNPC(Level* level, cJSON* json, IWorld* world):
-		LevelNPC(level, 0.0, 0.0, 0, 0)
+	LevelNPC::LevelNPC(IWorld* world, cJSON* json) :
+		LevelNPC(world, 0.0, 0.0, 0, 0)
 	{
-		deserializeJSON(json, world);
+		deserializeJSON(json);
 
 	}
 
-	void LevelNPC::loadResources(ResourceManager& resourceManager)
+	LevelNPC::~LevelNPC()
+	{
+		getWorld()->getResourceManager().getFileSystem()->removeListener(this);
+
+	}
+
+	void LevelNPC::loadResources()
 	{
 		if (m_image == nullptr)
 		{
 			if (!m_loadImageFail)
 			{
-				m_image = static_cast<Image*>(resourceManager.loadResource(m_imageName, ResourceType::RESOURCE_IMAGE));
+				m_image = static_cast<Image*>(getWorld()->getResourceManager().loadResource(this, m_imageName, ResourceType::RESOURCE_IMAGE));
 
 				m_loadImageFail = m_image == nullptr;
 			}
 		}
 	}
 
-	void LevelNPC::releaseResources(ResourceManager& resourceManager)
+	void LevelNPC::releaseResources()
 	{
 		if (m_image)
-			resourceManager.freeResource(m_image);
+			getWorld()->getResourceManager().freeResource(m_image);
 		m_image = nullptr;
 	}
 
@@ -52,28 +58,29 @@ namespace TilesEditor
 		else {
 			if (m_imageName == "") {
 				getBlankNPCImage()->draw(painter, x, y);
-			} else getBlankNPCImage()->draw(painter, x, y);
-			
+			}
+			else getBlankNPCImage()->draw(painter, x, y);
+
 		}
 	}
 
-	void LevelNPC::setImageName(const QString& name, ResourceManager& resourceManager)
+	void LevelNPC::setImageName(const QString& name)
 	{
 		if (name == "") {
 			m_imageName = "";
 			if (m_image != nullptr)
-				resourceManager.freeResource(m_image);
+				getWorld()->getResourceManager().freeResource(m_image);
 			m_image = nullptr;
 		}
 
-		else if (name != m_imageName)
+		else 
 		{
 			m_imageName = name;
 
 			if (m_image != nullptr)
-				resourceManager.freeResource(m_image);
-			
-			m_image = static_cast<Image*>(resourceManager.loadResource(m_imageName, ResourceType::RESOURCE_IMAGE));
+				getWorld()->getResourceManager().freeResource(m_image);
+
+			m_image = static_cast<Image*>(getWorld()->getResourceManager().loadResource(this, m_imageName, ResourceType::RESOURCE_IMAGE));
 
 			if (m_image != nullptr) {
 				setWidth(m_image->width());
@@ -88,9 +95,9 @@ namespace TilesEditor
 		}
 	}
 
-	void LevelNPC::openEditor(IWorld* world)
+	void LevelNPC::openEditor()
 	{
-		EditAnonymousNPC frm(this, world);
+		EditAnonymousNPC frm(this, getWorld());
 		frm.exec();
 	}
 
@@ -106,13 +113,13 @@ namespace TilesEditor
 		cJSON_AddNumberToObject(json, "height", getHeight());
 		cJSON_AddStringToObject(json, "code", getCode().toLocal8Bit().data());
 
-		
+
 		return json;
 	}
 
-	void LevelNPC::deserializeJSON(cJSON* json, IWorld* world)
+	void LevelNPC::deserializeJSON(cJSON* json)
 	{
-		setImageName(jsonGetChildString(json, "image"), world->getResourceManager());
+		setImageName(jsonGetChildString(json, "image"));
 		setX(jsonGetChildDouble(json, "x"));
 		setY(jsonGetChildDouble(json, "y"));
 
@@ -120,6 +127,16 @@ namespace TilesEditor
 		setHeight(jsonGetChildInt(json, "height"));
 
 		setCode(jsonGetChildString(json, "code"));
+	}
+
+	void LevelNPC::fileReady(const QString& fileName)
+	{
+		setImageName(getImageName());
+	}
+
+	void LevelNPC::fileWritten(const QString& fileName)
+	{
+
 	}
 
 	Image* LevelNPC::getBlankNPCImage()

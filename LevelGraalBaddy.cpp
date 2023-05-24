@@ -23,16 +23,16 @@ namespace TilesEditor
 
 	};
 
-	LevelGraalBaddy::LevelGraalBaddy(Level* level, double x, double y, int type) :
-		AbstractLevelEntity(level, x, y)
+	LevelGraalBaddy::LevelGraalBaddy(IWorld* world, double x, double y, int type) :
+		AbstractLevelEntity(world, x, y)
 	{
 		m_baddyType = type;
 	}
 
-	LevelGraalBaddy::LevelGraalBaddy(Level* level, cJSON* json, IWorld* world) :
-		LevelGraalBaddy(level, 0.0, 0.0, 0)
+	LevelGraalBaddy::LevelGraalBaddy(IWorld* world, cJSON* json) :
+		LevelGraalBaddy(world, 0.0, 0.0, 0)
 	{
-		deserializeJSON(json, world);
+		deserializeJSON(json);
 	}
 
 	cJSON* LevelGraalBaddy::serializeJSON()
@@ -49,7 +49,7 @@ namespace TilesEditor
 		return json;
 
 	}
-	void LevelGraalBaddy::deserializeJSON(cJSON* json, IWorld* world)
+	void LevelGraalBaddy::deserializeJSON(cJSON* json)
 	{
 		setX(jsonGetChildDouble(json, "x"));
 		setY(jsonGetChildDouble(json, "y"));
@@ -73,9 +73,9 @@ namespace TilesEditor
 		}
 	}
 
-	void LevelGraalBaddy::openEditor(IWorld* world)
+	void LevelGraalBaddy::openEditor()
 	{
-		EditBaddy dialog(this, world);
+		EditBaddy dialog(this, getWorld());
 		dialog.exec();
 	}
 

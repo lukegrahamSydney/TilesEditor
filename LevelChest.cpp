@@ -4,17 +4,17 @@
 
 namespace TilesEditor
 {
-	LevelChest::LevelChest(Level* level, double x, double y, const QString& itemName, int signIndex):
-		AbstractLevelEntity(level, x, y)
+	LevelChest::LevelChest(IWorld* world, double x, double y, const QString& itemName, int signIndex):
+		AbstractLevelEntity(world, x, y)
 	{
 		m_itemName = itemName;
 		m_signIndex = signIndex;
 	}
 
-	LevelChest::LevelChest(Level* level, cJSON* json, IWorld* world):
-		LevelChest(level, 0.0, 0.0, "", 0)
+	LevelChest::LevelChest(IWorld* world, cJSON* json):
+		LevelChest(world, 0.0, 0.0, "", 0)
 	{
-		deserializeJSON(json, world);
+		deserializeJSON(json);
 	}
 
 	void LevelChest::draw(QPainter* painter, const IRectangle& viewRect, double x, double y)
@@ -26,9 +26,9 @@ namespace TilesEditor
 		}
 	}
 
-	void LevelChest::openEditor(IWorld* world)
+	void LevelChest::openEditor()
 	{
-		EditChestDialog dialog(this, world);
+		EditChestDialog dialog(this, getWorld());
 		dialog.exec();
 	}
 
@@ -44,7 +44,7 @@ namespace TilesEditor
 		return json;
 	}
 
-	void LevelChest::deserializeJSON(cJSON* json, IWorld* world)
+	void LevelChest::deserializeJSON(cJSON* json)
 	{
 		setX(jsonGetChildDouble(json, "x"));
 		setY(jsonGetChildDouble(json, "y"));

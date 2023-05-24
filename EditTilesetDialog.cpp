@@ -39,7 +39,7 @@ namespace TilesEditor
 
 		m_tileset = *tileset;
 
-		m_tilesetImage = static_cast<Image*>(resourceManager.loadResource(m_tileset.getImageName(), ResourceType::RESOURCE_IMAGE));
+		m_tilesetImage = static_cast<Image*>(resourceManager.loadResource(nullptr, m_tileset.getImageName(), ResourceType::RESOURCE_IMAGE));
 
 
 		if (m_tilesetImage)
@@ -170,7 +170,7 @@ namespace TilesEditor
 		if (m_tilesetImage)
 			m_resourceManager.freeResource(m_tilesetImage);
 
-		m_tilesetImage = static_cast<Image*>(m_resourceManager.loadResource(ui.imageTextBox->text(), ResourceType::RESOURCE_IMAGE));
+		m_tilesetImage = static_cast<Image*>(m_resourceManager.loadResource(nullptr, ui.imageTextBox->text(), ResourceType::RESOURCE_IMAGE));
 
 		if (m_tilesetImage)
 		{

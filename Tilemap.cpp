@@ -3,7 +3,7 @@
 namespace TilesEditor
 {
     Tilemap::Tilemap(const Tilemap& source):
-        AbstractLevelEntity(nullptr, source.getX(), source.getY())
+        AbstractLevelEntity(source.getWorld(), source.getX(), source.getY())
     {
         m_hcount = source.m_hcount;
         m_vcount = source.m_vcount;
@@ -13,8 +13,8 @@ namespace TilesEditor
         memcpy(m_tiles, source.m_tiles, m_hcount * m_vcount * sizeof(int));
     }
 
-    Tilemap::Tilemap( Level* level, double x, double y, int hcount, int vcount, int layerIndex) :
-		AbstractLevelEntity(level, x, y), m_hcount(hcount), m_vcount(vcount)
+    Tilemap::Tilemap(IWorld* world, double x, double y, int hcount, int vcount, int layerIndex) :
+		AbstractLevelEntity(world, x, y), m_hcount(hcount), m_vcount(vcount)
 	{
 		m_tiles = new int[hcount * vcount];
 		clear(Tilemap::MakeTile(0, 0, 0));

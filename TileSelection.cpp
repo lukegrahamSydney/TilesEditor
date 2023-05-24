@@ -75,7 +75,7 @@ namespace TilesEditor
 
 		for (auto level : levels)
 		{
-			auto tilemap = level->getOrMakeTilemap(layer, world->getResourceManager());
+			auto tilemap = level->getOrMakeTilemap(layer);
 			if (tilemap != nullptr)
 			{
 				int destTileX = int((this->getX() - tilemap->getX()) / 16.0);

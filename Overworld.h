@@ -11,12 +11,15 @@
 #include "Level.h"
 #include "AbstractLevelEntity.h"
 #include "ResourceManager.h"
+#include "IWorld.h"
 
 namespace TilesEditor
 {
 	class Overworld
 	{
 	private:
+		IWorld* m_world;
+
 		QString m_name;
 		QString m_fileName;
 		QString m_tilesetName;
@@ -35,25 +38,25 @@ namespace TilesEditor
 		QMap<QString, Level*> m_levelNames;
 
 	public:
-		Overworld(const QString& name);
+		Overworld(IWorld* world, const QString& name);
 		~Overworld();
 
 		void setFileName(const QString& name) { m_fileName = name; }
 		const QString& getFileName() const { return m_fileName; }
-		void release(ResourceManager& resourceManager);
+		void release();
 
 		const QString& getName() const { return m_name; }
 
 		const QString& getTilesetName() const { return m_tilesetName; }
 		void setTilesetName(const QString& name) { m_tilesetName = name; }
 
-		bool loadFile(ResourceManager& resourceManager);
-		bool loadStream(QIODevice* stream, ResourceManager& resourceManager);
-		bool loadGMapStream(QIODevice* stream, ResourceManager& resourceManager);
-		bool loadTXTStream(QIODevice* stream, ResourceManager& resourceManager);
-		bool loadWorldStream(QIODevice* stream, ResourceManager& resourceManager);
+		bool loadFile();
+		bool loadStream(QIODevice* stream);
+		bool loadGMapStream(QIODevice* stream);
+		bool loadTXTStream(QIODevice* stream);
+		bool loadWorldStream(QIODevice* stream);
 
-		bool saveFile(ResourceManager& resourceManager);
+		bool saveFile();
 		bool saveStream(QIODevice* stream);
 		bool saveGMapStream(QIODevice* stream);
 		bool saveTXTStream(QIODevice* stream);
@@ -67,7 +70,7 @@ namespace TilesEditor
 		void addEntityToSpatialMap(AbstractLevelEntity* entity);
 		void removeEntityFromSpatialMap(AbstractLevelEntity* entity);
 		int getTileAt(int tileDepth, double x, double y);
-		void preloadLevels(ResourceManager& resourceManager);
+		void preloadLevels();
 
 		bool containsLevel(const QString& name) const;
 		int getWidth() const { return m_width; }

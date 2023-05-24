@@ -22,7 +22,7 @@ namespace TilesEditor
 	{
 
 	private:
-		int m_id = -1;
+		IWorld* m_world;
 
 
 		double m_x,
@@ -42,12 +42,11 @@ namespace TilesEditor
 			return entity1->getRealDepth() < entity2->getRealDepth();
 		}
 
-		AbstractLevelEntity(Level* level, double x, double y) {
-
+		AbstractLevelEntity(IWorld* world, double x, double y) {
+			m_world = world;
 			m_x = x;
 			m_y = y;
-			m_id = -1;
-			m_level = level;
+			m_level = nullptr;
 
 			m_dragOffsetX = m_dragOffsetY = 0.0;
 			m_microDepth = nextMicroDepth;
@@ -56,17 +55,10 @@ namespace TilesEditor
 
 		virtual LevelEntityType getEntityType() const = 0;
 
+		IWorld* getWorld() const { return m_world; }
 		void setLevel(Level* level) { m_level = level; }
 		Level* getLevel() { return m_level; }
 		const Level* getLevel() const { return m_level; }
-
-		void setID(int id) {
-			m_id = id;
-		}
-
-		int getID() const {
-			return m_id;
-		}
 
 		void setStartRect(const IRectangle& rect) { m_startRect = rect; }
 		const IRectangle& getStartRect() const { return m_startRect; }
@@ -75,12 +67,12 @@ namespace TilesEditor
 			draw(painter, viewRect, getX(), getY());
 		}
 
-		virtual void loadResources(ResourceManager& resourceManager) {}
-		virtual void releaseResources(ResourceManager& resourceManager) {}
+		virtual void loadResources() {}
+		virtual void releaseResources() {}
 		virtual bool update(double delta) { return false; };
 		virtual void draw(QPainter* painter, const IRectangle& viewRect, double x, double y) = 0;
 
-		virtual void openEditor(IWorld* world) {}
+		virtual void openEditor() {}
 		virtual double getX() const {
 			return m_x;
 		}
@@ -101,7 +93,7 @@ namespace TilesEditor
 		virtual QString toString() const { return ""; }
 		virtual Image* getIcon() { return nullptr; }
 		virtual cJSON* serializeJSON() { return nullptr; };
-		virtual void deserializeJSON(cJSON* json, IWorld* world) {}
+		virtual void deserializeJSON(cJSON* json) {}
 
 	
 		double getUnitWidth() const;
@@ -116,11 +108,11 @@ namespace TilesEditor
 
 		virtual void setDragOffset(double x, double y, bool snap);
 
-		virtual void drag(double x, double y, bool snap, IWorld* world);
+		virtual void drag(double x, double y, bool snap);
 		virtual bool canResize() const { return false; }
 
-		virtual void updateResize(int edges, int mouseX, int mouseY, bool snap, IWorld* world);
-		virtual void endResize(IWorld* world) {};
+		virtual void updateResize(int edges, int mouseX, int mouseY, bool snap);
+		virtual void endResize() {};
 
 	};
 };
