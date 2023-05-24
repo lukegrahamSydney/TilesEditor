@@ -1061,13 +1061,9 @@ namespace TilesEditor
 
 	void EditorTabWidget::fileReady(const QString& fileName)
 	{
-		QFileInfo fi(fileName);
-
-		auto name = fi.fileName();
-
 		if (m_overworld)
 		{
-			auto level = m_overworld->getLevel(name);
+			auto level = m_overworld->getLevel(fileName);
 			if (level)
 			{
 				level->setLoadFail(false);
