@@ -1066,14 +1066,20 @@ namespace TilesEditor
 
 	void EditorTabWidget::fileReady(const QString& fileName)
 	{
-		if (m_overworld)
+		if (m_tileset.getImageName() == fileName)
 		{
-			auto level = m_overworld->getLevel(fileName);
-			if (level)
+			tilesetRefreshClicked(true);
+		}
+		else {
+			if (m_overworld)
 			{
-				level->setLoadFail(false);
-				loadLevel(level);
-				m_graphicsView->redraw();
+				auto level = m_overworld->getLevel(fileName);
+				if (level)
+				{
+					level->setLoadFail(false);
+					loadLevel(level);
+					m_graphicsView->redraw();
+				}
 			}
 		}
 	}
