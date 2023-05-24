@@ -62,6 +62,7 @@ namespace TilesEditor
 		void freeResource(Resource* resource);
 		void updateResource(const QString& name);
 
+		void addFailedResource(const QString& name);
 		static QString formatResName(const QString& resName)
 		{
 			return resName.toLower();

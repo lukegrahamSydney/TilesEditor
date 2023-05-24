@@ -71,9 +71,10 @@ namespace TilesEditor
 		cJSON* serializeJSON() override;
 		void deserializeJSON(cJSON* json) override;
 
+		void fileFailed(const QString& name) override;
 		void fileReady(const QString& fileName) override;
 		void fileWritten(const QString& fileName) override;
-
+		
 		static Image* getBlankNPCImage();
 
 	};

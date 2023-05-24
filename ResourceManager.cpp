@@ -205,6 +205,11 @@ namespace TilesEditor
 		}
 	}
 
+	void ResourceManager::addFailedResource(const QString& name)
+	{
+		m_failedResources.insert(name);
+	}
+
 
 
 };

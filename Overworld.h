@@ -12,6 +12,7 @@
 #include "AbstractLevelEntity.h"
 #include "ResourceManager.h"
 #include "IWorld.h"
+#include "IFileRequester.h"
 
 namespace TilesEditor
 {
@@ -56,7 +57,7 @@ namespace TilesEditor
 		bool loadTXTStream(QIODevice* stream);
 		bool loadWorldStream(QIODevice* stream);
 
-		bool saveFile();
+		bool saveFile(IFileRequester* requester);
 		bool saveStream(QIODevice* stream);
 		bool saveGMapStream(QIODevice* stream);
 		bool saveTXTStream(QIODevice* stream);

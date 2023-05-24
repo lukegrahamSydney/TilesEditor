@@ -1059,6 +1059,11 @@ namespace TilesEditor
 
 	}
 
+	void EditorTabWidget::fileFailed(const QString& name)
+	{
+		m_resourceManager.addFailedResource(name);
+	}
+
 	void EditorTabWidget::fileReady(const QString& fileName)
 	{
 		if (m_overworld)
@@ -2573,7 +2578,7 @@ namespace TilesEditor
 					else resetModification = false;
 				}
 
-				m_overworld->saveFile();
+				m_overworld->saveFile(this);
 				if(resetModification)
 					setUnmodified();
 			}
@@ -3146,7 +3151,7 @@ namespace TilesEditor
 			QMessageBox::critical(nullptr, "Unable to save file", "Invalid file path");
 		}
 		else {
-			level->saveFile();
+			level->saveFile(this);
 			return true;
 		}
 		return false;

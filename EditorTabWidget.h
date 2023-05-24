@@ -240,6 +240,7 @@ namespace TilesEditor
 		void loadOverworld(const QString& name, const QString& fileName);
 		void loadLevel(const QString& name, const QString& fileName);
 
+		void fileFailed(const QString& name) override;
 		void fileReady(const QString& fileName) override;
 		void fileWritten(const QString& fileName) override {}
 	};

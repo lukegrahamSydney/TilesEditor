@@ -298,14 +298,14 @@ namespace TilesEditor
 		return false;
 	}
 
-	bool Overworld::saveFile()
+	bool Overworld::saveFile(IFileRequester* requester)
 	{
 		auto stream = m_world->getResourceManager().getFileSystem()->openStream(m_fileName, QIODevice::WriteOnly);
 
 		if (stream)
 		{
 			auto retval = saveStream(stream);
-			m_world->getResourceManager().getFileSystem()->endWrite(m_fileName, stream);
+			m_world->getResourceManager().getFileSystem()->endWrite(requester, m_fileName, stream);
 
 			return retval;
 		}

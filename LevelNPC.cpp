@@ -129,6 +129,11 @@ namespace TilesEditor
 		setCode(jsonGetChildString(json, "code"));
 	}
 
+	void LevelNPC::fileFailed(const QString& name)
+	{
+		getWorld()->getResourceManager().addFailedResource(name);
+	}
+
 	void LevelNPC::fileReady(const QString& fileName)
 	{
 		setImageName(getImageName());

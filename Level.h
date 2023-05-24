@@ -83,7 +83,7 @@ namespace TilesEditor
 		bool loadGraalStream(QIODevice* stream);
 		bool loadLVLStream(QIODevice* stream);
 
-		bool saveFile();
+		bool saveFile(IFileRequester* requester);
 		bool saveStream(QIODevice* stream);
 		bool saveNWStream(QIODevice* stream);
 		bool saveGraalStream(QIODevice* stream);
