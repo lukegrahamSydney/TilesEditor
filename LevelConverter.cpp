@@ -91,6 +91,7 @@ namespace TilesEditor
 		QDirIterator it(ui.inputEdit->text(), filters, QDir::Files, ui.subFoldersCheckBox->checkState() == Qt::CheckState::Checked ? QDirIterator::Subdirectories : QDirIterator::NoIteratorFlags);
 
 		m_files.clear();
+		m_filesSet.clear();
 		while (it.hasNext())
 		{
 			auto fileName = it.next();
