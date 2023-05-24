@@ -535,7 +535,7 @@ namespace TilesEditor
 			m_resourceManager.freeResource(m_tilesetImage);
 		}
 
-		m_tilesetImage = static_cast<Image*>(m_resourceManager.loadResource(nullptr, imageName, ResourceType::RESOURCE_IMAGE));
+		m_tilesetImage = static_cast<Image*>(m_resourceManager.loadResource(this, imageName, ResourceType::RESOURCE_IMAGE));
 
 		if (m_tilesetImage)
 		{
