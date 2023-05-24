@@ -23,6 +23,8 @@ Windows users can download this:
 16. Pattern tile flood
 17. Preview tile flood before doing it
 18. Generate an image of the entire level/gmap. Customize the zoom level to create maps and mini-map. Save individual levels to a folder (for gmap)
+19. Bulk level format converter
+
 
 # Requirements For compiling
 * QT6
