@@ -339,6 +339,9 @@ namespace TilesEditor
 
         // Load tiles.
         {
+            m_width = 64 * 16;
+            m_height = 64 * 16;
+
             int bits = (v > 1 ? 13 : 12);
             int read = 0;
             unsigned int buffer = 0;
@@ -1502,7 +1505,7 @@ namespace TilesEditor
         if (object->getEntityType() == LevelEntityType::ENTITY_LINK)
             m_links.removeOne(object);
 
-        if (object->getEntityType() == LevelEntityType::ENTITY_SIGN)
+        else if (object->getEntityType() == LevelEntityType::ENTITY_SIGN)
             m_signs.removeOne(object);
     }
 

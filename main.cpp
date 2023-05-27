@@ -1,6 +1,6 @@
 #include "MainWindow.h"
 #include <QtWidgets/QApplication>
-
+#include <QImageReader>
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
 
         app.setPalette(darkPalette);
     }
+    QImageReader::setAllocationLimit(1024 * 4);
 
     TilesEditor::MainWindow w;
     w.show();

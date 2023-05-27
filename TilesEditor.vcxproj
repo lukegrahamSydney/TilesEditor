@@ -193,6 +193,7 @@
     <ClInclude Include="LevelChest.h" />
     <ClInclude Include="LevelCommands.h" />
     <QtMoc Include="LevelConverter.h" />
+    <ClInclude Include="LevelFactory.h" />
     <ClInclude Include="LevelGraalBaddy.h" />
     <ClInclude Include="LevelLink.h" />
     <ClInclude Include="LevelNPC.h" />

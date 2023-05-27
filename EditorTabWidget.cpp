@@ -2806,7 +2806,7 @@ namespace TilesEditor
 											}
 										}
 									}
-
+					
 									group->addTileObject(tileObject);
 
 
@@ -3098,13 +3098,7 @@ namespace TilesEditor
 		}
 	}
 
-	void EditorTabWidget::test(bool checked)
-	{
-		auto transform = m_graphicsView->transform();
-		QTransform newTransform(transform.m11(), transform.m12(), transform.m21(), transform.m22(), (transform.dx()) + 0.1, transform.dy());
-		m_graphicsView->setTransform(newTransform);
 
-	}
 
 	void EditorTabWidget::selectorGone()
 	{

@@ -132,8 +132,6 @@ namespace TilesEditor
 		{
 			Resource* res = nullptr;
 
-
-			//If they wernt loaded by the threaded method use the normal method
 			QString fileName;
 
 			if (locateFile(resourceName, &fileName))
@@ -180,7 +178,6 @@ namespace TilesEditor
 
 			if (it != m_resources.end())
 			{
-				qDebug() << "Delete resource: " << resource->getName();
 				delete resource;
 				m_resources.erase(it);
 			}

@@ -125,6 +125,7 @@ namespace TilesEditor
 		Rectangle clampEntity(AbstractLevelEntity* entity);
 		void setTileLayer(int index, Tilemap* tilemap);
 
+
 		static int convertFromGraalTile(int graalTileIndex) {
 			int left = graalTileIndex & 0xF;
 			int top = graalTileIndex >> 4;
