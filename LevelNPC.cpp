@@ -93,6 +93,8 @@ namespace TilesEditor
 			setWidth(48);
 			setHeight(48);
 		}
+
+		getWorld()->updateEntityRect(this);
 	}
 
 	void LevelNPC::openEditor()

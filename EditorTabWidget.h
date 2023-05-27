@@ -229,6 +229,7 @@ namespace TilesEditor
 		bool tryGetTileAt(double x, double y, int* outTile) override;
 
 		void updateMovedEntity(AbstractLevelEntity* entity) override;
+		void updateEntityRect(AbstractLevelEntity* entity) override;
 		QList<Level*> getModifiedLevels() override;
 
 

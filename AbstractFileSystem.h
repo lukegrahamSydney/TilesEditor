@@ -36,6 +36,8 @@ namespace TilesEditor
 		virtual bool fileExists(const QString& fileName) = 0;
 		virtual QIODevice* openStream(const QString& fileName, QIODeviceBase::OpenModeFlag mode) = 0;
 
+		virtual QString getOpenFileName(const QString& caption, const QString& dir, const QString& filter) = 0;
+		virtual QString getSaveFileName(const QString& caption, const QString& dir, const QString& filter) = 0;
 		//this is called when a file has finished being written to. also delete the stream object in this function
 		virtual void endWrite(IFileRequester* requester, const QString& fileName, QIODevice* stream) = 0;
 	};

@@ -5,6 +5,7 @@
 #include <QStringList>
 #include <QList>
 #include <QSet>
+#include <QFileDialog>
 #include "AbstractFileSystem.h"
 
 namespace TilesEditor
@@ -25,6 +26,15 @@ namespace TilesEditor
 		bool fileExists(const QString& fileName) override;
 		QIODevice* openStream(const QString& fileName, QIODeviceBase::OpenModeFlag mode) override;
 
+		QString getOpenFileName(const QString& caption, const QString& dir, const QString& filter) override
+		{
+			return QFileDialog::getOpenFileName(nullptr, caption, dir, filter);
+		}
+
+		QString getSaveFileName(const QString& caption, const QString& dir, const QString& filter) override
+		{
+			return QFileDialog::getSaveFileName(nullptr, caption, dir, filter);
+		}
 		void endWrite(IFileRequester* requester, const QString& fileName, QIODevice* stream) override {
 			delete stream;
 

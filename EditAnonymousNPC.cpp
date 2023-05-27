@@ -31,7 +31,7 @@ namespace TilesEditor
 	{
 		if (m_modified)
 		{
-			if (QMessageBox::question(nullptr, "Changes made", "You have made changes to the NPC. Are you want to close?") == QMessageBox::Yes)
+			if (QMessageBox::question(nullptr, "Changes made", "You have made changes to the NPC. Are you sure you want to close?") == QMessageBox::Yes)
 			{
 				QDialog::reject();
 			}
@@ -40,8 +40,7 @@ namespace TilesEditor
 
 	void EditAnonymousNPC::imageBrowsePressed()
 	{
-
-		auto fileName = QFileDialog::getOpenFileName(nullptr, "Select Image", m_world->getResourceManager().getRootDir(), "Image Files (*.png *.gif)");
+		auto fileName = m_world->getResourceManager().getFileSystem()->getOpenFileName("Select Image", m_world->getResourceManager().getRootDir(), "Image Files (*.png *.gif)");
 		if (!fileName.isEmpty())
 		{
 			QFileInfo fi(fileName);

@@ -10,6 +10,7 @@ message("You are running qmake on a generated .pro file. This may not work!")
 HEADERS += ./AbstractFileSystem.h \
     ./AbstractLevelEntity.h \
     ./AbstractSelection.h \
+    ./IFileRequester.h \
     ./LevelChest.h \
     ./LevelCommands.h \
     ./LevelGraalBaddy.h \
@@ -74,7 +75,8 @@ HEADERS += ./AbstractFileSystem.h \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorHighlighter.hpp \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorLineWidget.hpp \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorPopup.hpp \
-    ./IFileRequester.h
+    ./LevelFactory.h \
+    ./FixMapNamesDialog.h
 SOURCES += ./AboutDialog.cpp \
     ./AbstractLevelEntity.cpp \
     ./AbstractSelection.cpp \
@@ -129,7 +131,8 @@ SOURCES += ./AboutDialog.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorHighlighter.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorLineWidget.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorPopup.cpp \
-    ./QCodeEditor/src/Widgets/QCodeEditorSlots.cpp
+    ./QCodeEditor/src/Widgets/QCodeEditorSlots.cpp \
+    ./FixMapNamesDialog.cpp
 FORMS += ./AboutDialog.ui \
     ./EditAnonymousNPC.ui \
     ./EditBaddy.ui \
@@ -147,5 +150,6 @@ FORMS += ./AboutDialog.ui \
     ./SaveOverworldDialog.ui \
     ./ScreenshotDialog.ui \
     ./TileObjectsWidget.ui \
-    ./TilesetsWidget.ui
+    ./TilesetsWidget.ui \
+    ./FixMapNamesDialog.ui
 RESOURCES += MainWindow.qrc

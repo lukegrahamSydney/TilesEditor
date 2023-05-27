@@ -1278,6 +1278,12 @@ namespace TilesEditor
 						m_graphicsView->redraw();
 				}
 			}
+			else if (m_level && m_level->getName() == fileName)
+			{
+				m_level->setLoadFail(false);
+				loadLevel(m_level);
+				m_graphicsView->redraw();
+			}
 		}
 	}
 
@@ -1384,6 +1390,16 @@ namespace TilesEditor
 		{
 			m_level->getEntitySpatialMap()->updateEntity(entity);
 		}
+	}
+
+	void EditorTabWidget::updateEntityRect(AbstractLevelEntity* entity)
+	{
+		if (m_overworld)
+		{
+			m_overworld->getEntitySpatialMap()->updateEntity(entity);
+		}
+		else if (m_level)
+			m_level->getEntitySpatialMap()->updateEntity(entity);
 	}
 
 	QList<Level*> EditorTabWidget::getModifiedLevels()
@@ -1853,10 +1869,12 @@ namespace TilesEditor
 				Rectangle rect(pos.x(), pos.y(), 1, 1);
 				if (rect.intersects(selection)) {
 					doTileSelection();
+					m_selector.setVisible(false);
 				}
-				m_selector.setVisible(false);
-				selectorGone();
-
+				else {
+					m_selector.setVisible(false);
+					selectorGone();
+				}
 				
 			}
 
@@ -2754,7 +2772,7 @@ namespace TilesEditor
 	{
 		if (m_level)
 		{
-			auto fullPath = QFileDialog::getSaveFileName(nullptr, "Save Level As", QString(), "All Level Files (*.nw *.lvl *.graal *.zelda)");
+			auto fullPath = m_resourceManager.getFileSystem()->getSaveFileName("Save Level As", QString(), "All Level Files (*.nw *.lvl *.graal *.zelda)");
 
 			if (!fullPath.isEmpty())
 			{
@@ -2836,6 +2854,7 @@ namespace TilesEditor
 
 	void EditorTabWidget::tilesetOpenClicked(bool checked)
 	{
+		
 		auto fileName = QFileDialog::getOpenFileName(nullptr, "Select Tileset", m_resourceManager.getRootDir(), "Image Files (*.png *.gif);;JSON File (*.json)");
 		if (!fileName.isEmpty())
 		{
@@ -3285,7 +3304,7 @@ namespace TilesEditor
 	{
 		if (level->getFileName().isEmpty())
 		{
-			auto fullPath = QFileDialog::getSaveFileName(nullptr, "Save Level", QString(), "All Level Files (*.nw *.lvl *.graal *.zelda)");
+			auto fullPath = m_resourceManager.getFileSystem()->getSaveFileName("Save Level", QString(), "All Level Files (*.nw *.lvl *.graal *.zelda)");
 
 			if (!fullPath.isEmpty())
 			{

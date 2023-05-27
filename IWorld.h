@@ -36,7 +36,13 @@ namespace TilesEditor
 		virtual bool containsLevel(const QString& levelName)const = 0;
 		virtual void centerLevel(const QString& levelName) = 0;
 		virtual void setModified(Level* level) = 0;
+
+		//Call this when the x/y changes
 		virtual void updateMovedEntity(AbstractLevelEntity* entity) = 0;
+
+		//Call this when the width/height changes
+		virtual void updateEntityRect(AbstractLevelEntity* entity) = 0;
+
 		virtual QList<Level*> getModifiedLevels() = 0;
 
 		virtual int getUnitWidth() const = 0;
