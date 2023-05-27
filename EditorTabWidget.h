@@ -101,7 +101,8 @@ namespace TilesEditor
 		void trimScriptEndingsClicked(bool checked);
 		void trimSignEndingsClicked(bool checked);
 
-
+		void gridValueChanged(int);
+	
 		//When the selector goes (he we will disable the button to create link/sign)
 		void selectorGone();
 
@@ -151,6 +152,8 @@ namespace TilesEditor
 		QMap<int, bool>	m_visibleLayers;
 		QPointF m_lastMousePos;
 
+		QPixmap m_gridImage;
+
 		int m_selectedTilesLayer;
 		bool m_selectedLayerVisible;
 		int m_defaultTile;
@@ -162,6 +165,8 @@ namespace TilesEditor
 
 		Tilemap	m_fillPattern;
 		QUndoStack m_undoStack;
+
+		void generateGridImage(int width, int height);
 
 		void doTileSelection();
 		bool doObjectSelection(int x, int y, bool allowAppend);

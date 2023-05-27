@@ -145,6 +145,11 @@ namespace TilesEditor
 		connect(ui.deleteButton, &QToolButton::clicked, this, &EditorTabWidget::deleteClicked);
 		connect(ui.screenshotButton, &QToolButton::clicked, this, &EditorTabWidget::screenshotClicked);
 
+
+		connect(ui.hcountSpinBox, &QSpinBox::valueChanged, this, &EditorTabWidget::gridValueChanged);
+		connect(ui.vcountSpinBox, &QSpinBox::valueChanged, this, &EditorTabWidget::gridValueChanged);
+		connect(ui.gridButton, &QToolButton::released, m_graphicsView, &GraphicsView::redraw);
+
 		//connect(ui.toolButton, &QToolButton::clicked, this, &EditorTabWidget::test);
 		auto selectMenu = new QMenu();
 		m_selectNPCs = selectMenu->addAction("Npcs");
@@ -229,16 +234,21 @@ namespace TilesEditor
 
 	}
 
-	void EditorTabWidget::renderScene(QPainter * painter, const QRectF & rect)
+	void EditorTabWidget::renderScene(QPainter * painter, const QRectF & _rect)
 	{
+		QRectF rect(std::floor(_rect.x()), std::floor(_rect.y()), _rect.width(), _rect.height());
+
+
 		Rectangle viewRect(rect.x(), rect.y(), rect.width(), rect.height());
 	
-		painter->fillRect(rect, QColorConstants::Black);
-
 		//forcing the view x/y offset as a whole number prevents tile alignment errors
 		auto transform = painter->transform();
 		QTransform newTransform(transform.m11(), transform.m12(), transform.m21(), transform.m22(), std::floor(transform.dx()), std::floor(transform.dy()));
 		painter->setTransform(newTransform);
+
+		painter->fillRect(rect, QColorConstants::Black);
+
+
 
 
 		auto mousePos = m_graphicsView->mapToScene(m_graphicsView->mapFromGlobal(QCursor::pos()));
@@ -448,8 +458,6 @@ namespace TilesEditor
 			painter->setCompositionMode(QPainter::CompositionMode_Difference);
 			painter->setPen(QColor(255, 255, 255));
 
-
-			//Draw tiles (and make sure level is loaded)
 			for (auto level : drawLevels)
 			{
 				int fontWidth = fm.horizontalAdvance(level->getName());
@@ -459,6 +467,41 @@ namespace TilesEditor
 
 			}
 			painter->setCompositionMode(compositionMode);
+		}
+
+		//Draw grid
+		if (ui.gridButton->isChecked())
+		{
+			if (ui.hcountSpinBox->value() > 0 && ui.vcountSpinBox->value() > 0)
+			{
+				if (m_gridImage.isNull())
+					generateGridImage(ui.hcountSpinBox->value() * 16, ui.vcountSpinBox->value() * 16);
+
+				auto compositionMode = painter->compositionMode();
+				painter->setCompositionMode(QPainter::CompositionMode_Difference);
+
+				auto opacity = painter->opacity();
+				painter->setOpacity(0.66f);
+				int gridOffsetX = ((int)rect.x()) % (ui.hcountSpinBox->value() * 16);
+				int gridOffsetY = ((int)rect.y()) % (ui.vcountSpinBox->value() * 16);
+
+
+				for (int y = 0; y < rect.height() + m_gridImage.height(); y += m_gridImage.height())
+				{
+
+
+					for (int x = 0; x < rect.width() + m_gridImage.width(); x += m_gridImage.width())
+					{
+						float left = x - gridOffsetX + rect.x();
+						float top = y - gridOffsetY + rect.y();
+
+						painter->drawPixmap(left, top, m_gridImage);
+					}
+				}
+				painter->setOpacity(opacity);
+				painter->setCompositionMode(compositionMode);
+			}
+
 		}
 	}
 
@@ -718,6 +761,42 @@ namespace TilesEditor
 		return false;
 
 	}
+
+	void EditorTabWidget::generateGridImage(int width, int height)
+	{
+		int hcount = width <= 256 ? qFloor(256.0f / width) : 1;
+		int vcount = height <= 256 ? qFloor(256.0f / height) : 1;
+
+		if (hcount > 0 && vcount > 0)
+		{
+			int textureWidth = hcount * width;
+			int textureHeight = vcount * height;
+
+			QImage image(textureWidth, textureHeight, QImage::Format_ARGB32);
+			image.fill(QColor(255, 255, 255, 0));
+			QPen pen;
+			pen.setWidth(1);
+			pen.setColor(Qt::white);
+
+			QPainter painter(&image);
+			painter.setPen(pen);
+
+			for (int y = 0; y < textureHeight; y += height)
+			{
+				painter.drawLine(0, y, textureWidth, y);
+			}
+
+			for (int x = 0; x < textureWidth; x += width)
+			{
+				painter.drawLine(x, 0, x, textureHeight);
+			}
+			painter.end();
+
+			m_gridImage = QPixmap::fromImage(image);
+
+		}
+	}
+
 	void EditorTabWidget::doTileSelection()
 	{
 		if (m_selector.visible())
@@ -1788,10 +1867,9 @@ namespace TilesEditor
 				return;
 			}
 
+			//Copy-paste via right click
 			if (m_selection && m_selection->pointInSelection(pos.x(), pos.y()))
 			{
-				auto selectionX = m_selection->getX();
-				auto selectionY = m_selection->getY();
 				m_selection->clipboardCopy();
 				doPaste(false);
 
@@ -3161,8 +3239,12 @@ namespace TilesEditor
 		}
 	}
 
-
-
+	void EditorTabWidget::gridValueChanged(int)
+	{
+		QPixmap a;
+		m_gridImage.swap(a);
+		m_graphicsView->redraw();
+	}
 
 	void EditorTabWidget::selectorGone()
 	{
