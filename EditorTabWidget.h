@@ -136,6 +136,10 @@ namespace TilesEditor
 		QAction* m_selectLinks;
 		QAction* m_selectSigns;
 
+		QAction* m_showNPCs;
+		QAction* m_showLinks;
+		QAction* m_showSigns;
+
 		ResourceManager m_resourceManager;
 		GraphicsView* m_graphicsView;
 		Level* m_level;

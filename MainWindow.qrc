@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/MainWindow">
+    <file>icons/fugue/eye--pencil.png</file>
     <file>icons/fugue/application-sidebar-collapse.png</file>
     <file>icons/fugue/folder-open.png</file>
     <file>icons/fugue/image-export.png</file>

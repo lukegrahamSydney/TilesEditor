@@ -161,6 +161,26 @@ namespace TilesEditor
 
 		ui.selectionButton->setMenu(selectMenu);
 
+		auto visibleObjectsMenu = new QMenu();
+		m_showNPCs = visibleObjectsMenu->addAction("Npcs");
+		m_showNPCs->setCheckable(true);
+		m_showNPCs->setChecked(true);
+		connect(m_showNPCs, &QAction::triggered, m_graphicsView, &GraphicsView::redraw);
+
+		m_showLinks = visibleObjectsMenu->addAction("Links");
+		m_showLinks->setCheckable(true);
+		m_showLinks->setChecked(true);
+		connect(m_showLinks, &QAction::triggered, m_graphicsView, &GraphicsView::redraw);
+
+		m_showSigns = visibleObjectsMenu->addAction("Signs");
+		m_showSigns->setCheckable(true);
+		m_showSigns->setChecked(true);
+		connect(m_showSigns, &QAction::triggered, m_graphicsView, &GraphicsView::redraw);
+
+		ui.visibleObjectsButton->setMenu(visibleObjectsMenu);
+
+
+
 		auto functionsMenu = new QMenu();
 		auto deleteEdgeLinks = functionsMenu->addAction("Delete Edge Links");
 		connect(deleteEdgeLinks, &QAction::triggered, this, &EditorTabWidget::deleteEdgeLinksClicked);
@@ -358,6 +378,7 @@ namespace TilesEditor
 			}
 		}
 
+
 		//Draw npcs
 		QSet<AbstractLevelEntity*> drawObjects;
 		if (m_overworld)
@@ -373,6 +394,15 @@ namespace TilesEditor
 
 		for (auto entity : sortedObjects)
 		{
+			if (entity->getEntityType() == LevelEntityType::ENTITY_NPC && !m_showNPCs->isChecked())
+				continue;
+
+			if (entity->getEntityType() == LevelEntityType::ENTITY_LINK && !m_showLinks->isChecked())
+				continue;
+
+			if (entity->getEntityType() == LevelEntityType::ENTITY_SIGN && !m_showSigns->isChecked())
+				continue;
+
 			entity->loadResources();
 			entity->draw(painter, viewRect);
 		}
@@ -3097,6 +3127,7 @@ namespace TilesEditor
 			}
 		}
 	}
+
 
 
 

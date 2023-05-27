@@ -159,6 +159,26 @@
        </widget>
       </item>
       <item>
+       <widget class="QToolButton" name="visibleObjectsButton">
+        <property name="toolTip">
+         <string>Change which objects are visible</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="MainWindow.qrc">
+          <normaloff>:/MainWindow/icons/fugue/eye--pencil.png</normaloff>:/MainWindow/icons/fugue/eye--pencil.png</iconset>
+        </property>
+        <property name="popupMode">
+         <enum>QToolButton::InstantPopup</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QToolButton" name="floodFillButton">
         <property name="toolTip">
          <string>Flood Fill</string>
