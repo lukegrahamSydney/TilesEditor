@@ -13,13 +13,13 @@ namespace TilesEditor
 	{
 		if (m_modified)
 		{
-			m_npc->setCode(ui.plainTextEdit->toPlainText());
+			
 
 			m_npc->setX(ui.xText->text().toDouble() * m_npc->getUnitWidth());
 			m_npc->setY(ui.yText->text().toDouble() * m_npc->getUnitHeight());
 
 			m_npc->setImageName(ui.imageText->text());
-
+			m_npc->setCode(ui.plainTextEdit->toPlainText());
 			m_world->setModified(m_npc->getLevel());
 
 			m_world->updateMovedEntity(m_npc);

@@ -18,7 +18,10 @@
 
 namespace TilesEditor
 {
+ 
     QMap<QString, int> Level::m_imageDimensionsCache;
+
+
     bool Level::getImageDimensions(ResourceManager& resourceManager, const QString& imageName, int* w, int* h)
     {
         auto it = m_imageDimensionsCache.find(imageName);
@@ -287,6 +290,7 @@ namespace TilesEditor
                             for (++i; i < lineCount && lines[i] != "NPCEND"; ++i)
                                 code += lines[i] + "\n";
                             
+
                             QString className = "";
 
                             auto levelNPC = new LevelNPC(m_world, x + getX(), y + getY(), width, height);
@@ -294,6 +298,8 @@ namespace TilesEditor
 
                             levelNPC->setImageName(image);
                             levelNPC->setCode(code);
+
+
                             addObject(levelNPC);
                         }
                     }

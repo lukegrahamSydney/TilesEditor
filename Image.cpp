@@ -24,6 +24,11 @@ namespace TilesEditor
         painter->drawPixmap((int)x, (int)y, this->pixmap());
     }
 
+    void Image::draw(QPainter* painter, double x, double y, int left, int top, int width, int height)
+    {
+        painter->drawPixmap((int)x, (int)y, this->pixmap(), left, top, width, height);
+    }
+
     Image* Image::load(const QString& assetName, QIODevice* stream)
     {
         QPixmap pixmap;

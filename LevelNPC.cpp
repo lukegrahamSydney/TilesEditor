@@ -1,10 +1,13 @@
 #include <QDebug>
+
 #include "LevelNPC.h"
 #include "cJSON/JsonHelper.h"
 #include "EditAnonymousNPC.h"
 
 namespace TilesEditor
 {
+
+	QRegularExpression LevelNPC::m_imgPartExpression("(?:^|[^/])setimgpart[\\( ]+(.*?),*([\\s\\d]+)*,*([\\s\\d]+)*,*([\\s\\d]+)*,([\\s\\d]+)\\)?");
 
 	LevelNPC::LevelNPC(IWorld* world, double x, double y, int width, int height) :
 		AbstractLevelEntity(world, x, y)
@@ -14,6 +17,7 @@ namespace TilesEditor
 		m_image = nullptr;
 
 		m_loadImageFail = false;
+		m_useImageShape = false;
 	}
 
 	LevelNPC::LevelNPC(IWorld* world, cJSON* json) :
@@ -27,6 +31,20 @@ namespace TilesEditor
 	{
 		getWorld()->getResourceManager().getFileSystem()->removeListener(this);
 
+	}
+
+	void LevelNPC::setImageShape(int left, int top, int width, int height)
+	{
+		m_useImageShape = true;
+		m_imageShape[0] = left;
+		m_imageShape[1] = top;
+		m_imageShape[2] = width;
+		m_imageShape[3] = height;
+
+		setWidth(width);
+		setHeight(height);
+
+		getWorld()->updateEntityRect(this);
 	}
 
 	void LevelNPC::loadResources()
@@ -53,7 +71,11 @@ namespace TilesEditor
 	{
 		if (m_image != nullptr)
 		{
-			m_image->draw(painter, x, y);
+			if (m_useImageShape)
+			{
+				m_image->draw(painter, x, y, m_imageShape[0], m_imageShape[1], m_imageShape[2], m_imageShape[3]);
+			}
+			else m_image->draw(painter, x, y);
 		}
 		else {
 			if (m_imageName == "") {
@@ -95,6 +117,26 @@ namespace TilesEditor
 		}
 
 		getWorld()->updateEntityRect(this);
+	}
+
+	void LevelNPC::setCode(const QString& code) 
+	{ 
+		m_code = code; 
+
+
+		auto match = m_imgPartExpression.match(code);
+		if (match.hasMatch())
+		{
+			auto imageLeft = match.captured(2).toInt();
+			auto imageTop = match.captured(3).toInt();
+			auto imageWidth = match.captured(4).toInt();
+			auto imageHeight = match.captured(5).toInt();
+			setImageShape(imageLeft, imageTop, imageWidth, imageHeight);
+		}
+		else if (m_useImageShape) {
+			m_useImageShape = false;
+			getWorld()->updateEntityRect(this);
+		}
 	}
 
 	void LevelNPC::openEditor()

@@ -2,6 +2,7 @@
 #define LEVELNPCH
 
 #include <QString>
+#include <QRegularExpression>
 #include "AbstractLevelEntity.h"
 #include "LevelEntityType.h"
 #include "Image.h"
@@ -16,6 +17,7 @@ namespace TilesEditor
 	{
 		
 	private:
+		static QRegularExpression m_imgPartExpression;
 		bool m_loadImageFail;
 
 		QString m_imageName;
@@ -25,6 +27,8 @@ namespace TilesEditor
 		int m_width;
 		int m_height;
 
+		bool m_useImageShape;
+		int m_imageShape[4];
 
 	public:
 
@@ -35,13 +39,14 @@ namespace TilesEditor
 		
 		LevelEntityType getEntityType() const override { return LevelEntityType::ENTITY_NPC; }
 
+		void setImageShape(int left, int top, int width, int height);
 		void loadResources() override;
 		void releaseResources() override;
 		void draw(QPainter* painter, const IRectangle& viewRect, double x, double y) override;
 
 		void setImageName(const QString& name);
 		const QString& getImageName() const { return m_imageName; }
-		void setCode(const QString& code) { m_code = code; }
+		void setCode(const QString& code);
 		const QString& getCode() const { return m_code; }
 		int getWidth() const override { return m_width; }
 		int getHeight() const override { return m_height; }
