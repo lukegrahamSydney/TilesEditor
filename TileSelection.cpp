@@ -133,6 +133,8 @@ namespace TilesEditor
 		auto jsonObject = cJSON_CreateObject();
 
 		cJSON_AddStringToObject(jsonObject, "type", "tileSelection");
+		cJSON_AddNumberToObject(jsonObject, "x", getX());
+		cJSON_AddNumberToObject(jsonObject, "y", getY());
 		cJSON_AddNumberToObject(jsonObject, "hcount", m_tilemap->getHCount());
 		cJSON_AddNumberToObject(jsonObject, "vcount", m_tilemap->getVCount());
 

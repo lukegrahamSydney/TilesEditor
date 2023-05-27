@@ -1061,6 +1061,90 @@ namespace TilesEditor
 	}
 
 
+	void EditorTabWidget::doPaste(bool centerScreen)
+	{
+
+		QClipboard* clipboard = QApplication::clipboard();
+
+		auto text = clipboard->text();
+
+		QByteArray ba = text.toLocal8Bit();
+
+		auto json = cJSON_Parse(ba.data());
+
+		if (json != nullptr)
+		{
+			auto viewRect = getViewRect();
+			auto type = jsonGetChildString(json, "type");
+
+			auto x = jsonGetChildDouble(json, "x");
+			auto y = jsonGetChildDouble(json, "y");
+			if (type == "tileSelection")
+			{
+				auto hcount = jsonGetChildInt(json, "hcount");
+				auto vcount = jsonGetChildInt(json, "vcount");
+
+
+				auto pasteX = centerScreen ? ((viewRect.getCenterX() - (hcount * 16) / 2) / 16.0) * 16.0 : x;
+				auto pasteY = centerScreen ? std::floor((viewRect.getCenterY() - (vcount * 16) / 2) / 16.0) * 16.0 : y;
+
+				auto tileSelection = new TileSelection(pasteX, pasteY, hcount, vcount);
+
+				auto tileArray = cJSON_GetObjectItem(json, "tiles");
+
+				if (tileArray && tileArray->type == cJSON_Array)
+				{
+					static const QString base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+					for (int y = 0; y < cJSON_GetArraySize(tileArray); ++y)
+					{
+						auto arrayItem = cJSON_GetArrayItem(tileArray, y);
+						if (arrayItem->type == cJSON_String)
+						{
+							QString line(arrayItem->valuestring);
+
+							auto parts = line.split(' ', Qt::SkipEmptyParts);
+							for (auto x = 0U; x < parts.size(); ++x)
+							{
+								int tile = 0;
+								auto& part = parts[x];
+								int bitcount = 0;
+
+
+								for (auto i = part.length() - 1; i >= 0; --i) {
+									auto value = base64.indexOf(part[i]);
+
+									tile |= value << bitcount;
+									bitcount += 6;
+
+								}
+								tileSelection->setTile(x, y, tile);
+							}
+						}
+					}
+				}
+
+				if (m_tilesetImage)
+					tileSelection->setTilesetImage(m_tilesetImage);
+				setSelection(tileSelection);
+
+				m_graphicsView->redraw();
+
+			}
+			else if (type == "objectSelection")
+			{
+				auto selection = new ObjectSelection(centerScreen ? viewRect.getCenterX() : x, centerScreen ? viewRect.getCenterY() : y);
+				selection->deserializeJSON(json, this);
+
+
+				setSelection(selection);
+
+				m_graphicsView->redraw();
+			}
+
+			cJSON_Delete(json);
+		}
+	}
+
 	void EditorTabWidget::newLevel(int hcount, int vcount)
 	{
 		m_level = new Level(this, 0, 0, hcount * 16, vcount * 16, nullptr, "");
@@ -1685,8 +1769,15 @@ namespace TilesEditor
 
 			if (m_selector.visible())
 			{
+				auto selection = m_selector.getSelection();
+				
+				Rectangle rect(pos.x(), pos.y(), 1, 1);
+				if (rect.intersects(selection)) {
+					doTileSelection();
+				}
 				m_selector.setVisible(false);
 				selectorGone();
+
 				
 			}
 
@@ -1695,6 +1786,20 @@ namespace TilesEditor
 				m_graphicsView->redraw();
 				ui.floodFillButton->setChecked(false);
 				return;
+			}
+
+			if (m_selection && m_selection->pointInSelection(pos.x(), pos.y()))
+			{
+				auto selectionX = m_selection->getX();
+				auto selectionY = m_selection->getY();
+				m_selection->clipboardCopy();
+				doPaste(false);
+
+				if (m_selection) {
+					m_selection->setDragOffset(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier));
+				}
+				return;
+
 			}
 			setSelection(nullptr);
 
@@ -1853,7 +1958,7 @@ namespace TilesEditor
 		}
 
 		//If holding left button
-		if (event->buttons().testFlag(Qt::MouseButton::LeftButton))
+		if (event->buttons().testFlag(Qt::MouseButton::LeftButton) || event->buttons().testFlag(Qt::MouseButton::RightButton))
 		{
 
 			if (m_selection != nullptr)
@@ -2481,80 +2586,8 @@ namespace TilesEditor
 
 	void EditorTabWidget::pastePressed()
 	{
-		QClipboard* clipboard = QApplication::clipboard();
+		doPaste(true);
 
-		auto text = clipboard->text();
-
-		QByteArray ba = text.toLocal8Bit();
-
-		auto json = cJSON_Parse(ba.data());
-
-		if (json != nullptr)
-		{
-			auto viewRect = getViewRect();
-			auto type = jsonGetChildString(json, "type");
-			if (type == "tileSelection")
-			{
-				auto hcount = jsonGetChildInt(json, "hcount");
-				auto vcount = jsonGetChildInt(json, "vcount");
-
-
-
-				auto tileSelection = new TileSelection(std::floor((viewRect.getCenterX() - (hcount * 16) / 2) / 16.0) * 16.0, std::floor((viewRect.getCenterY() - (vcount * 16) / 2) / 16.0) * 16.0, hcount, vcount);
-
-				auto tileArray = cJSON_GetObjectItem(json, "tiles");
-
-				if (tileArray && tileArray->type == cJSON_Array)
-				{
-					static const QString base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-					for (int y = 0; y < cJSON_GetArraySize(tileArray); ++y)
-					{
-						auto arrayItem = cJSON_GetArrayItem(tileArray, y);
-						if (arrayItem->type == cJSON_String)
-						{
-							QString line(arrayItem->valuestring);
-
-							auto parts = line.split(' ', Qt::SkipEmptyParts);
-							for (auto x = 0U; x < parts.size(); ++x)
-							{
-								int tile = 0;
-								auto& part = parts[x];
-								int bitcount = 0;
-
-
-								for (auto i = part.length() - 1; i >= 0; --i) {
-									auto value = base64.indexOf(part[i]);
-
-									tile |= value << bitcount;
-									bitcount += 6;
-
-								}
-								tileSelection->setTile(x, y, tile);
-							}
-						}
-					}
-				}
-
-				if(m_tilesetImage)
-					tileSelection->setTilesetImage(m_tilesetImage);
-				setSelection(tileSelection);
-
-				m_graphicsView->redraw();
-
-			}
-			else if (type == "objectSelection")
-			{
-				auto selection = new ObjectSelection(viewRect.getCenterX(), viewRect.getCenterY());
-				selection->deserializeJSON(json, this);
-
-
-				setSelection(selection);
-
-				m_graphicsView->redraw();
-			}
-
-			cJSON_Delete(json);
-		}
 	}
 
 	void EditorTabWidget::deleteClicked(bool checked)

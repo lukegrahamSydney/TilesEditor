@@ -240,6 +240,7 @@ namespace TilesEditor
 		int getHeight() const override;
 		Image* getTilesetImage() override { return m_tilesetImage; }
 
+		void doPaste(bool centerScreen);
 		void newLevel(int hcount, int vcount);
 		void loadOverworld(const QString& name, const QString& fileName);
 		void loadLevel(const QString& name, const QString& fileName);
