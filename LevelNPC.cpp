@@ -123,19 +123,21 @@ namespace TilesEditor
 	{ 
 		m_code = code; 
 
-
-		auto match = m_imgPartExpression.match(code);
-		if (match.hasMatch())
+		if (m_image)
 		{
-			auto imageLeft = match.captured(2).toInt();
-			auto imageTop = match.captured(3).toInt();
-			auto imageWidth = match.captured(4).toInt();
-			auto imageHeight = match.captured(5).toInt();
-			setImageShape(imageLeft, imageTop, imageWidth, imageHeight);
-		}
-		else if (m_useImageShape) {
-			m_useImageShape = false;
-			getWorld()->updateEntityRect(this);
+			auto match = m_imgPartExpression.match(code);
+			if (match.hasMatch())
+			{
+				auto imageLeft = match.captured(2).toInt();
+				auto imageTop = match.captured(3).toInt();
+				auto imageWidth = match.captured(4).toInt();
+				auto imageHeight = match.captured(5).toInt();
+				setImageShape(imageLeft, imageTop, imageWidth, imageHeight);
+			}
+			else if (m_useImageShape) {
+				m_useImageShape = false;
+				getWorld()->updateEntityRect(this);
+			}
 		}
 	}
 
@@ -153,8 +155,6 @@ namespace TilesEditor
 		cJSON_AddStringToObject(json, "image", getImageName().toLocal8Bit().data());
 		cJSON_AddNumberToObject(json, "x", getX());
 		cJSON_AddNumberToObject(json, "y", getY());
-		cJSON_AddNumberToObject(json, "width", getWidth());
-		cJSON_AddNumberToObject(json, "height", getHeight());
 		cJSON_AddStringToObject(json, "code", getCode().toLocal8Bit().data());
 
 
@@ -163,13 +163,13 @@ namespace TilesEditor
 
 	void LevelNPC::deserializeJSON(cJSON* json)
 	{
-		setImageName(jsonGetChildString(json, "image"));
+		
 		setX(jsonGetChildDouble(json, "x"));
 		setY(jsonGetChildDouble(json, "y"));
 
-		setWidth(jsonGetChildInt(json, "width"));
-		setHeight(jsonGetChildInt(json, "height"));
-
+		setWidth(48);
+		setHeight(48);
+		setImageName(jsonGetChildString(json, "image"));
 		setCode(jsonGetChildString(json, "code"));
 	}
 

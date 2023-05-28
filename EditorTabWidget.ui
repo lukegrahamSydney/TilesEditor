@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>822</width>
+    <width>808</width>
     <height>448</height>
    </rect>
   </property>
@@ -663,16 +663,16 @@
        <number>2</number>
       </property>
       <property name="leftMargin">
-       <number>3</number>
+       <number>1</number>
       </property>
       <property name="topMargin">
-       <number>1</number>
+       <number>4</number>
       </property>
       <property name="rightMargin">
-       <number>3</number>
+       <number>2</number>
       </property>
       <property name="bottomMargin">
-       <number>1</number>
+       <number>4</number>
       </property>
       <item>
        <widget class="QToolButton" name="gridButton">

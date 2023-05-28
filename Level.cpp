@@ -13,6 +13,7 @@
 #include "LevelSign.h"
 #include "LevelChest.h"
 #include "LevelGraalBaddy.h"
+#include "ObjectFactory.h"
 
 #include "cJSON/JsonHelper.h"
 
@@ -823,25 +824,13 @@ namespace TilesEditor
                         {
                             auto jsonObject = cJSON_GetArrayItem(jsonObjects, i);
 
+                            auto entity = ObjectFactory::createObject(m_world, jsonObject);
 
-                            auto x = this->getX() + jsonGetChildInt(jsonObject, "x");
-                            auto y = this->getY() + jsonGetChildInt(jsonObject, "y");
-                            auto image = jsonGetChildString(jsonObject, "image");
-
-                            int width, height;
-                            if (image != "")
-                                getImageDimensions(m_world->getResourceManager(), image, &width, &height);
-                            else {
-                                width = height = 48;
+                            if (entity)
+                            {
+                                entity->setLevel(this);
+                                addObject(entity);
                             }
-
-
-                            auto npc = new LevelNPC(m_world, x, y, width, height);
-                            npc->setLevel(this);
-                            npc->setImageName(image);
-
-                            npc->setCode(jsonGetChildString(jsonObject, "code"));
-                            addObject(npc);
 
                         }
                     }
@@ -1398,23 +1387,24 @@ namespace TilesEditor
 
         for (auto obj : m_objects)
         {
-            if (obj->getEntityType() == LevelEntityType::ENTITY_NPC)
+            switch (obj->getEntityType()) 
             {
-                auto npc = static_cast<LevelNPC*>(obj);
+                case LevelEntityType::ENTITY_LINK:
+                case LevelEntityType::ENTITY_SIGN:
+                    break;
 
-                auto jsonNPC = cJSON_CreateObject();
-                if (jsonNPC)
-                {
-                    cJSON_AddStringToObject(jsonNPC, "type", "npcV1");
-                    cJSON_AddNumberToObject(jsonNPC, "x", int(npc->getX() - this->getX()));
-                    cJSON_AddNumberToObject(jsonNPC, "y", int(npc->getY() - this->getY()));
+                default: {
+                    auto jsonObj = obj->serializeJSON();
+                    if (jsonObj)
+                    {
+                        cJSON_AddItemReferenceToArray(jsonObjects, jsonObj);
 
-                    cJSON_AddStringToObject(jsonNPC, "image", npc->getImageName().toLocal8Bit().data());
-                    cJSON_AddStringToObject(jsonNPC, "code", npc->getCode().toLocal8Bit().data());
-
-                    cJSON_AddItemReferenceToArray(jsonObjects, jsonNPC);
+                    
+                    }
                 }
+                   
             }
+
         }
 
         cJSON_AddItemToObject(jsonRoot, "objects", jsonObjects);

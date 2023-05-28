@@ -236,7 +236,7 @@ namespace TilesEditor
 
 	void EditorTabWidget::renderScene(QPainter * painter, const QRectF & _rect)
 	{
-		QRectF rect(std::floor(_rect.x()), std::floor(_rect.y()), _rect.width(), _rect.height());
+		QRectF rect(std::floor(_rect.x()), std::floor(_rect.y()), _rect.width() + 1, _rect.height() + 1);
 
 
 		Rectangle viewRect(rect.x(), rect.y(), rect.width(), rect.height());

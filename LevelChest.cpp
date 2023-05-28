@@ -36,7 +36,7 @@ namespace TilesEditor
 	{
 		auto json = cJSON_CreateObject();
 
-		cJSON_AddStringToObject(json, "type", "levelChest");
+		cJSON_AddStringToObject(json, "type", "levelChestv1");
 		cJSON_AddNumberToObject(json, "x", getX());
 		cJSON_AddNumberToObject(json, "y", getY());
 		cJSON_AddStringToObject(json, "item", getItemName().toLocal8Bit().data());

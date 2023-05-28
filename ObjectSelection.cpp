@@ -9,6 +9,7 @@
 #include "LevelChest.h"
 #include "LevelSign.h"
 #include "LevelGraalBaddy.h"
+#include "ObjectFactory.h"
 
 namespace TilesEditor
 {
@@ -239,22 +240,9 @@ namespace TilesEditor
                 auto jsonObj = cJSON_GetArrayItem(objects, i);
                 if (jsonObj)
                 {
-                    auto objectType = jsonGetChildString(jsonObj, "type");
 
-                    AbstractLevelEntity* entity = nullptr;
+                    AbstractLevelEntity* entity = ObjectFactory::createObject(world, jsonObj);
 
-                    if (objectType == "levelNPCv1")
-                        entity = new LevelNPC(world, jsonObj);
-                    else if (objectType == "levelLink")
-                        entity = new LevelLink(world, jsonObj);
-                    else if (objectType == "levelChest")
-                        entity = new LevelChest(world, jsonObj);
-
-                    else if (objectType == "levelSign")
-                        entity = new LevelSign(world, jsonObj);
-
-                    else if(objectType == "levelBaddy")
-                        entity = new LevelGraalBaddy(world, jsonObj);
                     if (entity)
                     {
                         auto offsetX = entity->getX() - x;

@@ -124,6 +124,7 @@
     <ClCompile Include="ListLinksDialog.cpp" />
     <ClCompile Include="MainFileSystem.cpp" />
     <ClCompile Include="NewOverworldDialog.cpp" />
+    <ClCompile Include="ObjectFactory.cpp" />
     <ClCompile Include="ObjectListModel.cpp" />
     <ClCompile Include="ObjectSelection.cpp" />
     <ClCompile Include="ObjectsWidget.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="LevelSign.h" />
     <QtMoc Include="ListLinksDialog.h" />
     <QtMoc Include="NewOverworldDialog.h" />
+    <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="ObjectListModel.h" />
     <ClInclude Include="ObjectSelection.h" />
     <QtMoc Include="QCodeEditor\include\KGL\Design\QCodeEditorDesign.hpp" />
