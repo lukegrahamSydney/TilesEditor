@@ -17,4 +17,5 @@ OBJECTS_DIR += release
 UI_DIR += .
 RCC_DIR += .
 QT += widgets core gui
+RC_ICONS = icon.ico
 include(TilesEditor.pri)

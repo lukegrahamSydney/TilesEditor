@@ -13,6 +13,7 @@ HEADERS += ./AbstractFileSystem.h \
     ./IFileRequester.h \
     ./LevelChest.h \
     ./LevelCommands.h \
+    ./LevelFactory.h \
     ./LevelGraalBaddy.h \
     ./LevelLink.h \
     ./LevelNPC.h \
@@ -54,6 +55,7 @@ HEADERS += ./AbstractFileSystem.h \
     ./EditTilesetDialog.h \
     ./EditChestDialog.h \
     ./EditBaddy.h \
+    ./FixMapNamesDialog.h \
     ./LevelConverter.h \
     ./ListLinksDialog.h \
     ./NewOverworldDialog.h \
@@ -74,9 +76,7 @@ HEADERS += ./AbstractFileSystem.h \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditor.hpp \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorHighlighter.hpp \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorLineWidget.hpp \
-    ./QCodeEditor/include/KGL/Widgets/QCodeEditorPopup.hpp \
-    ./LevelFactory.h \
-    ./FixMapNamesDialog.h
+    ./QCodeEditor/include/KGL/Widgets/QCodeEditorPopup.hpp
 SOURCES += ./AboutDialog.cpp \
     ./AbstractLevelEntity.cpp \
     ./AbstractSelection.cpp \
@@ -88,6 +88,7 @@ SOURCES += ./AboutDialog.cpp \
     ./EditorTabWidget.cpp \
     ./EditSignsDialog.cpp \
     ./EditTilesetDialog.cpp \
+    ./FixMapNamesDialog.cpp \
     ./GraphicsView.cpp \
     ./Image.cpp \
     ./ImageDimensions.cpp \
@@ -131,8 +132,7 @@ SOURCES += ./AboutDialog.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorHighlighter.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorLineWidget.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorPopup.cpp \
-    ./QCodeEditor/src/Widgets/QCodeEditorSlots.cpp \
-    ./FixMapNamesDialog.cpp
+    ./QCodeEditor/src/Widgets/QCodeEditorSlots.cpp
 FORMS += ./AboutDialog.ui \
     ./EditAnonymousNPC.ui \
     ./EditBaddy.ui \
@@ -142,6 +142,7 @@ FORMS += ./AboutDialog.ui \
     ./EditorTabWidget.ui \
     ./EditSignsDialog.ui \
     ./EditTilesetDialog.ui \
+    ./FixMapNamesDialog.ui \
     ./LevelConverter.ui \
     ./ListLinksDialog.ui \
     ./MainWindow.ui \
@@ -150,6 +151,5 @@ FORMS += ./AboutDialog.ui \
     ./SaveOverworldDialog.ui \
     ./ScreenshotDialog.ui \
     ./TileObjectsWidget.ui \
-    ./TilesetsWidget.ui \
-    ./FixMapNamesDialog.ui
+    ./TilesetsWidget.ui
 RESOURCES += MainWindow.qrc
