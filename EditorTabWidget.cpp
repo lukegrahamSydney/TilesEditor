@@ -1868,7 +1868,7 @@ namespace TilesEditor
 			}
 
 			
-			m_selector.beginSelection(pos.x(), pos.y(), 16, 16);
+			m_selector.beginSelection(pos.x(), pos.y(), std::ceil(getSnapX() / 16.0) * 16.0, std::ceil(getSnapY() / 16.0) * 16.0);
 			m_graphicsView->redraw();
 		}
 		else if (event->button() == Qt::MouseButton::RightButton)

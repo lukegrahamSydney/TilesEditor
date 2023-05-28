@@ -177,12 +177,12 @@ namespace TilesEditor
 
 	void TileSelection::drag(double x, double y, bool snap, double snapX, double snapY, IWorld* world)
 	{
-		AbstractSelection::drag(x, y, true, snapX, snapY, world);
+		AbstractSelection::drag(x, y, true, std::ceil(snapX / 16.0) * 16.0, std::ceil(snapY / 16.0) * 16.0, world);
 	}
 
 	void TileSelection::setDragOffset(double x, double y, bool snap, double snapX, double snapY)
 	{
-		AbstractSelection::setDragOffset(x, y, true, snapX, snapY);
+		AbstractSelection::setDragOffset(x, y, true, std::ceil(snapX / 16.0) * 16.0, std::ceil(snapY / 16.0) * 16.0);
 	}
 	
 	void TileSelection::beginResize(int edges, IWorld* world)
