@@ -53,6 +53,15 @@ namespace TilesEditor
 		cJSON* serializeJSON() override;
 		void deserializeJSON(cJSON* json) override;
 
+		void setDragOffset(double x, double y, bool snap, double snapX, double snapY) override {
+			AbstractLevelEntity::setDragOffset(x, y, true, std::ceil(snapX / 16.0) * 16.0, std::ceil(snapY / 16.0) * 16.0);
+		}
+
+		void drag(double x, double y, bool snap, double snapX, double snapY) override {
+			AbstractLevelEntity::drag(x, y, true, std::ceil(snapX / 16.0) * 16.0, std::ceil(snapY / 16.0) * 16.0);
+		}
+
+
 		static Image* getChestImage() {
 			static auto retval = new Image("", QPixmap(":/MainWindow/icons/chest.png"));
 			return retval;

@@ -175,14 +175,14 @@ namespace TilesEditor
 		m_cleared = true;
 	}
 
-	void TileSelection::drag(double x, double y, bool snap, IWorld* world)
+	void TileSelection::drag(double x, double y, bool snap, double snapX, double snapY, IWorld* world)
 	{
-		AbstractSelection::drag(x, y, true, world);
+		AbstractSelection::drag(x, y, true, snapX, snapY, world);
 	}
 
-	void TileSelection::setDragOffset(double x, double y, bool snap)
+	void TileSelection::setDragOffset(double x, double y, bool snap, double snapX, double snapY)
 	{
-		AbstractSelection::setDragOffset(x, y, true);
+		AbstractSelection::setDragOffset(x, y, true, snapX, snapY);
 	}
 	
 	void TileSelection::beginResize(int edges, IWorld* world)
@@ -228,7 +228,7 @@ namespace TilesEditor
 		return 0;
 	}
 
-	void TileSelection::updateResize(int mouseX, int mouseY, bool snap, IWorld* world)
+	void TileSelection::updateResize(int mouseX, int mouseY, bool snap, double snapX, double snapY, IWorld* world)
 	{
 		auto edges = getResizeEdges();
 		auto newHCount = m_tilemap->getHCount();

@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/MainWindow">
+    <file>icons/grid-snap.png</file>
     <file>icons/grid.png</file>
     <file>icons/fugue/eye--pencil.png</file>
     <file>icons/fugue/application-sidebar-collapse.png</file>

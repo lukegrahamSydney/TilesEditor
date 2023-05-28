@@ -40,24 +40,24 @@ namespace TilesEditor
         return false;
     }
 
-    void ObjectSelection::drag(double x, double y, bool snap, IWorld* world)
+    void ObjectSelection::drag(double x, double y, bool snap, double snapX, double snapY, IWorld* world)
     {
-        AbstractSelection::drag(x, y, snap, world);
+        AbstractSelection::drag(x, y, snap, snapX, snapY, world);
 
         for (auto object : m_selectedObjects)
         {
-            object->drag(x, y, snap);
+            object->drag(x, y, snap, snapX, snapY);
 
         }
     }
 
-    void ObjectSelection::setDragOffset(double x, double y, bool snap)
+    void ObjectSelection::setDragOffset(double x, double y, bool snap, double snapX, double snapY)
     {
-        AbstractSelection::setDragOffset(x, y, snap);
+        AbstractSelection::setDragOffset(x, y, snap, snapX, snapY);
 
         for (auto object : m_selectedObjects)
         {
-            object->setDragOffset(x, y, snap);
+            object->setDragOffset(x, y, snap, snapX, snapY);
         }
     }
 
@@ -296,11 +296,11 @@ namespace TilesEditor
     }
 
 
-    void ObjectSelection::updateResize(int mouseX, int mouseY, bool snap, IWorld* world)
+    void ObjectSelection::updateResize(int mouseX, int mouseY, bool snap, double snapX, double snapY, IWorld* world)
     {
         if (canResize())
         {
-            m_selectedObjects.first()->updateResize(getResizeEdges(), mouseX, mouseY, snap);
+            m_selectedObjects.first()->updateResize(getResizeEdges(), mouseX, mouseY, snap, snapX, snapY);
 
             world->setModified(m_selectedObjects.first()->getLevel());
         }

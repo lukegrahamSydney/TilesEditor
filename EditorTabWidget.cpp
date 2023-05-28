@@ -753,6 +753,19 @@ namespace TilesEditor
 		return nullptr;
 	}
 
+	double EditorTabWidget::getSnapX() const
+	{
+		if (ui.snapButton->isChecked())
+			return ui.hcountSpinBox->value() * 16;
+		return 1.0;
+	}
+
+	double EditorTabWidget::getSnapY() const
+	{
+		if (ui.snapButton->isChecked())
+			return ui.vcountSpinBox->value() * 16;
+		return 1.0;
+	}
 
 	bool EditorTabWidget::selectingLevel()
 	{
@@ -1788,14 +1801,14 @@ namespace TilesEditor
 					if (m_selection->pointInSelection(pos.x(), pos.y()))
 					{
 						m_graphicsView->setCursor(Qt::CursorShape::OpenHandCursor);
-						m_selection->setDragOffset(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier));
+						m_selection->setDragOffset(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier), getSnapX(), getSnapY());
 						return;
 					}
 					else {
 						if (QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ShiftModifier) && m_selection->getSelectionType() == SelectionType::SELECTION_OBJECTS)
 						{
 							doObjectSelection(pos.x(), pos.y(), true);
-							m_selection->setDragOffset(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier));
+							m_selection->setDragOffset(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier), getSnapX(), getSnapY());
 							m_graphicsView->redraw();
 
 							return;
@@ -1843,7 +1856,7 @@ namespace TilesEditor
 						setStatusBar("Hint: Hold 'Shift' and double click the link to open the destination level", 1, 20000);
 				}
 				m_graphicsView->setCursor(Qt::CursorShape::OpenHandCursor);
-				m_selection->setDragOffset(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier));
+				m_selection->setDragOffset(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier), getSnapX(), getSnapY());
 				m_graphicsView->redraw();
 				return;
 			}
@@ -1892,7 +1905,7 @@ namespace TilesEditor
 				doPaste(false);
 
 				if (m_selection) {
-					m_selection->setDragOffset(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier));
+					m_selection->setDragOffset(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier), getSnapX(), getSnapY());
 				}
 				return;
 
@@ -2070,12 +2083,12 @@ namespace TilesEditor
 
 					if (m_selection->resizing())
 					{
-						m_selection->updateResize(pos.x(), pos.y(), true, this);
+						m_selection->updateResize(pos.x(), pos.y(), true, getSnapX(), getSnapY(), this);
 						m_graphicsView->redraw();
 						return;
 					}
 
-					m_selection->drag(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier), this);
+					m_selection->drag(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier), getSnapX(), getSnapY(), this);
 					m_graphicsView->redraw();
 					return;
 				}
@@ -2095,7 +2108,7 @@ namespace TilesEditor
 					true, this);*/
 
 				m_selection->drag(pos.x() - m_selection->getWidth() / 2, pos.y() - m_selection->getHeight() / 2,
-					true, this);
+					true, getSnapX(), getSnapY(), this);
 				m_graphicsView->redraw();
 				return;
 

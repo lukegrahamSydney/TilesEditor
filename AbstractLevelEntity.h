@@ -106,12 +106,12 @@ namespace TilesEditor
 		virtual double getDepth() const { return 0.0; }
 		virtual AbstractLevelEntity* duplicate() = 0;
 
-		virtual void setDragOffset(double x, double y, bool snap);
+		virtual void setDragOffset(double x, double y, bool snap, double snapX, double snapY);
 
-		virtual void drag(double x, double y, bool snap);
+		virtual void drag(double x, double y, bool snap, double snapX, double snapY);
 		virtual bool canResize() const { return false; }
 
-		virtual void updateResize(int edges, int mouseX, int mouseY, bool snap);
+		virtual void updateResize(int edges, int mouseX, int mouseY, bool snap, double snapX, double snapY);
 		virtual void endResize() {};
 
 	};

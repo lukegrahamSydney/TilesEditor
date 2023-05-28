@@ -2,12 +2,12 @@
 
 namespace TilesEditor
 {
-	void AbstractSelection::setDragOffset(double x, double y, bool snap)
+	void AbstractSelection::setDragOffset(double x, double y, bool snap, double snapX, double snapY)
 	{
 		if (snap)
 		{
-			m_dragOffsetX = int(std::floor((x - this->getX()) / 16.0) * 16.0);
-			m_dragOffsetY = int(std::floor((y - this->getY()) / 16.0) * 16.0);
+			m_dragOffsetX = int(std::floor((x - this->getX()) / snapX) * snapX);
+			m_dragOffsetY = int(std::floor((y - this->getY()) / snapY) * snapY);
 		}
 		else {
 			m_dragOffsetX = x - this->getX();
@@ -15,12 +15,12 @@ namespace TilesEditor
 		}
 	}
 
-	void AbstractSelection::drag(double x, double y, bool snap, IWorld* world)
+	void AbstractSelection::drag(double x, double y, bool snap, double snapX, double snapY, IWorld* world)
 	{
 		if (snap)
 		{
-			m_x = (std::floor(x / 16.0) * 16) - m_dragOffsetX;
-			m_y = (std::floor(y / 16.0) * 16) - m_dragOffsetY;
+			m_x = (std::floor(x / snapX) * snapX) - m_dragOffsetX;
+			m_y = (std::floor(y / snapY) * snapY) - m_dragOffsetY;
 		}
 		else {
 			m_x = x - m_dragOffsetX;

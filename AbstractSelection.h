@@ -45,9 +45,9 @@ namespace TilesEditor
 		virtual void reinsertIntoWorld(IWorld* world, int layer) = 0;
 		virtual void clearSelection(IWorld* world) = 0;
 
-		virtual void setDragOffset(double x, double y, bool snap);
+		virtual void setDragOffset(double x, double y, bool snap, double snapX, double snapY);
 
-		virtual void drag(double x, double y, bool snap, IWorld* world);
+		virtual void drag(double x, double y, bool snap, double snapX, double snapY, IWorld* world);
 		virtual bool canResize() const { return false; }
 		virtual void deserializeJSON(cJSON* json, IWorld* world) {};
 		void setAlternateSelectionMethod(bool val) { m_alternateSelectionMethod = val; }
@@ -72,7 +72,7 @@ namespace TilesEditor
 			return m_resizeEdges != 0;
 		}
 
-		virtual void updateResize(int mouseX, int mouseY, bool snap, IWorld* world) {};
+		virtual void updateResize(int mouseX, int mouseY, bool snap, double snapX, double snapY, IWorld* world) {};
 		virtual void endResize(IWorld* world) {
 			m_resizeEdges = 0;
 		};

@@ -53,12 +53,12 @@ namespace TilesEditor
 		bool clipboardCopy() override;
 		void clearSelection(IWorld* world) override;
 		bool canResize() const override { return true; }
-		void drag(double x, double y, bool snap, IWorld* world) override;
-		void setDragOffset(double x, double y, bool snap) override;
+		void drag(double x, double y, bool snap, double snapX, double snapY, IWorld* world) override;
+		void setDragOffset(double x, double y, bool snap, double snapX, double snapY) override;
 
 		void beginResize(int edges, IWorld* world) override;
 		int getResizeEdge(int mouseX, int mouseY) override;
-		void updateResize(int mouseX, int mouseY, bool snap, IWorld* world) override;
+		void updateResize(int mouseX, int mouseY, bool snap, double snapX, double snapY, IWorld* world) override;
 	};
 };
 

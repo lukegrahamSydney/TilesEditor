@@ -192,6 +192,8 @@ namespace TilesEditor
 		Tilemap* getTilesetSelection();
 		Tilemap* getSelectionTiles();
 
+		double getSnapX() const;
+		double getSnapY() const;
 
 	public:
 

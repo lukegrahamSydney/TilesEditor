@@ -46,10 +46,12 @@ namespace TilesEditor
 		double getDepth() const override { return 10000000.0; }
 
 		bool isPossibleEdgeLink() const { return m_possibleEdgeLink; }
-		void setDragOffset(double x, double y, bool snap) override;
+		void setDragOffset(double x, double y, bool snap, double snapX, double snapY) override;
 		bool canResize() const override { return true; }
-		void drag(double x, double y, bool snap) override;
-
+		void drag(double x, double y, bool snap, double snapX, double snapY) override;
+		void updateResize(int edges, int mouseX, int mouseY, bool snap, double snapX, double snapY) override {
+			AbstractLevelEntity::updateResize(edges, mouseX, mouseY, snap, std::ceil(snapX / 16.0) * 16.0, std::ceil(snapY / 16.0) * 16.0);
+		}
 		void openEditor() override;
 		QString toString() const override { return QString("[Link: %1, %2, %3]").arg(getNextLevel()).arg(getNextX()).arg(getNextY()); }
 		AbstractLevelEntity* duplicate() override;

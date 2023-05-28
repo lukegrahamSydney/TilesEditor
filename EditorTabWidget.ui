@@ -692,6 +692,26 @@
        </widget>
       </item>
       <item>
+       <widget class="QToolButton" name="snapButton">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="MainWindow.qrc">
+          <normaloff>:/MainWindow/icons/grid-snap.png</normaloff>:/MainWindow/icons/grid-snap.png</iconset>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="label_3">
         <property name="text">
          <string>Width:</string>

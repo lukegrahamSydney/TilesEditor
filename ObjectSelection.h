@@ -24,8 +24,8 @@ namespace TilesEditor
 		ObjectSelection(double x, double y);
 		void draw(QPainter* painter, const IRectangle& viewRect) override;
 		bool pointInSelection(double x, double y) override;
-		void drag(double x, double y, bool snap, IWorld* world) override;
-		void setDragOffset(double x, double y, bool snap) override;
+		void drag(double x, double y, bool snap, double snapX, double snapY, IWorld* world) override;
+		void setDragOffset(double x, double y, bool snap, double snapX, double snapY) override;
 		void release(ResourceManager& resourceManager) override {}
 		void reinsertIntoWorld(IWorld* world, int layer) override;
 		void clearSelection(IWorld* world) override;
@@ -46,7 +46,7 @@ namespace TilesEditor
 		void addObject(AbstractLevelEntity* entity);
 
 		size_t objectCount() { return m_selectedObjects.size(); }
-		void updateResize(int mouseX, int mouseY, bool snap, IWorld* world) override;
+		void updateResize(int mouseX, int mouseY, bool snap, double snapX, double snapY, IWorld* world) override;
 		void endResize(IWorld* world) override;
 		int getResizeEdge(int mouseX, int mouseY) override;
 

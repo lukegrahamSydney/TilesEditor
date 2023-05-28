@@ -14,11 +14,11 @@ namespace TilesEditor
 		return getLevel()->getUnitHeight();
 	}
 
-	void AbstractLevelEntity::setDragOffset(double x, double y, bool snap) {
+	void AbstractLevelEntity::setDragOffset(double x, double y, bool snap, double snapX, double snapY) {
 		if (snap)
 		{
-			m_dragOffsetX = int(std::floor((x - this->getX()) / 16.0) * 16.0);
-			m_dragOffsetY = int(std::floor((y - this->getY()) / 16.0) * 16.0);
+			m_dragOffsetX = int(std::floor((x - this->getX()) / snapX) * snapX);
+			m_dragOffsetY = int(std::floor((y - this->getY()) / snapY) * snapY);
 		}
 		else {
 			m_dragOffsetX = x - this->getX();
@@ -26,14 +26,14 @@ namespace TilesEditor
 		}
 	}
 
-	void AbstractLevelEntity::drag(double x, double y, bool snap) {
+	void AbstractLevelEntity::drag(double x, double y, bool snap, double snapX, double snapY) {
 		auto oldX = getX();
 		auto oldY = getY();
 
 		if (snap)
 		{
-			m_x = (std::floor(x / 16.0) * 16) - m_dragOffsetX;
-			m_y = (std::floor(y / 16.0) * 16) - m_dragOffsetY;
+			m_x = (std::floor(x / snapX) * snapX) - m_dragOffsetX;
+			m_y = (std::floor(y / snapY) * snapY) - m_dragOffsetY;
 		}
 		else {
 			m_x = x - m_dragOffsetX;
@@ -47,13 +47,13 @@ namespace TilesEditor
 		}
 	}
 
-	void AbstractLevelEntity::updateResize(int edges, int mouseX, int mouseY, bool snap)
+	void AbstractLevelEntity::updateResize(int edges, int mouseX, int mouseY, bool snap, double snapX, double snapY)
 	{
 		if (edges & AbstractSelection::EDGE_LEFT)
 		{
 			int x = std::min(mouseX, (int)getRight());
 			int width = (int)getRight() - x;
-			width = std::max(16, int(std::floor(width / 16.0) * 16.0));
+			width = std::max(int(snapX), int(std::floor(width / snapX) * snapX));
 
 			setX(getRight() - width);
 			setWidth(width);
@@ -63,7 +63,7 @@ namespace TilesEditor
 		{
 			int pos2 = std::max(mouseX, (int)getX());
 			int width = pos2 - (int)getX();
-			width = std::max(16, int(std::ceil(width / 16.0) * 16.0));
+			width = std::max(int(snapX), int(std::ceil(width / snapX) * snapX));
 
 			setWidth(width);
 		}
@@ -72,7 +72,7 @@ namespace TilesEditor
 		{
 			int y = std::min(mouseY, (int)getBottom());
 			int height = (int)getBottom() - y;
-			height = std::max(16, int(std::floor(height / 16.0) * 16.0));
+			height = std::max(int(snapY), int(std::floor(height / snapY) * snapY));
 
 			setY(getBottom() - height);
 			setHeight(height);
@@ -83,7 +83,7 @@ namespace TilesEditor
 		{
 			int pos2 = std::max(mouseY, (int)getY());
 			int height = pos2 - (int)getY();
-			height = std::max(16, int(std::ceil(height / 16.0) * 16.0));
+			height = std::max(int(snapY), int(std::ceil(height / snapY) * snapY));
 			setHeight(height);
 		}
 	}
