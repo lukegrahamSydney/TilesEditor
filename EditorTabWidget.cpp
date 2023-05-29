@@ -1187,7 +1187,7 @@ namespace TilesEditor
 				auto vcount = jsonGetChildInt(json, "vcount");
 
 
-				auto pasteX = centerScreen ? ((viewRect.getCenterX() - (hcount * 16) / 2) / 16.0) * 16.0 : x;
+				auto pasteX = centerScreen ? std::floor((viewRect.getCenterX() - (hcount * 16) / 2) / 16.0) * 16.0 : x;
 				auto pasteY = centerScreen ? std::floor((viewRect.getCenterY() - (vcount * 16) / 2) / 16.0) * 16.0 : y;
 
 				auto tileSelection = new TileSelection(pasteX, pasteY, hcount, vcount);
