@@ -67,7 +67,7 @@ namespace TilesEditor
 		~Level();
 
 		void release();
-
+		IWorld* getWorld() { return m_world; }
 		const QString& getTilesetName() const { return m_tilesetName; }
 		void setTilesetName(const QString& name) { m_tilesetName = name; }
 
@@ -79,15 +79,9 @@ namespace TilesEditor
 		bool loadFile();
 
 		bool loadStream(QIODevice* stream);
-		bool loadNWStream(QIODevice* stream);
-		bool loadGraalStream(QIODevice* stream);
-		bool loadLVLStream(QIODevice* stream);
 
 		bool saveFile(IFileRequester* requester);
 		bool saveStream(QIODevice* stream);
-		bool saveNWStream(QIODevice* stream);
-		bool saveGraalStream(QIODevice* stream);
-		bool saveLVLStream(QIODevice* stream);
 
 		bool getLoaded() const { return m_loaded; }
 		void setLoaded(bool val) { m_loaded = val; }
@@ -96,9 +90,13 @@ namespace TilesEditor
 		bool getLoadFail() const { return m_loadFail; }
 		double getX() const { return m_x; }
 		double getY() const { return m_y; }
+
+		void setSize(int width, int height);
 		int getWidth() const { return m_width; }
 		int getHeight() const { return m_height; }
 
+		void setUnitWidth(int value) { m_unitWidth = value; }
+		void setUnitHeight(int value) { m_unitHeight = value; }
 		int getUnitWidth() const { return m_unitWidth; }
 		int getUnitHeight() const { return m_unitHeight; }
 		int getTileWidth() const { return 16; }

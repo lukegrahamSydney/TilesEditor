@@ -23,6 +23,7 @@
 #include "ScreenshotDialog.h"
 #include "LevelChest.h"
 #include "LevelGraalBaddy.h"
+#include "FileFormatManager.h"
 
 namespace TilesEditor
 {
@@ -1777,7 +1778,7 @@ namespace TilesEditor
 		{
 			if (ui.floodFillButton->isChecked())
 			{
-				addUndoCommand(new CommandFloodFillPattern2(this, pos.x(), pos.y(), m_selectedTilesLayer, &m_fillPattern));
+				addUndoCommand(new CommandFloodFillPattern(this, pos.x(), pos.y(), m_selectedTilesLayer, &m_fillPattern));
 				
 				m_graphicsView->redraw();
 				return;
@@ -2217,92 +2218,8 @@ namespace TilesEditor
 		}
 	}
 
-	int EditorTabWidget::floodFillPattern(double x, double y, int layer, const Tilemap* pattern, QList<QPair<unsigned short, unsigned short>>* outputNodes)
-	{
-		QSet<QPair<int, int>> scannedIndexes;
-		auto startTileX = int(std::floor(x / 16));
-		auto startTileY = int(std::floor(y / 16));
-
-		auto startTileX2 = (int)std::ceil(double(startTileX) / pattern->getHCount()) * pattern->getHCount();
-		auto startTileY2 = (int)std::ceil(double(startTileY) / pattern->getVCount()) * pattern->getVCount();
-		
-		auto startTile = 0;
-		if (tryGetTileAt(startTileX * 16, startTileY * 16, &startTile))
-		{
-			QStack<QPair<int, int> > nodes;
-			auto addNode = [&](int x, int y)
-			{
-				QPair<int, int> a(x, y);
-
-				if (!scannedIndexes.contains(a))
-				{
-					scannedIndexes.insert(a);
-					nodes.push(a);
-				}
-
-			};
-			addNode(startTileX, startTileY);
-
-			Level* level = nullptr;
-			while (nodes.count() > 0)
-			{
-				auto node = nodes.pop();
-
-				auto nodeXPos = node.first * 16.0;
-				auto nodeYPos = node.second * 16.0;
-
-				if (level == nullptr || nodeXPos < level->getX() || nodeXPos >= level->getRight() || nodeYPos < level->getY() || nodeYPos >= level->getBottom())
-					level = getLevelAt(nodeXPos, nodeYPos);
-
-				if (level != nullptr)
-				{
-					auto tilemap = level->getTilemap(m_selectedTilesLayer);
-					if (tilemap != nullptr)
-					{
-						//left/top position within the destination "Tilemap"
-						auto tilemapX = node.first - int(std::floor(tilemap->getX() / 16.0));
-						auto tilemapY = node.second - int(std::floor(tilemap->getY() / 16.0));
-
-						//Get the correct pattern co-ordinates
-						auto deltaX = startTileX2 + (node.first - startTileX);
-						auto deltaY = startTileY2 + (node.second - startTileY);
-
-						auto patternTileX = deltaX % pattern->getHCount();
-						auto patternTileY = deltaY % pattern->getVCount();
-
-
-						auto patternTile = pattern->getTile(patternTileX, patternTileY);
-						int tile = 0;
-						if (tilemap->tryGetTile(tilemapX, tilemapY, &tile) && !Tilemap::IsInvisibleTile(tile))
-						{
-							if (tile == startTile)
-							{
-								setModified(level);
-
-								if (outputNodes)
-									outputNodes->push_back(QPair<unsigned short, unsigned short>((unsigned short)node.first, (unsigned short)node.second));
-
-								tilemap->setTile(tilemapX, tilemapY, patternTile);
-
-
-								addNode(node.first - 1, node.second);
-								addNode(node.first, node.second - 1);
-
-								addNode(node.first + 1, node.second);
-								addNode(node.first, node.second + 1);
-
-								
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return startTile;
-	}
-
-	void EditorTabWidget::floodFillPattern2(double x, double y, int layer, const Tilemap* pattern, QList<TileInfo>* outputNodes)
+	
+	void EditorTabWidget::floodFillPattern(double x, double y, int layer, const Tilemap* pattern, QList<TileInfo>* outputNodes)
 	{
 		QSet<int> startTiles;
 		QSet<QPair<int, int>> scannedIndexes;
@@ -2806,7 +2723,7 @@ namespace TilesEditor
 	{
 		if (m_level)
 		{
-			auto fullPath = m_resourceManager.getFileSystem()->getSaveFileName("Save Level As", QString(), "All Level Files (*.nw *.lvl *.graal *.zelda)");
+			auto fullPath = m_resourceManager.getFileSystem()->getSaveFileName("Save Level As", QString(), FileFormatManager::instance()->getLevelSaveFilters());
 
 			if (!fullPath.isEmpty())
 			{
@@ -3338,7 +3255,7 @@ namespace TilesEditor
 	{
 		if (level->getFileName().isEmpty())
 		{
-			auto fullPath = m_resourceManager.getFileSystem()->getSaveFileName("Save Level", QString(), "All Level Files (*.nw *.lvl *.graal *.zelda)");
+			auto fullPath = m_resourceManager.getFileSystem()->getSaveFileName("Save Level", QString(), FileFormatManager::instance()->getLevelSaveFilters());
 
 			if (!fullPath.isEmpty())
 			{

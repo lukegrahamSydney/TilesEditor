@@ -239,8 +239,7 @@ namespace TilesEditor
 		void putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible) override;
 		void deleteTiles(double x, double y, int layer, int hcount, int vcount, int replacementTile) override;
 
-		int floodFillPattern(double x, double y, int layer, const Tilemap* pattern, QList<QPair<unsigned short, unsigned short> >* outputNodes = nullptr) override;
-		void floodFillPattern2(double x, double y, int layer, const Tilemap* pattern, QList<TileInfo>* outputNodes = nullptr) override;
+		void floodFillPattern(double x, double y, int layer, const Tilemap* pattern, QList<TileInfo>* outputNodes = nullptr) override;
 
 		int getUnitWidth() const override;
 		int getUnitHeight() const override;

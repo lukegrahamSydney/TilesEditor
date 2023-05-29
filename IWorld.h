@@ -55,8 +55,7 @@ namespace TilesEditor
 		virtual void getTiles(double x, double y, int layer, Tilemap* output) = 0;
 		virtual void putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible) = 0;
 		virtual void deleteTiles(double x, double y, int layer, int hcount, int vcount, int replacementTile) = 0;
-		virtual int floodFillPattern(double x, double y, int layer, const Tilemap* pattern, QList<QPair<unsigned short, unsigned short> >* outputNodes = nullptr) = 0;
-		virtual void floodFillPattern2(double x, double y, int layer, const Tilemap* pattern, QList<TileInfo>* outputNodes = nullptr) = 0;
+		virtual void floodFillPattern(double x, double y, int layer, const Tilemap* pattern, QList<TileInfo>* outputNodes = nullptr) = 0;
 		virtual void addUndoCommand(QUndoCommand* command) = 0;
 	};
 };

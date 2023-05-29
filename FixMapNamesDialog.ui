@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>353</width>
-    <height>414</height>
+    <width>286</width>
+    <height>311</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,7 +35,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="inputFolderLabel">
         <property name="text">
-         <string>Input File:</string>
+         <string>Overworld File:</string>
         </property>
        </widget>
       </item>
@@ -71,7 +71,7 @@
            </property>
            <property name="icon">
             <iconset resource="MainWindow.qrc">
-             <normaloff>:/MainWindow/icons/fugue/folder-open.png</normaloff>:/MainWindow/icons/fugue/folder-open.png</iconset>
+             <normaloff>:/MainWindow/icons/fugue/folder-open-document.png</normaloff>:/MainWindow/icons/fugue/folder-open-document.png</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -79,46 +79,6 @@
           </widget>
          </item>
         </layout>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="inputMaskLabel">
-        <property name="text">
-         <string>Input Mask:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="inputMaskEdit">
-        <property name="toolTip">
-         <string>Comma separated list of input masks for the file names</string>
-        </property>
-        <property name="inputMask">
-         <string/>
-        </property>
-        <property name="text">
-         <string>*.graal</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="subFoldersLabel">
-        <property name="text">
-         <string>Sub Folders:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QCheckBox" name="subFoldersCheckBox">
-        <property name="toolTip">
-         <string>Scan sub folders</string>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
        </widget>
       </item>
      </layout>
@@ -130,30 +90,11 @@
       <string>Output options</string>
      </property>
      <layout class="QFormLayout" name="formLayout">
-      <item row="1" column="0">
-       <widget class="QLabel" name="formatLabel">
+      <item row="0" column="0">
+       <widget class="QLabel" name="ouputFolderLabel">
         <property name="text">
-         <string>Format:</string>
+         <string>Ouput Folder:</string>
         </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QComboBox" name="formatCombo">
-        <item>
-         <property name="text">
-          <string>.nw</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>.lvl</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>.graal</string>
-         </property>
-        </item>
        </widget>
       </item>
       <item row="0" column="1">
@@ -195,13 +136,6 @@
           </widget>
          </item>
         </layout>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="ouputFolderLabel">
-        <property name="text">
-         <string>Ouput Folder:</string>
-        </property>
        </widget>
       </item>
      </layout>

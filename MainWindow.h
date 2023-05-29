@@ -9,6 +9,7 @@
 #include "EditorTabWidget.h"
 #include "MainFileSystem.h"
 
+
 namespace TilesEditor
 {
     class MainWindow : public QMainWindow

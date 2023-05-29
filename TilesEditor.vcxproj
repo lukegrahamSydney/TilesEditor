@@ -109,6 +109,7 @@
     <ClCompile Include="EditorTabWidget.cpp" />
     <ClCompile Include="EditSignsDialog.cpp" />
     <ClCompile Include="EditTilesetDialog.cpp" />
+    <ClCompile Include="FileFormatManager.cpp" />
     <ClCompile Include="FixMapNamesDialog.cpp" />
     <ClCompile Include="GraphicsView.cpp" />
     <ClCompile Include="Image.cpp" />
@@ -117,6 +118,9 @@
     <ClCompile Include="LevelChest.cpp" />
     <ClCompile Include="LevelCommands.cpp" />
     <ClCompile Include="LevelConverter.cpp" />
+    <ClCompile Include="LevelFormatGraal.cpp" />
+    <ClCompile Include="LevelFormatLVL.cpp" />
+    <ClCompile Include="LevelFormatNW.cpp" />
     <ClCompile Include="LevelGraalBaddy.cpp" />
     <ClCompile Include="LevelLink.cpp" />
     <ClCompile Include="LevelNPC.cpp" />
@@ -194,10 +198,15 @@
     <QtMoc Include="EditBaddy.h" />
     <QtMoc Include="FixMapNamesDialog.h" />
     <ClInclude Include="IFileRequester.h" />
+    <ClInclude Include="ILevelFormat.h" />
     <ClInclude Include="LevelChest.h" />
     <ClInclude Include="LevelCommands.h" />
     <QtMoc Include="LevelConverter.h" />
     <ClInclude Include="LevelFactory.h" />
+    <ClInclude Include="LevelFormatGraal.h" />
+    <ClInclude Include="LevelFormatLVL.h" />
+    <ClInclude Include="FileFormatManager.h" />
+    <ClInclude Include="LevelFormatNW.h" />
     <ClInclude Include="LevelGraalBaddy.h" />
     <ClInclude Include="LevelLink.h" />
     <ClInclude Include="LevelNPC.h" />

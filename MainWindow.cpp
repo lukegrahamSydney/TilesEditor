@@ -8,6 +8,11 @@
 #include "EditAnonymousNPC.h"
 #include "MainFileSystem.h"
 #include "LevelConverter.h"
+#include "FileFormatManager.h"
+
+#include "LevelFormatNW.h"
+#include "LevelFormatGraal.h"
+#include "LevelFormatLVL.h"
 
 namespace TilesEditor
 {
@@ -60,7 +65,12 @@ namespace TilesEditor
 
         connect(ui.levelsTab, &QTabWidget::currentChanged, this, &MainWindow::tabChanged);
         connect(ui.levelsTab, &QTabWidget::tabCloseRequested, this, &MainWindow::closeTabIndexSlot);
-       
+
+        FileFormatManager::instance()->registerLevelExtension("lvl", new LevelFormatLVL());
+        FileFormatManager::instance()->registerLevelExtension("nw", new LevelFormatNW());
+        FileFormatManager::instance()->registerLevelExtension(QStringList({ "graal", "zelda", "editor"}), new LevelFormatGraal());
+
+        
     }
 
     MainWindow::~MainWindow()
@@ -173,7 +183,7 @@ namespace TilesEditor
 
     void MainWindow::openFile(bool checked)
     {
-        auto fileName = QFileDialog::getOpenFileName(nullptr, "Select level", QString(), "All supported files (*.nw *.graal *.zelda *.gmap *.lvl *.world *.txt)");
+        auto fileName = QFileDialog::getOpenFileName(nullptr, "Select level", QString(), FileFormatManager::instance()->getLevelLoadFilters());
         
         if (!fileName.isEmpty())
         {
