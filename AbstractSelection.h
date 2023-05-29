@@ -64,6 +64,7 @@ namespace TilesEditor
 		virtual bool clipboardCopy() { return false; }
 		int getResizeEdges() const { return m_resizeEdges; }
 
+		virtual Rectangle getDrawRect() const { return Rectangle(); };
 		virtual void beginResize(int edges, IWorld* world) {
 			m_resizeEdges = edges;
 		}

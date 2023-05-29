@@ -50,6 +50,7 @@ namespace TilesEditor
 		void endResize(IWorld* world) override;
 		int getResizeEdge(int mouseX, int mouseY) override;
 
+		Rectangle getDrawRect() const override;
 
 	};
 };

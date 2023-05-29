@@ -1899,7 +1899,7 @@ namespace TilesEditor
 			}
 
 			//Copy-paste via right click
-			if (m_selection && m_selection->pointInSelection(pos.x(), pos.y()))
+			if (m_selection && !m_selection->getAlternateSelectionMethod() && m_selection->pointInSelection(pos.x(), pos.y()))
 			{
 				m_selection->clipboardCopy();
 				doPaste(false);
@@ -2088,8 +2088,18 @@ namespace TilesEditor
 						return;
 					}
 
+					auto oldRect = m_selection->getDrawRect();
 					m_selection->drag(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier), getSnapX(), getSnapY(), this);
-					m_graphicsView->redraw();
+					
+					auto newRect = m_selection->getDrawRect();
+					
+					auto left = std::min(oldRect.getX(), newRect.getX()) - 2;
+					auto top = std::min(oldRect.getY(), newRect.getY()) - 2;
+					auto right = std::max(oldRect.getRight(), newRect.getRight()) + 2;
+					auto bottom = std::max(oldRect.getBottom(), newRect.getBottom()) + 2;
+					m_graphicsView->scene()->update(left, top, right - left, bottom - top);
+
+					
 					return;
 				}
 
@@ -2102,14 +2112,18 @@ namespace TilesEditor
 
 			if (m_selection->getAlternateSelectionMethod())
 			{
-				/*m_selection->drag(
-					std::round((pos.x() - m_selection->getWidth() / 2) / 16.0) * 16.0,
-					std::round((pos.y() - m_selection->getHeight() / 2) / 16.0) * 16.0,
-					true, this);*/
+				auto oldRect = m_selection->getDrawRect();
 
 				m_selection->drag(pos.x() - m_selection->getWidth() / 2, pos.y() - m_selection->getHeight() / 2,
 					true, getSnapX(), getSnapY(), this);
-				m_graphicsView->redraw();
+
+				auto newRect = m_selection->getDrawRect();
+				auto left = std::min(oldRect.getX(), newRect.getX()) - 2;
+				auto top = std::min(oldRect.getY(), newRect.getY()) - 2;
+				auto right = std::max(oldRect.getRight(), newRect.getRight()) + 2;
+				auto bottom = std::max(oldRect.getBottom(), newRect.getBottom()) + 2;
+				m_graphicsView->scene()->update(left, top, right - left, bottom - top);
+
 				return;
 
 			}
@@ -2142,9 +2156,16 @@ namespace TilesEditor
 
 		if (m_selector.selecting())
 		{
+			auto oldRect = m_selector.getSelection();
 			m_selector.setVisible(true);
 			m_selector.updateSelection(pos.x(), pos.y());
-			m_graphicsView->redraw();
+			auto newRect = m_selector.getSelection();
+
+			auto left = std::min(oldRect.getX(), newRect.getX()) - 2;
+			auto top = std::min(oldRect.getY(), newRect.getY()) - 2;
+			auto right = std::max(oldRect.getRight(), newRect.getRight()) + 2;
+			auto bottom = std::max(oldRect.getBottom(), newRect.getBottom()) + 2;
+			m_graphicsView->scene()->update(left, top, right - left, bottom - top);
 		}
 		else if (m_selector.visible())
 		{

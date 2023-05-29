@@ -337,4 +337,31 @@ namespace TilesEditor
        
         return 0;
     }
+
+    Rectangle ObjectSelection::getDrawRect() const
+    {
+        if (m_selectedObjects.size() > 0)
+        {
+            double left = m_selectedObjects.first()->getX();
+            double top = m_selectedObjects.first()->getY();
+            double right = m_selectedObjects.first()->getRight();
+            double bottom = m_selectedObjects.first()->getBottom();
+
+            for (int i = 1; i < m_selectedObjects.size(); ++i)
+            {
+                auto obj = m_selectedObjects[i];
+
+                left = std::min(obj->getX(), left);
+                top = std::min(obj->getY(), top);
+                right = std::max(obj->getRight(), right);
+                bottom = std::max(obj->getBottom(), bottom);
+            }
+            return Rectangle(left, top, right - left, bottom - top);
+        }
+
+        return Rectangle();
+
+
+
+    }
 }
