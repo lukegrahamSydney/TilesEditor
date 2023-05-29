@@ -33,6 +33,8 @@ namespace TilesEditor
         // Load tiles.
         {
             level->setSize(64 * 16, 64 * 16);
+            level->setUnitWidth(16);
+            level->setUnitHeight(16);
 
             int bits = (v > 1 ? 13 : 12);
             int read = 0;
@@ -596,5 +598,20 @@ namespace TilesEditor
 
         }
         return false;
+    }
+
+    void LevelFormatGraal::applyFormat(Level* level)
+    {
+        level->setUnitWidth(16);
+        level->setUnitHeight(16);
+
+        auto layers = level->getTileLayers();
+
+        //Delete all layers other than 0
+        for (auto layer : layers)
+        {
+            if(layer->getLayerIndex() != 0)
+                level->deleteTileLayer(layer->getLayerIndex());
+        }
     }
 };

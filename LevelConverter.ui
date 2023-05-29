@@ -171,23 +171,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QComboBox" name="formatCombo">
-        <item>
-         <property name="text">
-          <string>.nw</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>.lvl</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>.graal</string>
-         </property>
-        </item>
-       </widget>
+       <widget class="QComboBox" name="formatCombo"/>
       </item>
       <item row="0" column="1">
        <widget class="QWidget" name="ouputFolderWidget" native="true">

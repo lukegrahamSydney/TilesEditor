@@ -46,6 +46,25 @@ namespace TilesEditor
 		return false;
 	}
 
+	void FileFormatManager::applyFormat(Level* level)
+	{
+		auto& levelName = level->getName();
+
+		auto pos = levelName.lastIndexOf('.');
+		if (pos >= 0)
+		{
+			auto ext = levelName.mid(pos + 1);
+
+			auto it = m_levelFormats.find(ext);
+			if (it != m_levelFormats.end())
+			{
+				auto& filter = it.value();
+
+				filter->applyFormat(level);
+			}
+		}
+	}
+
 	void FileFormatManager::registerLevelExtension(const QString& ext,  ILevelFormat* levelFormat)
 	{
 
@@ -69,8 +88,13 @@ namespace TilesEditor
 
 			if (format->canSave())
 			{
-				auto& filter = filters[format->getCategory()];
-				filter.append(QString("*.%1").arg(ext));
+				auto categories = format->getCategories();
+				for (auto category : categories)
+				{
+					auto& filter = filters[category];
+					filter.append(QString("*.%1").arg(ext));
+
+				}
 				allFilters.append(QString("*.%1").arg(ext));
 			}
 		}
@@ -100,8 +124,13 @@ namespace TilesEditor
 
 			if (format->canLoad())
 			{
-				auto& filter = filters[format->getCategory()];
-				filter.append(QString("*.%1").arg(ext));
+				auto categories = format->getCategories();
+				for (auto category : categories)
+				{
+					auto& filter = filters[category];
+					filter.append(QString("*.%1").arg(ext));
+				}
+
 				allFilters.append(QString("*.%1").arg(ext));
 			}
 		}
@@ -118,5 +147,51 @@ namespace TilesEditor
 			retval.append(QString("%1 (%2)").arg(category).arg(filter.join(" ")));
 		}
 		return retval.join(";;");
+	}
+
+	QStringList FileFormatManager::getAllLevelLoadExtensions() const
+	{
+		QStringList allFilters;
+		for (auto it = m_levelFormats.constKeyValueBegin(); it != m_levelFormats.constKeyValueEnd(); ++it)
+		{
+			auto& ext = it->first;
+			auto& format = it->second;
+
+			if (format->canLoad())
+			{
+				allFilters.append(ext);
+			}
+		}
+
+		return allFilters;
+	}
+
+	QStringList FileFormatManager::getAllLevelSaveExtensions() const
+	{
+		QStringList allFilters;
+		for (auto it = m_levelFormats.constKeyValueBegin(); it != m_levelFormats.constKeyValueEnd(); ++it)
+		{
+			auto& ext = it->first;
+			auto& format = it->second;
+
+			if (format->canSave())
+			{
+				allFilters.append(ext);
+			}
+		}
+
+		return allFilters;
+	}
+
+	QList<ILevelFormat*> FileFormatManager::getRegisteredFormats() const
+	{
+		QList<ILevelFormat*> retval;
+
+		for (auto format : m_levelFormats)
+		{
+			if (retval.indexOf(format) == -1)
+				retval.push_back(format);
+		}
+		return retval;
 	}
 }

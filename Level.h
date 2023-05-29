@@ -68,6 +68,7 @@ namespace TilesEditor
 
 		void release();
 		IWorld* getWorld() { return m_world; }
+		Overworld* getOverworld() { return m_overworld; }
 		const QString& getTilesetName() const { return m_tilesetName; }
 		void setTilesetName(const QString& name) { m_tilesetName = name; }
 
@@ -119,6 +120,7 @@ namespace TilesEditor
 		void removeObject(AbstractLevelEntity* object);
 		void removeEntityFromSpatialMap(AbstractLevelEntity* object);
 
+		void deleteTileLayer(int index);
 		QString getDisplayTile(int tile) const;
 		Rectangle clampEntity(AbstractLevelEntity* entity);
 		void setTileLayer(int index, Tilemap* tilemap);

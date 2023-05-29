@@ -250,6 +250,19 @@ namespace TilesEditor
         return QString::number(tileIndex);
     }
 
+    void Level::deleteTileLayer(int index)
+    {
+        auto it = m_tileLayers.find(index);
+        if(it != m_tileLayers.end())
+        {
+            if (it.key() == 0)
+                m_mainTileLayer = nullptr;
+
+            delete it.value();
+            m_tileLayers.erase(it);
+        }
+    }
+
     Rectangle Level::clampEntity(AbstractLevelEntity* entity)
     {
         auto left = entity->getX();

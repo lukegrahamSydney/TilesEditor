@@ -4,6 +4,7 @@
 #include "LevelConverter.h"
 #include "Level.h"
 #include "MainFileSystem.h"
+#include "FileFormatManager.h"
 
 
 namespace TilesEditor
@@ -18,6 +19,13 @@ namespace TilesEditor
 		connect(ui.inputBrowseButton, &QAbstractButton::clicked, this, &LevelConverter::inputBrowseClicked);
 		connect(ui.outputBrowseButton, &QAbstractButton::clicked, this, &LevelConverter::outputBrowseClicked);
 
+		auto formats = FileFormatManager::instance()->getRegisteredFormats();
+		for (auto format : formats)
+		{
+			if (format->canSave())
+				ui.formatCombo->addItem(format->getPrimaryExtension());
+		}
+		
 		this->setFixedSize(this->size());
 	}
 
@@ -29,11 +37,11 @@ namespace TilesEditor
 
 	void LevelConverter::timer()
 	{
-		if (m_files.size() > 0)
+		for (int i = 0; i < 10 && m_files.size() > 0; ++i)
 		{
 			auto file = m_files.first();
 
-			
+
 			m_files.pop_front();
 			QFileInfo info(file);
 
@@ -58,14 +66,14 @@ namespace TilesEditor
 
 					if (i >= 0)
 					{
-						nextLevel = nextLevel.left(i) + ui.formatCombo->currentText();
+						nextLevel = QString("%1.%2").arg(nextLevel.left(i)).arg(ui.formatCombo->currentText());
 
 						link->setNextLevel(nextLevel);
 					}
 				}
 			}
 
-			auto newName = info.completeBaseName() + ui.formatCombo->currentText();
+			auto newName = QString("%1.%2").arg(info.completeBaseName()).arg(ui.formatCombo->currentText());
 			auto newPath = ui.outFolderEdit->text() + subDir;
 			auto newFullPath = newPath + newName;
 
@@ -80,9 +88,11 @@ namespace TilesEditor
 
 			delete level;
 			ui.progressBar->setValue(ui.progressBar->value() + 1);
-			if (m_files.size() > 0)
-				QTimer::singleShot(1, this, &LevelConverter::timer);
 		}
+
+		if (m_files.size() > 0)
+			QTimer::singleShot(1, this, &LevelConverter::timer);
+		
 	}
 
 	void LevelConverter::accept()

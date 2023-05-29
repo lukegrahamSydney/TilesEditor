@@ -166,8 +166,6 @@ namespace TilesEditor
     {
         auto tabPage = createNewTab();
 
-
-
         QFileInfo fi(fileName);
 
         ui.levelsTab->addTab(tabPage, fi.fileName());
@@ -183,7 +181,13 @@ namespace TilesEditor
 
     void MainWindow::openFile(bool checked)
     {
-        auto fileName = QFileDialog::getOpenFileName(nullptr, "Select level", QString(), FileFormatManager::instance()->getLevelLoadFilters());
+        auto allLevelExtensions = FileFormatManager::instance()->getAllLevelLoadExtensions();
+        for (auto& ext : allLevelExtensions)
+            ext = "*." + ext;
+
+        auto allSupportedFilesFilter = QString("All Supported Files (*.gmap *.world %1)").arg(allLevelExtensions.join(" "));
+        auto filters = QStringList({ allSupportedFilesFilter, "Overworld Files (*.gmap *.world)", FileFormatManager::instance()->getLevelLoadFilters(), "All Files (*.*)"}).join(";;");
+        auto fileName = QFileDialog::getOpenFileName(nullptr, "Select level", QString(), filters);
         
         if (!fileName.isEmpty())
         {

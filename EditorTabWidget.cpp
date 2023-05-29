@@ -876,7 +876,9 @@ namespace TilesEditor
 			auto selection = append ? static_cast<ObjectSelection*>(m_selection) : new ObjectSelection(x, y);
 
 			//setModified(entity->getLevel());
-			entity->getLevel()->removeEntityFromSpatialMap(entity);
+
+			if(entity->getLevel())
+				entity->getLevel()->removeEntityFromSpatialMap(entity);
 
 			selection->addObject(entity);
 			entity->setStartRect(*entity);
@@ -896,10 +898,14 @@ namespace TilesEditor
 		auto hadSelection = m_selection != nullptr;
 		if (m_selection != nullptr)
 		{
+			auto oldRect = m_selection->getDrawRect();
 			if(!m_selection->getAlternateSelectionMethod())
 				m_selection->reinsertIntoWorld(this, m_selectedTilesLayer);
 			m_selection->release(m_resourceManager);
 			delete m_selection;
+			m_selection = nullptr;
+
+			m_graphicsView->scene()->update(oldRect.getX() - 2, oldRect.getY() - 2, oldRect.getWidth() + 4, oldRect.getHeight() + 4);
 		}
 
 
@@ -914,7 +920,10 @@ namespace TilesEditor
 
 			if (m_selector.visible())
 			{
+				auto oldRect = m_selector.getSelection();
 				m_selector.setVisible(false);
+				m_graphicsView->scene()->update(oldRect.getX() - 2, oldRect.getY() - 2, oldRect.getWidth() + 4, oldRect.getHeight() + 4);
+
 				selectorGone();
 			}
 
@@ -1226,6 +1235,7 @@ namespace TilesEditor
 			else if (type == "objectSelection")
 			{
 				auto selection = new ObjectSelection(centerScreen ? viewRect.getCenterX() : x, centerScreen ? viewRect.getCenterY() : y);
+				selection->setSelectMode(ObjectSelection::SelectMode::MODE_INSERT);
 				selection->deserializeJSON(json, this);
 
 
@@ -1382,38 +1392,44 @@ namespace TilesEditor
 
 	void EditorTabWidget::updateMovedEntity(AbstractLevelEntity* entity)
 	{
-		if (m_overworld)
+		if (entity->getLevel())
 		{
-			if (entity->getLevel() && !entity->getLevel()->intersects(*entity))
+			auto overworld = entity->getLevel()->getOverworld();
+			if (overworld)
 			{
-				auto newLevel = this->getLevelAt(entity->getX(), entity->getY());
-				if (newLevel && newLevel != entity->getLevel())
+				//If the entity no longer intersects the level
+				if (!entity->getLevel()->intersects(*entity))
 				{
-					entity->getLevel()->removeObject(entity);
-					setModified(entity->getLevel());
+					//Find the new level
+					auto newLevel = overworld->getLevelAt(entity->getX(), entity->getY());
+					if (newLevel && newLevel != entity->getLevel())
+					{
+						entity->getLevel()->removeObject(entity);
+						setModified(entity->getLevel());
 
-					newLevel->addObject(entity);
-					entity->setLevel(newLevel);
-					setModified(newLevel);
-					return;
+						newLevel->addObject(entity);
+						entity->setLevel(newLevel);
+						setModified(newLevel);
+						return;
+					}
 				}
-			}
-			m_overworld->getEntitySpatialMap()->updateEntity(entity);
+				//Otherwise simply update the overworld spatial map
+				overworld->getEntitySpatialMap()->updateEntity(entity);
+			} else
+				entity->getLevel()->getEntitySpatialMap()->updateEntity(entity);
+
 		}
-		else if (m_level)
-		{
-			m_level->getEntitySpatialMap()->updateEntity(entity);
-		}
+
 	}
 
 	void EditorTabWidget::updateEntityRect(AbstractLevelEntity* entity)
 	{
-		if (m_overworld)
+		if (entity->getLevel())
 		{
-			m_overworld->getEntitySpatialMap()->updateEntity(entity);
+			if (entity->getLevel()->getOverworld())
+				entity->getLevel()->getOverworld()->getEntitySpatialMap()->updateEntity(entity);
+			else entity->getLevel()->getEntitySpatialMap()->updateEntity(entity);
 		}
-		else if (m_level)
-			m_level->getEntitySpatialMap()->updateEntity(entity);
 	}
 
 	QList<Level*> EditorTabWidget::getModifiedLevels()
@@ -2732,8 +2748,11 @@ namespace TilesEditor
 				m_level->setName(fi.fileName());
 				m_level->setFileName(fullPath);
 
+				FileFormatManager::instance()->applyFormat(m_level);
 				if (saveLevel(m_level))
 					setUnmodified();
+
+				m_graphicsView->redraw();
 			}
 		}
 	}

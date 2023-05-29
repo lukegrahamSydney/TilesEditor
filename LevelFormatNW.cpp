@@ -35,6 +35,8 @@ namespace TilesEditor
 
             if (valid)
             {
+                level->setUnitWidth(16);
+                level->setUnitHeight(16);
                 level->setSize(64 * 16, 64 * 16);
 
                 QVector<Tilemap*> tilemaps;
@@ -316,4 +318,10 @@ namespace TilesEditor
             stream << "TILESET " << level->getTilesetName() << Qt::endl;
         return true;
 	}
+
+    void LevelFormatNW::applyFormat(Level* level)
+    {
+        level->setUnitWidth(16);
+        level->setUnitHeight(16);
+    }
 };

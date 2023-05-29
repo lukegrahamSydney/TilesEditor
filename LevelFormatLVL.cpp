@@ -351,4 +351,10 @@ namespace TilesEditor
         cJSON_Delete(jsonRoot);
         return true;
     }
+
+    void LevelFormatLVL::applyFormat(Level* level)
+    {
+        level->setUnitWidth(1);
+        level->setUnitHeight(1);
+    }
 };

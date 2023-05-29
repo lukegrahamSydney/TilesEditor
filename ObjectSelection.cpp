@@ -76,6 +76,7 @@ namespace TilesEditor
 
                     if (level != nullptr)
                     {
+                        qDebug() << "AAA";
                         object->setLevel(level);
                         new CommandAddEntity(world, object, undoCommand);
                     }
@@ -167,7 +168,16 @@ namespace TilesEditor
 
             world->deleteEntities(m_selectedObjects, undoCommand);
             world->addUndoCommand(undoCommand);
-        }else world->deleteEntities(m_selectedObjects);
+        }
+        else if (m_selectMode == SelectMode::MODE_INSERT)
+        {
+            for (auto obj : m_selectedObjects)
+            {
+                obj->releaseResources();
+                delete obj;
+            }
+            
+        }
 
         m_selectedObjects.clear();
     }

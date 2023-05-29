@@ -18,7 +18,8 @@ namespace TilesEditor
 		virtual bool canSave() const { return false; }
 		virtual bool canLoad() const { return false; }
 
-		virtual QString getCategory() const { return ""; }
+		virtual QString getPrimaryExtension() const = 0;
+		virtual QStringList getCategories() const { return QStringList(); }
 	};
 };
 #endif
