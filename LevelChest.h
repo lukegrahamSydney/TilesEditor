@@ -45,6 +45,7 @@ namespace TilesEditor
 
 		QString toString() const override { return QString("[Chest: %1, %2]").arg(getX()).arg(getY()); }
 
+		QPixmap getIcon() override;
 		void openEditor() override;
 		AbstractLevelEntity* duplicate() override {
 			return nullptr;

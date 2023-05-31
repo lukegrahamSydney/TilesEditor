@@ -20,6 +20,8 @@ namespace TilesEditor
 	public:
 		EditBaddy(LevelGraalBaddy* baddy, IWorld* world, QWidget* parent = nullptr);
 		~EditBaddy();
+		
+
 
 	private:
 		Ui::EditBaddyClass ui;

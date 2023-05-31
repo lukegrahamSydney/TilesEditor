@@ -26,6 +26,16 @@ namespace TilesEditor
 		}
 	}
 
+	QPixmap LevelChest::getIcon()
+	{
+		auto chestImage = getChestImage();
+
+		if (chestImage) {
+			return chestImage->pixmap();
+		}
+		return QPixmap();
+	}
+
 	void LevelChest::openEditor()
 	{
 		EditChestDialog dialog(this, getWorld());

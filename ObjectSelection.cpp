@@ -71,14 +71,44 @@ namespace TilesEditor
                 auto undoCommand = new QUndoCommand();
                 for (auto object : m_selectedObjects)
                 {
-
-                    auto level = world->getLevelAt(object->getCenterX(), object->getCenterY());
-
-                    if (level != nullptr)
+                    if (object->getEntityType() == LevelEntityType::ENTITY_LINK || object->getEntityType() == LevelEntityType::ENTITY_SIGN)
                     {
-                        qDebug() << "AAA";
-                        object->setLevel(level);
-                        new CommandAddEntity(world, object, undoCommand);
+                        //Links and signs will be split up across overlapping levels
+                        auto levels = world->getLevelsInRect(*object);
+                        for (auto level : levels)
+                        {
+
+                            //Duplicate our object
+                            auto newObject = object->duplicate();
+                            if (newObject)
+                            {
+                                newObject->setLevel(level);
+                                auto rect = level->clampEntity(newObject);
+                                newObject->setX(rect.getX());
+                                newObject->setY(rect.getY());
+                                newObject->setWidth(rect.getWidth());
+                                newObject->setHeight(rect.getHeight());
+
+                                //Special case for graal signs. They're always 2 blocks wide (32 pixels)
+                                if (newObject->getEntityType() == LevelEntityType::ENTITY_SIGN)
+                                    newObject->setWidth(32);
+
+                                new CommandAddEntity(world, newObject, undoCommand);
+                            }
+                            
+                        }
+
+                        delete object;
+                        
+                    }
+                    else {
+                        auto level = world->getLevelAt(object->getCenterX(), object->getCenterY());
+
+                        if (level != nullptr)
+                        {
+                            object->setLevel(level);
+                            new CommandAddEntity(world, object, undoCommand);
+                        }
                     }
                     
                 }
@@ -108,6 +138,7 @@ namespace TilesEditor
                                 if (object->getEntityType() == LevelEntityType::ENTITY_SIGN)
                                     newRect.setWidth(32);
 
+                                level->addEntityToSpatialMap(object);
                                 new CommandReshapeEntity(world, oldRect, newRect, object, undoCommand);
 
 

@@ -31,6 +31,9 @@ namespace TilesEditor
 	{
 		getWorld()->getResourceManager().getFileSystem()->removeListener(this);
 
+		if (m_image)
+			getWorld()->getResourceManager().freeResource(m_image);
+
 	}
 
 	void LevelNPC::setImageShape(int left, int top, int width, int height)

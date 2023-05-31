@@ -6,7 +6,7 @@
 #include <QSet>
 #include <QVector>
 #include <QIODevice>
-#include "ISpatialMapItem.h"
+#include "AbstractSpatialGridItem.h"
 #include "ResourceManager.h"
 #include "EntitySpatialGrid.h"
 #include "Tilemap.h"
@@ -21,7 +21,7 @@ namespace TilesEditor
 {
 	class Overworld;
 	class Level :
-		public ISpatialMapItem
+		public AbstractSpatialGridItem
 	{
 	public:
 

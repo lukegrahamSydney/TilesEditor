@@ -86,8 +86,10 @@ namespace TilesEditor
 			if (level != m_entity->getLevel()) {
 
 				//If they've changed level, remove it from the old level, and it to the new one
-				if (m_entity->getLevel())
+				if (m_entity->getLevel()) {
 					m_entity->getLevel()->removeObject(m_entity);
+					m_world->setModified(m_entity->getLevel());
+				}
 
 				level->addObject(m_entity);
 				m_entity->setLevel(level);
@@ -111,9 +113,11 @@ namespace TilesEditor
 		{
 			if (level != m_entity->getLevel()) {
 
-				//If they've changed level, remove it from the old level
-				if (m_entity->getLevel())
+				//If they've changed level, remove it from the old level, and it to the new one
+				if (m_entity->getLevel()) {
 					m_entity->getLevel()->removeObject(m_entity);
+					m_world->setModified(m_entity->getLevel());
+				}
 
 				//Add to the new level
 				level->addObject(m_entity);
@@ -150,6 +154,7 @@ namespace TilesEditor
 		if (m_entity->getLevel())
 		{
 			m_entity->getLevel()->addObject(m_entity);
+			m_world->setModified(m_entity->getLevel());
 		}
 	}
 

@@ -1413,10 +1413,10 @@ namespace TilesEditor
 						return;
 					}
 				}
-				//Otherwise simply update the overworld spatial map
-				overworld->getEntitySpatialMap()->updateEntity(entity);
+
+				entity->getLevel()->updateSpatialEntity(entity);
 			} else
-				entity->getLevel()->getEntitySpatialMap()->updateEntity(entity);
+				entity->getLevel()->updateSpatialEntity(entity);
 
 		}
 
@@ -1426,9 +1426,8 @@ namespace TilesEditor
 	{
 		if (entity->getLevel())
 		{
-			if (entity->getLevel()->getOverworld())
-				entity->getLevel()->getOverworld()->getEntitySpatialMap()->updateEntity(entity);
-			else entity->getLevel()->getEntitySpatialMap()->updateEntity(entity);
+			entity->getLevel()->updateSpatialEntity(entity);
+
 		}
 	}
 
@@ -1944,8 +1943,8 @@ namespace TilesEditor
 					EntityAction(AbstractLevelEntity* entity, const QString& text):
 						QAction(text), m_entity(entity)
 					{
-						if(entity->getIcon())
-							this->setIcon(entity->getIcon()->pixmap());
+
+						this->setIcon(entity->getIcon());
 
 					}
 
@@ -2110,10 +2109,10 @@ namespace TilesEditor
 					
 					auto newRect = m_selection->getDrawRect();
 					
-					auto left = std::min(oldRect.getX(), newRect.getX()) - 2;
-					auto top = std::min(oldRect.getY(), newRect.getY()) - 2;
-					auto right = std::max(oldRect.getRight(), newRect.getRight()) + 2;
-					auto bottom = std::max(oldRect.getBottom(), newRect.getBottom()) + 2;
+					auto left = std::min(oldRect.getX(), newRect.getX()) - 4;
+					auto top = std::min(oldRect.getY(), newRect.getY()) - 4;
+					auto right = std::max(oldRect.getRight(), newRect.getRight()) + 4;
+					auto bottom = std::max(oldRect.getBottom(), newRect.getBottom()) + 4;
 					m_graphicsView->scene()->update(left, top, right - left, bottom - top);
 
 					
@@ -2135,10 +2134,10 @@ namespace TilesEditor
 					true, getSnapX(), getSnapY(), this);
 
 				auto newRect = m_selection->getDrawRect();
-				auto left = std::min(oldRect.getX(), newRect.getX()) - 2;
-				auto top = std::min(oldRect.getY(), newRect.getY()) - 2;
-				auto right = std::max(oldRect.getRight(), newRect.getRight()) + 2;
-				auto bottom = std::max(oldRect.getBottom(), newRect.getBottom()) + 2;
+				auto left = std::min(oldRect.getX(), newRect.getX()) - 4;
+				auto top = std::min(oldRect.getY(), newRect.getY()) - 4;
+				auto right = std::max(oldRect.getRight(), newRect.getRight()) + 4;
+				auto bottom = std::max(oldRect.getBottom(), newRect.getBottom()) + 4;
 				m_graphicsView->scene()->update(left, top, right - left, bottom - top);
 
 				return;
@@ -2178,10 +2177,10 @@ namespace TilesEditor
 			m_selector.updateSelection(pos.x(), pos.y());
 			auto newRect = m_selector.getSelection();
 
-			auto left = std::min(oldRect.getX(), newRect.getX()) - 2;
-			auto top = std::min(oldRect.getY(), newRect.getY()) - 2;
-			auto right = std::max(oldRect.getRight(), newRect.getRight()) + 2;
-			auto bottom = std::max(oldRect.getBottom(), newRect.getBottom()) + 2;
+			auto left = std::min(oldRect.getX(), newRect.getX()) - 4;
+			auto top = std::min(oldRect.getY(), newRect.getY()) - 4;
+			auto right = std::max(oldRect.getRight(), newRect.getRight()) + 4;
+			auto bottom = std::max(oldRect.getBottom(), newRect.getBottom()) + 4;
 			m_graphicsView->scene()->update(left, top, right - left, bottom - top);
 		}
 		else if (m_selector.visible())

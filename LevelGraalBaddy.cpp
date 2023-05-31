@@ -73,6 +73,21 @@ namespace TilesEditor
 		}
 	}
 
+	QPixmap LevelGraalBaddy::getIcon()
+	{
+		auto baddyImage = getBaddyImage();
+
+		if (baddyImage)
+		{
+			if (m_baddyType >= 0 && m_baddyType < 10)
+			{
+				
+				return baddyImage->pixmap().copy(baddyTypes[m_baddyType][0], baddyTypes[m_baddyType][1], baddyTypes[m_baddyType][2], baddyTypes[m_baddyType][3]);
+			}
+		}
+		return QPixmap();
+	}
+
 	void LevelGraalBaddy::openEditor()
 	{
 		EditBaddy dialog(this, getWorld());

@@ -191,6 +191,7 @@
     <QtMoc Include="EditSignsDialog.h" />
     <QtMoc Include="CustomPaintWidget.h" />
     <QtMoc Include="EditExternalNPC.h" />
+    <ClInclude Include="AbstractSpatialGridItem.h" />
     <ClInclude Include="cJSON\cJSON.h" />
     <ClInclude Include="cJSON\JsonHelper.h" />
     <QtMoc Include="EditTilesetDialog.h" />

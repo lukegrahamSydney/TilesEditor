@@ -64,7 +64,7 @@ namespace TilesEditor
 		void openEditor() override;
 
 		QString toString() const override { return QString("[Npc: %1, %2, %3]").arg(getImageName()).arg(getX()).arg(getY()); }
-		Image* getIcon() override { return m_image; }
+		QPixmap getIcon() override { return m_image ? m_image->pixmap() : getBlankNPCImage()->pixmap(); }
 
 		AbstractLevelEntity* duplicate() override {
 			auto newNPC = new LevelNPC(this->getWorld(), getX(), getY(), getWidth(), getHeight());
