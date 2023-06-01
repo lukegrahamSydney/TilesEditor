@@ -237,7 +237,7 @@ namespace TilesEditor
 
 	void EditorTabWidget::renderScene(QPainter * painter, const QRectF & _rect)
 	{
-		QRectF rect(std::floor(_rect.x()), std::floor(_rect.y()), _rect.width() + 1, _rect.height() + 1);
+		QRectF rect(std::floor(_rect.x()), std::floor(_rect.y()), _rect.width() + 2, _rect.height() + 2);
 
 
 		Rectangle viewRect(rect.x(), rect.y(), rect.width(), rect.height());
@@ -481,25 +481,18 @@ namespace TilesEditor
 				auto compositionMode = painter->compositionMode();
 				painter->setCompositionMode(QPainter::CompositionMode_Difference);
 
-				auto opacity = painter->opacity();
-				painter->setOpacity(0.66f);
-				int gridOffsetX = ((int)rect.x()) % (ui.hcountSpinBox->value() * 16);
-				int gridOffsetY = ((int)rect.y()) % (ui.vcountSpinBox->value() * 16);
+				
+				auto right = std::ceil(viewRect.getRight() / m_gridImage.width()) * m_gridImage.width();
+				auto bottom = std::ceil(viewRect.getBottom() / m_gridImage.height()) * m_gridImage.height();
 
-
-				for (int y = 0; y < rect.height() + m_gridImage.height(); y += m_gridImage.height())
+				for (auto left = std::floor(viewRect.getX() / m_gridImage.width()) * m_gridImage.width(); left < right; left += m_gridImage.width())
 				{
-
-
-					for (int x = 0; x < rect.width() + m_gridImage.width(); x += m_gridImage.width())
+					for (auto top = std::floor(viewRect.getY() / m_gridImage.height()) * m_gridImage.height(); top < bottom; top += m_gridImage.height())
 					{
-						float left = x - gridOffsetX + rect.x();
-						float top = y - gridOffsetY + rect.y();
-
 						painter->drawPixmap(left, top, m_gridImage);
 					}
 				}
-				painter->setOpacity(opacity);
+
 				painter->setCompositionMode(compositionMode);
 			}
 
@@ -787,10 +780,12 @@ namespace TilesEditor
 			int textureHeight = vcount * height;
 
 			QImage image(textureWidth, textureHeight, QImage::Format_ARGB32);
-			image.fill(QColor(255, 255, 255, 0));
+			image.fill(QColor(0, 0, 0, 0));
 			QPen pen;
 			pen.setWidth(1);
-			pen.setColor(Qt::white);
+			pen.setStyle(Qt::PenStyle::DotLine);
+			
+			pen.setColor(QColor(255, 255, 255, 180));
 
 			QPainter painter(&image);
 			painter.setPen(pen);
@@ -1414,9 +1409,8 @@ namespace TilesEditor
 					}
 				}
 
-				entity->getLevel()->updateSpatialEntity(entity);
-			} else
-				entity->getLevel()->updateSpatialEntity(entity);
+			} 
+			entity->getLevel()->updateSpatialEntity(entity);
 
 		}
 

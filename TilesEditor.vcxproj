@@ -170,7 +170,6 @@
     <QtUic Include="ListLinksDialog.ui" />
     <QtUic Include="MainWindow.ui" />
     <QtMoc Include="MainWindow.h" />
-    <ClCompile Include="EntitySpatialGrid.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="main.cpp" />
     <QtUic Include="NewOverworldDialog.ui" />

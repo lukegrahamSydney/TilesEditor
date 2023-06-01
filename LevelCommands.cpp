@@ -83,9 +83,10 @@ namespace TilesEditor
 
 		if (level != nullptr)
 		{
+			//A change of level is required
 			if (level != m_entity->getLevel()) {
 
-				//If they've changed level, remove it from the old level, and it to the new one
+				//If they've changed level, remove it from the old level
 				if (m_entity->getLevel()) {
 					m_entity->getLevel()->removeObject(m_entity);
 					m_world->setModified(m_entity->getLevel());
@@ -96,7 +97,7 @@ namespace TilesEditor
 				m_world->setModified(level);
 			}
 			//ONLY add it to the spatial map
-			else level->addEntityToSpatialMap(m_entity);
+			else level->updateSpatialEntity(m_entity);
 		}
 	}
 
@@ -111,9 +112,9 @@ namespace TilesEditor
 
 		if (level != nullptr)
 		{
+			//A change of level is required
 			if (level != m_entity->getLevel()) {
-
-				//If they've changed level, remove it from the old level, and it to the new one
+				//If they've changed level, remove it from the old level
 				if (m_entity->getLevel()) {
 					m_entity->getLevel()->removeObject(m_entity);
 					m_world->setModified(m_entity->getLevel());
@@ -125,7 +126,9 @@ namespace TilesEditor
 				m_world->setModified(level);
 			}
 			//ONLY add it to the spatial map
-			else level->addEntityToSpatialMap(m_entity);
+			else {
+				level->updateSpatialEntity(m_entity);
+			}
 
 		}
 	}

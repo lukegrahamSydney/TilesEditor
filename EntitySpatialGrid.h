@@ -16,7 +16,7 @@ namespace TilesEditor
     class EntitySpatialGrid :
         public IEntitySpatialMap<T>
     {
-    private:
+    private: 
         double m_x;
         double m_y;
 
@@ -251,8 +251,9 @@ namespace TilesEditor
 
         void add(T* entity)
         {
-            if (entity->m_spatialGridAdded)
+            if (entity->m_spatialGridAdded) {
                 return;
+            }
 
             auto x = entity->getX() - m_x;
             auto y = entity->getY() - m_y;

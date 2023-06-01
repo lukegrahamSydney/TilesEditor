@@ -174,6 +174,10 @@ namespace TilesEditor
 
                     }else 
                     {
+
+                        if (object->getLevel())
+                            object->getLevel()->addEntityToSpatialMap(object);
+
                         //Npc,chest, etc
                         new CommandMoveEntity(world, object->getStartRect(), *object, object, undoCommand);
 
