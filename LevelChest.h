@@ -43,7 +43,7 @@ namespace TilesEditor
 		int getWidth() const override { return 32; }
 		int getHeight() const override { return 32; }
 
-		QString toString() const override { return QString("[Chest: %1, %2]").arg(getX()).arg(getY()); }
+		QString toString() const override { return QString("[Chest: %1, %2, %3]").arg(m_itemName).arg(getX()).arg(getY()); }
 
 		QPixmap getIcon() override;
 		void openEditor() override;
@@ -51,7 +51,7 @@ namespace TilesEditor
 			return nullptr;
 		}
 
-		cJSON* serializeJSON() override;
+		cJSON* serializeJSON(bool useLocalCoordinates = false) override;
 		void deserializeJSON(cJSON* json) override;
 
 		void setDragOffset(double x, double y, bool snap, double snapX, double snapY) override {

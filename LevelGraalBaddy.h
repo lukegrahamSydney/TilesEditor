@@ -24,7 +24,7 @@ namespace TilesEditor
 		LevelGraalBaddy(IWorld* world, double x, double y, int type);
 		LevelGraalBaddy(IWorld* world, cJSON* json);
 
-		cJSON* serializeJSON() override;
+		cJSON* serializeJSON(bool useLocalCoordinates = false) override;
 		void deserializeJSON(cJSON* json) override;
 
 		int getBaddyType() const { return m_baddyType; }

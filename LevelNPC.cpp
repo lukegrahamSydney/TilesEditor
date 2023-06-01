@@ -3,6 +3,7 @@
 #include "LevelNPC.h"
 #include "cJSON/JsonHelper.h"
 #include "EditAnonymousNPC.h"
+#include "Level.h"
 
 namespace TilesEditor
 {
@@ -150,14 +151,22 @@ namespace TilesEditor
 		frm.exec();
 	}
 
-	cJSON* LevelNPC::serializeJSON()
+	cJSON* LevelNPC::serializeJSON(bool useLocalCoordinates)
 	{
 		auto json = cJSON_CreateObject();
 
 		cJSON_AddStringToObject(json, "type", "levelNPCv1");
 		cJSON_AddStringToObject(json, "image", getImageName().toLocal8Bit().data());
-		cJSON_AddNumberToObject(json, "x", getX());
-		cJSON_AddNumberToObject(json, "y", getY());
+
+		if (useLocalCoordinates && getLevel()) {
+			cJSON_AddNumberToObject(json, "x", getX() - getLevel()->getX());
+			cJSON_AddNumberToObject(json, "y", getY() - getLevel()->getY());
+		}
+		else {
+			cJSON_AddNumberToObject(json, "x", getX());
+			cJSON_AddNumberToObject(json, "y", getY());
+		}
+
 		cJSON_AddStringToObject(json, "code", getCode().toLocal8Bit().data());
 
 

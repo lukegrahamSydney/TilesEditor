@@ -26,7 +26,7 @@ namespace TilesEditor
 
 		LevelEntityType getEntityType() const override { return LevelEntityType::ENTITY_SIGN; }
 
-		cJSON* serializeJSON() override;
+		cJSON* serializeJSON(bool useLocalCoordinates = false) override;
 		void deserializeJSON(cJSON* json) override;
 
 		void draw(QPainter* painter, const IRectangle& viewRect, double x, double y) override;

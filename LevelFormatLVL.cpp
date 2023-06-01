@@ -162,6 +162,8 @@ namespace TilesEditor
 
                             if (entity)
                             {
+                                entity->setX(level->getX() + entity->getX());
+                                entity->setY(level->getY() + entity->getY());
                                 entity->setLevel(level);
                                 level->addObject(entity);
                             }
@@ -329,7 +331,7 @@ namespace TilesEditor
                 break;
 
             default: {
-                auto jsonObj = obj->serializeJSON();
+                auto jsonObj = obj->serializeJSON(true);
                 if (jsonObj)
                 {
                     cJSON_AddItemReferenceToArray(jsonObjects, jsonObj);

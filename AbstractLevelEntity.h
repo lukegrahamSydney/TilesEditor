@@ -93,7 +93,7 @@ namespace TilesEditor
 
 		virtual QString toString() const { return ""; }
 		virtual QPixmap getIcon() { return QPixmap(); }
-		virtual cJSON* serializeJSON() { return nullptr; };
+		virtual cJSON* serializeJSON(bool useLocalCoordinates = false) { return nullptr; };
 		virtual void deserializeJSON(cJSON* json) {}
 
 	

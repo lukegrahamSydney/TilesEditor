@@ -1,6 +1,7 @@
 #include "LevelChest.h"
 #include "EditChestDialog.h"
 #include "cJSON/JsonHelper.h"
+#include "Level.h"
 
 namespace TilesEditor
 {
@@ -42,13 +43,19 @@ namespace TilesEditor
 		dialog.exec();
 	}
 
-	cJSON* LevelChest::serializeJSON()
+	cJSON* LevelChest::serializeJSON(bool useLocalCoordinates)
 	{
 		auto json = cJSON_CreateObject();
 
 		cJSON_AddStringToObject(json, "type", "levelChestv1");
-		cJSON_AddNumberToObject(json, "x", getX());
-		cJSON_AddNumberToObject(json, "y", getY());
+		if (useLocalCoordinates && getLevel()) {
+			cJSON_AddNumberToObject(json, "x", getX() - getLevel()->getX());
+			cJSON_AddNumberToObject(json, "y", getY() - getLevel()->getY());
+		}
+		else {
+			cJSON_AddNumberToObject(json, "x", getX());
+			cJSON_AddNumberToObject(json, "y", getY());
+		}
 		cJSON_AddStringToObject(json, "item", getItemName().toLocal8Bit().data());
 		cJSON_AddNumberToObject(json, "sign", getSignIndex());
 		return json;

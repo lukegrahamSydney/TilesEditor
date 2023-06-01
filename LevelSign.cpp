@@ -23,13 +23,20 @@ namespace TilesEditor
 		m_text = text;
 	}
 
-	cJSON* LevelSign::serializeJSON()
+	cJSON* LevelSign::serializeJSON(bool useLocalCoordinates)
 	{
 		auto json = cJSON_CreateObject();
 
 		cJSON_AddStringToObject(json, "type", "levelSign");
-		cJSON_AddNumberToObject(json, "x", getX());
-		cJSON_AddNumberToObject(json, "y", getY());
+		if (useLocalCoordinates && getLevel()) {
+			cJSON_AddNumberToObject(json, "x", getX() - getLevel()->getX());
+			cJSON_AddNumberToObject(json, "y", getY() - getLevel()->getY());
+		}
+		else {
+			cJSON_AddNumberToObject(json, "x", getX());
+			cJSON_AddNumberToObject(json, "y", getY());
+		}
+
 		cJSON_AddNumberToObject(json, "width", getWidth());
 		cJSON_AddNumberToObject(json, "height", getHeight());
 		cJSON_AddStringToObject(json, "text", getText().toLocal8Bit().data());

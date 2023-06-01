@@ -73,7 +73,7 @@ namespace TilesEditor
 			return newNPC;
 		}
 
-		cJSON* serializeJSON() override;
+		cJSON* serializeJSON(bool useLocalCoordinates = false) override;
 		void deserializeJSON(cJSON* json) override;
 
 		void fileFailed(const QString& name) override;

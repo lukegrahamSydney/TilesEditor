@@ -1,5 +1,6 @@
 #include "LevelGraalBaddy.h"
 #include "EditBaddy.h"
+#include "Level.h"
 
 namespace TilesEditor
 {
@@ -35,13 +36,19 @@ namespace TilesEditor
 		deserializeJSON(json);
 	}
 
-	cJSON* LevelGraalBaddy::serializeJSON()
+	cJSON* LevelGraalBaddy::serializeJSON(bool useLocalCoordinates)
 	{
 		auto json = cJSON_CreateObject();
 
 		cJSON_AddStringToObject(json, "type", "levelBaddy");
-		cJSON_AddNumberToObject(json, "x", getX());
-		cJSON_AddNumberToObject(json, "y", getY());
+		if (useLocalCoordinates && getLevel()) {
+			cJSON_AddNumberToObject(json, "x", getX() - getLevel()->getX());
+			cJSON_AddNumberToObject(json, "y", getY() - getLevel()->getY());
+		}
+		else {
+			cJSON_AddNumberToObject(json, "x", getX());
+			cJSON_AddNumberToObject(json, "y", getY());
+		}
 		cJSON_AddNumberToObject(json, "baddyType", getBaddyType());
 		cJSON_AddStringToObject(json, "verse0", getBaddyVerse(0).toLocal8Bit().data());
 		cJSON_AddStringToObject(json, "verse1", getBaddyVerse(1).toLocal8Bit().data());
