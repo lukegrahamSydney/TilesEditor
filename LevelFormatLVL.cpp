@@ -103,7 +103,12 @@ namespace TilesEditor
 
                             if (jsonSign)
                             {
+                                auto sign = ObjectFactory::createObject(level->getWorld(), "levelSign", jsonSign);
+                                sign->setX(level->getX() + sign->getX());
+                                sign->setY(level->getY() + sign->getY());
+                                sign->setLevel(level);
 
+                                /*
                                 auto x = level->getX() + jsonGetChildInt(jsonSign, "x");
                                 auto y = level->getY() + jsonGetChildInt(jsonSign, "y");
 
@@ -115,6 +120,7 @@ namespace TilesEditor
                                 sign->setLevel(level);
 
                                 sign->setText(jsonGetChildString(jsonSign, "text"));
+                                */
 
                                 level->addObject(sign);
 
@@ -131,7 +137,12 @@ namespace TilesEditor
 
                             if (jsonLink)
                             {
+                                auto link = ObjectFactory::createObject(level->getWorld(), "levelLink", jsonLink);
+                                link->setX(level->getX() + link->getX());
+                                link->setY(level->getY() + link->getY());
+                                link->setLevel(level);
 
+                                /*
                                 auto x = level->getX() + jsonGetChildInt(jsonLink, "x");
                                 auto y = level->getY() + jsonGetChildInt(jsonLink, "y");
 
@@ -144,7 +155,7 @@ namespace TilesEditor
 
                                 link->setNextLevel(jsonGetChildString(jsonLink, "destination"));
                                 link->setNextX(jsonGetChildString(jsonLink, "destinationX"));
-                                link->setNextY(jsonGetChildString(jsonLink, "destinationY"));
+                                link->setNextY(jsonGetChildString(jsonLink, "destinationY"));*/
                                 level->addObject(link);
 
                             }
@@ -158,7 +169,8 @@ namespace TilesEditor
                         {
                             auto jsonObject = cJSON_GetArrayItem(jsonObjects, i);
 
-                            auto entity = ObjectFactory::createObject(level->getWorld(), jsonObject);
+                            auto objectType = jsonGetChildString(jsonObject, "type");
+                            auto entity = ObjectFactory::createObject(level->getWorld(), objectType, jsonObject);
 
                             if (entity)
                             {
@@ -282,17 +294,9 @@ namespace TilesEditor
             auto jsonSigns = cJSON_CreateArray();
             for (auto sign : level->getSigns())
             {
-                auto jsonSign = cJSON_CreateObject();
-
-                cJSON_AddNumberToObject(jsonSign, "x", int(sign->getX() - level->getX()));
-                cJSON_AddNumberToObject(jsonSign, "y", int(sign->getY() - level->getY()));
-                cJSON_AddNumberToObject(jsonSign, "width", sign->getWidth());
-                cJSON_AddNumberToObject(jsonSign, "height", sign->getHeight());
-
-                cJSON_AddStringToObject(jsonSign, "text", sign->getText().toLocal8Bit().data());
-
+                auto jsonSign = sign->serializeJSON(true);
+                cJSON_DeleteItemFromObject(jsonSign, "type");
                 cJSON_AddItemToArray(jsonSigns, jsonSign);
-                ;
             }
 
             cJSON_AddItemToObject(jsonRoot, "signs", jsonSigns);
@@ -303,18 +307,9 @@ namespace TilesEditor
             auto jsonLinks = cJSON_CreateArray();
             for (auto link : level->getLinks())
             {
-                auto jsonLink = cJSON_CreateObject();
-
-                cJSON_AddNumberToObject(jsonLink, "x", int(link->getX() - level->getX()));
-                cJSON_AddNumberToObject(jsonLink, "y", int(link->getY() - level->getY()));
-                cJSON_AddNumberToObject(jsonLink, "width", link->getWidth());
-                cJSON_AddNumberToObject(jsonLink, "height", link->getHeight());
-
-                cJSON_AddStringToObject(jsonLink, "destination", link->getNextLevel().toLocal8Bit().data());
-                cJSON_AddStringToObject(jsonLink, "destinationX", link->getNextX().toLocal8Bit().data());
-                cJSON_AddStringToObject(jsonLink, "destinationY", link->getNextY().toLocal8Bit().data());
+                auto jsonLink = link->serializeJSON(true);
+                cJSON_DeleteItemFromObject(jsonLink, "type");
                 cJSON_AddItemToArray(jsonLinks, jsonLink);
-
             }
 
             cJSON_AddItemToObject(jsonRoot, "links", jsonLinks);

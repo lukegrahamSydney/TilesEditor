@@ -7,23 +7,23 @@
 
 namespace TilesEditor
 {
-	AbstractLevelEntity* ObjectFactory::createObject(IWorld* world, cJSON* jsonObj)
+	AbstractLevelEntity* ObjectFactory::createObject(IWorld* world, const QString& type, cJSON* jsonObj)
 	{
 
-        auto objectType = jsonGetChildString(jsonObj, "type");
+        //auto objectType = jsonGetChildString(jsonObj, "type");
 
-        if (objectType == "levelNPCv1")
+        if (type == "levelNPCv1")
             return new LevelNPC(world, jsonObj);
-        else if (objectType == "levelLink")
+        else if (type == "levelLink")
             return new LevelLink(world, jsonObj);
 
-        else if (objectType == "levelChestv1")
+        else if (type == "levelChestv1")
             return new LevelChest(world, jsonObj);
 
-        else if (objectType == "levelSign")
+        else if (type == "levelSign")
             return new LevelSign(world, jsonObj);
 
-        else if (objectType == "levelBaddy")
+        else if (type == "levelBaddy")
             return new LevelGraalBaddy(world, jsonObj);
 
             

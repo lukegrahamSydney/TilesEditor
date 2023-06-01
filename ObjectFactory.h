@@ -10,7 +10,7 @@ namespace TilesEditor
 	class ObjectFactory
 	{
 	public:
-		static AbstractLevelEntity* createObject(IWorld* world, cJSON* json);
+		static AbstractLevelEntity* createObject(IWorld* world, const QString& type, cJSON* json);
 
 	};
 };

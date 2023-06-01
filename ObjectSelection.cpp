@@ -285,8 +285,8 @@ namespace TilesEditor
                 auto jsonObj = cJSON_GetArrayItem(objects, i);
                 if (jsonObj)
                 {
-
-                    AbstractLevelEntity* entity = ObjectFactory::createObject(world, jsonObj);
+                    auto objectType = jsonGetChildString(jsonObj, "type");
+                    auto entity = ObjectFactory::createObject(world, objectType, jsonObj);
 
                     if (entity)
                     {
