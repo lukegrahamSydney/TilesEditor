@@ -43,7 +43,9 @@ namespace TilesEditor
 		if (QMessageBox::question(nullptr, "Warning", "Are you sure you want to delete this link?") == QMessageBox::Yes)
 		{
 			m_modified = false;
-			m_world->deleteEntity(m_link);
+
+			if(m_allowDelete)
+				m_world->deleteEntity(m_link);
 			QDialog::reject();
 		}
 	}
@@ -54,11 +56,11 @@ namespace TilesEditor
 		m_modified = true;
 	}
 
-	EditLinkDialog::EditLinkDialog(LevelLink* link, IWorld* world, QWidget* parent)
+	EditLinkDialog::EditLinkDialog(LevelLink* link, IWorld* world, bool allowDelete, QWidget* parent)
 		: QDialog(parent)
 	{
 		ui.setupUi(this);
-
+		m_allowDelete = allowDelete;
 		m_link = link;
 		m_world = world;
 

@@ -2523,7 +2523,7 @@ namespace TilesEditor
 			auto link = new LevelLink(this, rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), false);
 			link->setLevel(rootLinkLevel);
 
-			EditLinkDialog frm(link, this);
+			EditLinkDialog frm(link, this, false);
 			if (frm.exec() == QDialog::Accepted)
 			{
 				auto undoCommand = new QUndoCommand();

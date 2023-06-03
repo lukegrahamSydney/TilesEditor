@@ -10,10 +10,16 @@ message("You are running qmake on a generated .pro file. This may not work!")
 HEADERS += ./AbstractFileSystem.h \
     ./AbstractLevelEntity.h \
     ./AbstractSelection.h \
+    ./AbstractSpatialGridItem.h \
     ./IFileRequester.h \
+    ./ILevelFormat.h \
     ./LevelChest.h \
     ./LevelCommands.h \
     ./LevelFactory.h \
+    ./LevelFormatGraal.h \
+    ./LevelFormatLVL.h \
+    ./FileFormatManager.h \
+    ./LevelFormatNW.h \
     ./LevelGraalBaddy.h \
     ./LevelLink.h \
     ./LevelNPC.h \
@@ -57,6 +63,7 @@ HEADERS += ./AbstractFileSystem.h \
     ./EditChestDialog.h \
     ./EditBaddy.h \
     ./FixMapNamesDialog.h \
+    ./ExternalNPCInspector.h \
     ./LevelConverter.h \
     ./ListLinksDialog.h \
     ./NewOverworldDialog.h \
@@ -77,12 +84,7 @@ HEADERS += ./AbstractFileSystem.h \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditor.hpp \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorHighlighter.hpp \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorLineWidget.hpp \
-    ./QCodeEditor/include/KGL/Widgets/QCodeEditorPopup.hpp \
-    ./ILevelFormat.h \
-    ./LevelFormatNW.h \
-    ./LevelFormatGraal.h \
-    ./LevelFormatLVL.h \
-    ./FileFormatManager.h
+    ./QCodeEditor/include/KGL/Widgets/QCodeEditorPopup.hpp
 SOURCES += ./AboutDialog.cpp \
     ./AbstractLevelEntity.cpp \
     ./AbstractSelection.cpp \
@@ -94,6 +96,8 @@ SOURCES += ./AboutDialog.cpp \
     ./EditorTabWidget.cpp \
     ./EditSignsDialog.cpp \
     ./EditTilesetDialog.cpp \
+    ./ExternalNPCInspector.cpp \
+    ./FileFormatManager.cpp \
     ./FixMapNamesDialog.cpp \
     ./GraphicsView.cpp \
     ./Image.cpp \
@@ -102,6 +106,9 @@ SOURCES += ./AboutDialog.cpp \
     ./LevelChest.cpp \
     ./LevelCommands.cpp \
     ./LevelConverter.cpp \
+    ./LevelFormatGraal.cpp \
+    ./LevelFormatLVL.cpp \
+    ./LevelFormatNW.cpp \
     ./LevelGraalBaddy.cpp \
     ./LevelLink.cpp \
     ./LevelNPC.cpp \
@@ -125,7 +132,6 @@ SOURCES += ./AboutDialog.cpp \
     ./TileSelection.cpp \
     ./Tileset.cpp \
     ./TilesetsWidget.cpp \
-    ./EntitySpatialGrid.cpp \
     ./MainWindow.cpp \
     ./main.cpp \
     ./cJSON/cJSON.c \
@@ -139,11 +145,7 @@ SOURCES += ./AboutDialog.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorHighlighter.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorLineWidget.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorPopup.cpp \
-    ./QCodeEditor/src/Widgets/QCodeEditorSlots.cpp \
-    ./LevelFormatNW.cpp \
-    ./LevelFormatGraal.cpp \
-    ./LevelFormatLVL.cpp \
-    ./FileFormatManager.cpp
+    ./QCodeEditor/src/Widgets/QCodeEditorSlots.cpp
 FORMS += ./AboutDialog.ui \
     ./EditAnonymousNPC.ui \
     ./EditBaddy.ui \
@@ -153,6 +155,7 @@ FORMS += ./AboutDialog.ui \
     ./EditorTabWidget.ui \
     ./EditSignsDialog.ui \
     ./EditTilesetDialog.ui \
+    ./ExternalNPCInspector.ui \
     ./FixMapNamesDialog.ui \
     ./LevelConverter.ui \
     ./ListLinksDialog.ui \

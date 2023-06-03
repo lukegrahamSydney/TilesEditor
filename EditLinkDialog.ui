@@ -272,17 +272,23 @@
     <rect>
      <x>4</x>
      <y>200</y>
-     <width>57</width>
+     <width>69</width>
      <height>24</height>
     </rect>
    </property>
    <property name="text">
     <string>Delete</string>
    </property>
+   <property name="icon">
+    <iconset resource="MainWindow.qrc">
+     <normaloff>:/MainWindow/icons/fugue/cross-script.png</normaloff>:/MainWindow/icons/fugue/cross-script.png</iconset>
+   </property>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="MainWindow.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

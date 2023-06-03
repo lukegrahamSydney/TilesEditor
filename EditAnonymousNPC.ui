@@ -361,6 +361,10 @@
         <property name="text">
          <string>Delete</string>
         </property>
+        <property name="icon">
+         <iconset resource="MainWindow.qrc">
+          <normaloff>:/MainWindow/icons/fugue/cross-script.png</normaloff>:/MainWindow/icons/fugue/cross-script.png</iconset>
+        </property>
        </widget>
       </item>
       <item>
@@ -408,7 +412,9 @@
    <header location="global">QCodeEditor.hpp</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="MainWindow.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

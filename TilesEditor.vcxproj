@@ -109,6 +109,7 @@
     <ClCompile Include="EditorTabWidget.cpp" />
     <ClCompile Include="EditSignsDialog.cpp" />
     <ClCompile Include="EditTilesetDialog.cpp" />
+    <ClCompile Include="ExternalNPCInspector.cpp" />
     <ClCompile Include="FileFormatManager.cpp" />
     <ClCompile Include="FixMapNamesDialog.cpp" />
     <ClCompile Include="GraphicsView.cpp" />
@@ -165,6 +166,7 @@
     <QtUic Include="EditorTabWidget.ui" />
     <QtUic Include="EditSignsDialog.ui" />
     <QtUic Include="EditTilesetDialog.ui" />
+    <QtUic Include="ExternalNPCInspector.ui" />
     <QtUic Include="FixMapNamesDialog.ui" />
     <QtUic Include="LevelConverter.ui" />
     <QtUic Include="ListLinksDialog.ui" />
@@ -197,6 +199,7 @@
     <QtMoc Include="EditChestDialog.h" />
     <QtMoc Include="EditBaddy.h" />
     <QtMoc Include="FixMapNamesDialog.h" />
+    <QtMoc Include="ExternalNPCInspector.h" />
     <ClInclude Include="IFileRequester.h" />
     <ClInclude Include="ILevelFormat.h" />
     <ClInclude Include="LevelChest.h" />

@@ -22,9 +22,10 @@ namespace TilesEditor
 		LevelLink* m_link;
 		IWorld* m_world;
 		bool m_modified;
+		bool m_allowDelete;
 
 	public:
-		EditLinkDialog(LevelLink* link, IWorld* world, QWidget* parent = nullptr);
+		EditLinkDialog(LevelLink* link, IWorld* world, bool allowDelete, QWidget* parent = nullptr);
 		~EditLinkDialog();
 
 		bool getModified() const { return m_modified; }

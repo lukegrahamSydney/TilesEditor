@@ -97,7 +97,7 @@ namespace TilesEditor
 
 	void LevelLink::openEditor()
 	{
-		EditLinkDialog form(this, getWorld());
+		EditLinkDialog form(this, getWorld(), true);
 		form.exec();
 	}
 
