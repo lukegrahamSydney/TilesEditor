@@ -7,6 +7,7 @@ Experimental...seems to work though
 #include <QDialog>
 #include <QStringList>
 #include <QSet>
+#include <QAbstractItemModel>
 #include "ui_LevelConverter.h"
 #include "EditorTabWidget.h"
 #include "MainFileSystem.h"
@@ -23,7 +24,7 @@ namespace TilesEditor
 		void timer();
 
 	public:
-		LevelConverter(QWidget* parent = nullptr);
+		LevelConverter(QStandardItemModel* tilesetsModel, QWidget* parent = nullptr);
 		~LevelConverter();
 
 	protected:
@@ -31,6 +32,7 @@ namespace TilesEditor
 		void accept() override;
 
 	private:
+		QStandardItemModel* m_tilesetsModel;
 		Ui::LevelConverterClass ui;
 		QStringList m_files;
 		QSet<QString> m_levelNames;

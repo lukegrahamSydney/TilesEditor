@@ -47,11 +47,11 @@ namespace TilesEditor
 
             auto tilemap = level->getOrMakeTilemap(0);
 
-            auto setTileIndex = [](Tilemap* tilemap, int boardIndex, int graalTile) {
+            auto setTileIndex = [](Tilemap* tilemap, int boardIndex, int graalTile, Tileset* defaultTileset) {
                 auto tileX = boardIndex % 64;
                 auto tileY = boardIndex / 64;
 
-                auto tile = Level::convertFromGraalTile(graalTile);
+                auto tile = Level::convertFromGraalTile(graalTile, defaultTileset);
 
                 tilemap->setTile(tileX, tileY, tile);
             };
@@ -93,7 +93,7 @@ namespace TilesEditor
                 // If our count is 1, just read in a tile.  This is the default mode.
                 if (count == 1)
                 {
-                    setTileIndex(tilemap, boardIndex++, code);
+                    setTileIndex(tilemap, boardIndex++, code, level->getDefaultTileset());
                     continue;
                 }
 
@@ -114,8 +114,8 @@ namespace TilesEditor
                     // Add the tiles now.
                     for (int i = 0; i < count && boardIndex < 64 * 64 - 1; ++i)
                     {
-                        setTileIndex(tilemap, boardIndex++, tiles[0]);
-                        setTileIndex(tilemap, boardIndex++, tiles[1]);
+                        setTileIndex(tilemap, boardIndex++, tiles[0], level->getDefaultTileset());
+                        setTileIndex(tilemap, boardIndex++, tiles[1], level->getDefaultTileset());
                     }
 
                     // Clean up.
@@ -127,7 +127,7 @@ namespace TilesEditor
                 else
                 {
                     for (int i = 0; i < count && boardIndex < 64 * 64; ++i)
-                        setTileIndex(tilemap, boardIndex++, code);
+                        setTileIndex(tilemap, boardIndex++, code, level->getDefaultTileset());
                     count = 1;
                 }
             }

@@ -33,6 +33,9 @@ namespace TilesEditor
                 }
             }
 
+            if (level->getDefaultTileset())
+                level->setTilesetName(level->getDefaultTileset()->text());
+
             if (valid)
             {
                 level->setUnitWidth(16);
@@ -60,22 +63,21 @@ namespace TilesEditor
                             auto tilemap = level->getOrMakeTilemap(layer);
                             auto& tileData = words[5];
 
-                            if (x < 64 && y < 64 && x + width <= 64)
+
+                            if (tileData.length() >= width * 2)
                             {
-                                if (tileData.length() >= width * 2)
+                                for (size_t ii = 0u; ii < width; ++ii)
                                 {
-                                    for (size_t ii = 0u; ii < width; ++ii)
-                                    {
-                                        char byte1 = tileData[ii * 2].unicode();
-                                        char byte2 = tileData[1 + ii * 2].unicode();
+                                    char byte1 = tileData[ii * 2].unicode();
+                                    char byte2 = tileData[1 + ii * 2].unicode();
 
-                                        auto graalTile = (int)((base64.indexOf(byte1) << 6) + base64.indexOf(byte2));
-                                        auto tile = Level::convertFromGraalTile(graalTile);
-                                        tilemap->setTile(x + ii, y, tile);
+                                    auto graalTile = (int)((base64.indexOf(byte1) << 6) + base64.indexOf(byte2));
+                                    auto tile = Level::convertFromGraalTile(graalTile, level->getDefaultTileset());
+                                    tilemap->setTile(x + ii, y, tile);
 
-                                    }
                                 }
                             }
+                            
                         }
                         else if (words[0] == "TILESET" && wordCount >= 2)
                         {
@@ -201,16 +203,19 @@ namespace TilesEditor
 
         auto writeTileLayer = [](QTextStream& stream, Tilemap* tilemap)
         {
-            for (int top = 0; top < 64; ++top)
+            auto hcount = std::max(tilemap->getHCount(), 64);
+            auto vcount = std::max(tilemap->getVCount(), 64);
+
+            for (int top = 0; top < vcount; ++top)
             {
-                for (int left = 0; left < 64; ++left)
+                for (int left = 0; left < hcount; ++left)
                 {
                     //Start scanning from left until we hit a NON-invisible title
                     if (!Tilemap::IsInvisibleTile(tilemap->getTile(left, top)))
                     {
                         //Continue scanning until we hit the end, or an invisible tile
                         int right = left;
-                        for (; right < 64; ++right)
+                        for (; right < hcount; ++right)
                         {
                             if (Tilemap::IsInvisibleTile(tilemap->getTile(right, top)))
                                 break;

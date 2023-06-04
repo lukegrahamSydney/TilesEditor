@@ -128,6 +128,7 @@
     <ClCompile Include="LevelSign.cpp" />
     <ClCompile Include="ListLinksDialog.cpp" />
     <ClCompile Include="MainFileSystem.cpp" />
+    <ClCompile Include="NewLevelDialog.cpp" />
     <ClCompile Include="NewOverworldDialog.cpp" />
     <ClCompile Include="ObjectFactory.cpp" />
     <ClCompile Include="ObjectListModel.cpp" />
@@ -174,6 +175,7 @@
     <QtMoc Include="MainWindow.h" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="main.cpp" />
+    <QtUic Include="NewLevelDialog.ui" />
     <QtUic Include="NewOverworldDialog.ui" />
     <QtUic Include="ObjectsWidget.ui" />
     <QtUic Include="SaveOverworldDialog.ui" />
@@ -216,6 +218,7 @@
     <ClInclude Include="LevelSign.h" />
     <QtMoc Include="ListLinksDialog.h" />
     <QtMoc Include="NewOverworldDialog.h" />
+    <QtMoc Include="NewLevelDialog.h" />
     <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="ObjectListModel.h" />
     <ClInclude Include="ObjectSelection.h" />

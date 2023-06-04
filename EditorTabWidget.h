@@ -248,7 +248,7 @@ namespace TilesEditor
 		Image* getTilesetImage() override { return m_tilesetImage; }
 
 		void doPaste(bool centerScreen);
-		void newLevel(int hcount, int vcount);
+		void newLevel(const QString& format, int hcount, int vcount);
 		void loadOverworld(const QString& name, const QString& fileName);
 		void loadLevel(const QString& name, const QString& fileName);
 

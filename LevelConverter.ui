@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>260</width>
-    <height>310</height>
+    <width>291</width>
+    <height>343</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -104,14 +104,17 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="2" column="1">
+       <widget class="QComboBox" name="defaultTilesetComboBox"/>
+      </item>
+      <item row="3" column="0">
        <widget class="QLabel" name="subFoldersLabel">
         <property name="text">
          <string>Sub Folders:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="3" column="1">
        <widget class="QCheckBox" name="subFoldersCheckBox">
         <property name="toolTip">
          <string>Scan sub folders</string>
@@ -121,6 +124,13 @@
         </property>
         <property name="checked">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="defaultTilesetLabel">
+        <property name="text">
+         <string>Default Tileset:</string>
         </property>
        </widget>
       </item>

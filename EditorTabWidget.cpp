@@ -785,7 +785,7 @@ namespace TilesEditor
 			pen.setWidth(1);
 			pen.setStyle(Qt::PenStyle::DotLine);
 			
-			pen.setColor(QColor(255, 255, 255, 180));
+			pen.setColor(QColor(255, 255, 255, 210));
 
 			QPainter painter(&image);
 			painter.setPen(pen);
@@ -1243,11 +1243,15 @@ namespace TilesEditor
 		}
 	}
 
-	void EditorTabWidget::newLevel(int hcount, int vcount)
+	void EditorTabWidget::newLevel(const QString& format, int hcount, int vcount)
 	{
 		m_level = new Level(this, 0, 0, hcount * 16, vcount * 16, nullptr, "");
 		m_level->getOrMakeTilemap(0)->clear(0);
 		m_level->setLoaded(true);
+
+		FileFormatManager::instance()->applyFormat(format, m_level);
+
+		m_graphicsView->setSceneRect(QRect(0, 0, m_level->getWidth(), m_level->getHeight()));
 		m_graphicsView->redraw();
 
 	}
@@ -2923,7 +2927,7 @@ namespace TilesEditor
 												char byte2 = tileData[1 + ii * 2].unicode();
 
 												auto graalTile = (int)((base64.indexOf(byte1) << 6) + base64.indexOf(byte2));
-												auto tile = Level::convertFromGraalTile(graalTile);
+												auto tile = Level::convertFromGraalTile(graalTile, nullptr);
 												tileObject->setTile(ii, y, tile);
 
 											}
@@ -3275,6 +3279,7 @@ namespace TilesEditor
 
 				level->setName(fi.fileName());
 				level->setFileName(fullPath);
+				FileFormatManager::instance()->applyFormat(m_level);
 			}
 		}
 

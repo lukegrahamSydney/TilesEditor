@@ -53,6 +53,7 @@ namespace TilesEditor
 
     Level::Level(IWorld* world, double x, double y, int width, int height, Overworld* overworld, const QString& name)
     {
+        m_defaultTileset = nullptr;
         m_world = world;
         m_loadFail = false;
         m_modified = false;

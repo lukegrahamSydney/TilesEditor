@@ -9,10 +9,11 @@
 
 namespace TilesEditor
 {
-	LevelConverter::LevelConverter(QWidget* parent)
+	LevelConverter::LevelConverter(QStandardItemModel* tilesetsModel, QWidget* parent)
 		: QDialog(parent)
 	{
 		ui.setupUi(this);
+		m_tilesetsModel = tilesetsModel;
 		m_dummyTab = new EditorTabWidget(nullptr, &m_fileSystem);
 		m_dummyTab->hide();
 
@@ -26,6 +27,7 @@ namespace TilesEditor
 				ui.formatCombo->addItem(format->getPrimaryExtension());
 		}
 		
+		ui.defaultTilesetComboBox->setModel(tilesetsModel);
 		this->setFixedSize(this->size());
 	}
 
@@ -48,7 +50,11 @@ namespace TilesEditor
 			auto subDir = info.absolutePath().mid(ui.inputEdit->text().length());
 			subDir += "/";
 
+			
+			auto defaultTileset = ui.defaultTilesetComboBox->currentIndex() >= 0 ? static_cast<Tileset*>(m_tilesetsModel->item(ui.defaultTilesetComboBox->currentIndex())) : nullptr;
+
 			auto level = new Level(m_dummyTab, 0.0, 0.0, 64 * 16, 64 * 16, nullptr, "");
+			level->setDefaultTileset(defaultTileset);
 			level->setName(info.fileName());
 			level->setFileName(file);
 

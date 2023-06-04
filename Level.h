@@ -16,6 +16,7 @@
 #include "LevelSign.h"
 #include "IWorld.h"
 #include "IFileRequester.h"
+#include "Tileset.h"
 
 namespace TilesEditor
 {
@@ -34,6 +35,7 @@ namespace TilesEditor
 		static bool getImageDimensions(ResourceManager& resourceManager, const QString& imageName, int* w, int* h);
 
 		IWorld* m_world;
+		Tileset* m_defaultTileset;
 
 		bool m_modified;
 
@@ -66,6 +68,8 @@ namespace TilesEditor
 		Level(IWorld* world, double x, double y, int width, int height, Overworld* overworld, const QString& name);
 		~Level();
 
+		Tileset* getDefaultTileset() { return m_defaultTileset; }
+		void setDefaultTileset(Tileset* tileset) { m_defaultTileset = tileset; }
 		void release();
 		IWorld* getWorld() { return m_world; }
 		Overworld* getOverworld() { return m_overworld; }
@@ -126,13 +130,13 @@ namespace TilesEditor
 		void setTileLayer(int index, Tilemap* tilemap);
 
 
-		static int convertFromGraalTile(int graalTileIndex) {
+		static int convertFromGraalTile(int graalTileIndex, Tileset* defaultTileset) {
 			int left = graalTileIndex & 0xF;
 			int top = graalTileIndex >> 4;
 			left = left + (16 * (top / 32));
 			top = top % 32;
 
-			return Tilemap::MakeTile(left, top, 0);
+			return Tilemap::MakeTile(left, top, defaultTileset == nullptr ? 0 : defaultTileset->getTileType(left, top));
 		}
 	};
 };

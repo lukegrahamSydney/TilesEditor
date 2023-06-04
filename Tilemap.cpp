@@ -58,8 +58,8 @@ namespace TilesEditor
 
         int left = qAbs((int)qFloor((qMax((int)(viewRect.getX() - x), 0) / tileWidth)));
         int top = qAbs((int)qFloor((qMax((int)(viewRect.getY() - y), 0) / tileHeight)));
-        int right = qMin(left + (int)qCeil(viewRect.getRight() / tileWidth), left + (int)m_hcount);
-        int bottom = qMin(top + (int)qCeil(viewRect.getBottom() / tileWidth), top + (int)m_vcount);
+        int right = qMin((int)qCeil((viewRect.getRight() - x) / tileWidth), int(x / tileWidth) + (int)m_hcount);
+        int bottom = qMin((int)qCeil((viewRect.getBottom() - y) / tileWidth), int(y / tileHeight) + (int)m_vcount);
        
 
         //keep within map dimensions

@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/MainWindow">
+    <file>icons/fugue/document--pencil.png</file>
     <file>icons/fugue/pencil.png</file>
     <file>icons/grid-snap.png</file>
     <file>icons/grid.png</file>

@@ -9,6 +9,7 @@
 #include "MainFileSystem.h"
 #include "LevelConverter.h"
 #include "FileFormatManager.h"
+#include "NewLevelDialog.h"
 
 #include "LevelFormatNW.h"
 #include "LevelFormatGraal.h"
@@ -60,6 +61,7 @@ namespace TilesEditor
 
         connect(ui.actionOpen, &QAction::triggered, this, &MainWindow::openFile);
         connect(ui.actionNew, &QAction::triggered, this, &MainWindow::newLevel);
+        connect(ui.actionActionNewCustom, &QAction::triggered, this, &MainWindow::newCustomLevel);
         connect(ui.actionAbout, &QAction::triggered, this, &MainWindow::aboutClicked);
         connect(ui.actionLevelConverter, &QAction::triggered, this, &MainWindow::levelConvert);
 
@@ -199,9 +201,22 @@ namespace TilesEditor
     void MainWindow::newLevel(bool checked)
     {
         auto tabPage = createNewTab();
-        tabPage->newLevel(64, 64);
+        tabPage->newLevel("nw", 64, 64);
 
         ui.levelsTab->addTab(tabPage, "new");
+    }
+
+    void MainWindow::newCustomLevel(bool checked)
+    {
+        NewLevelDialog form(this);
+        if (form.exec() == QDialog::Accepted)
+        {
+            auto tabPage = createNewTab();
+            tabPage->newLevel(form.getFormat(), form.getHCount(), form.getVCount());
+           
+           
+            ui.levelsTab->addTab(tabPage, "new");
+        }
     }
 
 
@@ -291,7 +306,7 @@ namespace TilesEditor
 
     void MainWindow::levelConvert(bool checked)
     {
-        LevelConverter converter;
+        LevelConverter converter(&m_tilesetList);
         converter.exec();
     }
 

@@ -72,6 +72,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionNew"/>
+   <addaction name="actionActionNewCustom"/>
    <addaction name="actionOpen"/>
    <addaction name="actionAbout"/>
    <addaction name="separator"/>
@@ -182,6 +183,9 @@
    <property name="text">
     <string>New</string>
    </property>
+   <property name="toolTip">
+    <string>New default level</string>
+   </property>
   </action>
   <action name="actionOpen">
    <property name="icon">
@@ -211,6 +215,18 @@
    </property>
    <property name="toolTip">
     <string>Level Converter</string>
+   </property>
+  </action>
+  <action name="actionActionNewCustom">
+   <property name="icon">
+    <iconset resource="MainWindow.qrc">
+     <normaloff>:/MainWindow/icons/fugue/document--pencil.png</normaloff>:/MainWindow/icons/fugue/document--pencil.png</iconset>
+   </property>
+   <property name="text">
+    <string>actionNewCustom</string>
+   </property>
+   <property name="toolTip">
+    <string>New custom level</string>
    </property>
   </action>
  </widget>

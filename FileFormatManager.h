@@ -20,6 +20,7 @@ namespace TilesEditor
 		bool loadLevel(Level* level, QIODevice* stream);
 
 		void applyFormat(Level* level);
+		void applyFormat(const QString& format, Level* level);
 		void registerLevelExtension(const QString& ext, ILevelFormat* levelFormat);
 		void registerLevelExtension(const QStringList& extensions, ILevelFormat* levelFormat);
 

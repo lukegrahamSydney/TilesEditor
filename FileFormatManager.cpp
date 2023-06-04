@@ -53,16 +53,22 @@ namespace TilesEditor
 		auto pos = levelName.lastIndexOf('.');
 		if (pos >= 0)
 		{
-			auto ext = levelName.mid(pos + 1);
-
-			auto it = m_levelFormats.find(ext);
-			if (it != m_levelFormats.end())
-			{
-				auto& filter = it.value();
-
-				filter->applyFormat(level);
-			}
+			auto format = levelName.mid(pos + 1);
+			applyFormat(format, level);
 		}
+	}
+
+	void FileFormatManager::applyFormat(const QString& format, Level* level)
+	{
+
+		auto it = m_levelFormats.find(format);
+		if (it != m_levelFormats.end())
+		{
+			auto& filter = it.value();
+
+			filter->applyFormat(level);
+		}
+		
 	}
 
 	void FileFormatManager::registerLevelExtension(const QString& ext,  ILevelFormat* levelFormat)
