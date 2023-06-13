@@ -22,6 +22,9 @@ namespace TilesEditor
 			m_world->updateMovedEntity(m_link);
 
 
+			m_world->setModified(m_link->getLevel());
+
+
 		}
 		QDialog::accept();
 	}
