@@ -44,6 +44,7 @@ namespace TilesEditor
 		QString m_name;
 		QString m_fileName;
 		QString m_tilesetName;
+		QString m_tilesetImageName;
 
 		bool m_loaded;
 		bool m_loadFail;
@@ -75,6 +76,8 @@ namespace TilesEditor
 		Overworld* getOverworld() { return m_overworld; }
 		const QString& getTilesetName() const { return m_tilesetName; }
 		void setTilesetName(const QString& name) { m_tilesetName = name; }
+		void setTilesetImageName(const QString& name) { m_tilesetImageName = name; }
+		const QString& getTilesetImageName() const { return m_tilesetImageName; }
 
 		void setName(const QString& name) { m_name = name; }
 		const QString& getName() const { return m_name; }

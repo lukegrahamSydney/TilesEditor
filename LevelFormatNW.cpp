@@ -33,8 +33,10 @@ namespace TilesEditor
                 }
             }
 
-            if (level->getDefaultTileset())
+            if (level->getDefaultTileset()) {
                 level->setTilesetName(level->getDefaultTileset()->text());
+                level->setTilesetImageName(level->getDefaultTileset()->getImageName());
+            }
 
             if (valid)
             {
@@ -82,6 +84,10 @@ namespace TilesEditor
                         else if (words[0] == "TILESET" && wordCount >= 2)
                         {
                             level->setTilesetName(words[1]);
+                        }
+                        else if (words[0] == "TILESETIMAGE" && wordCount >= 2)
+                        {
+                            level->setTilesetImageName(words[1]);
                         }
                         else if (words[0] == "LINK" && wordCount >= 8)
                         {
@@ -321,6 +327,9 @@ namespace TilesEditor
 
         if (!level->getTilesetName().isEmpty())
             stream << "TILESET " << level->getTilesetName() << Qt::endl;
+
+        if (!level->getTilesetImageName().isEmpty())
+            stream << "TILESETIMAGE " << level->getTilesetImageName() << Qt::endl;
         return true;
 	}
 

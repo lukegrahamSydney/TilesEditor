@@ -47,6 +47,8 @@ namespace TilesEditor
 		void tilesetMouseRelease(QMouseEvent* event);
 		void tilesetMouseMove(QMouseEvent* event);
 		void tilesetEditClicked(bool checked);
+		void tilesetMouseWheel(QWheelEvent* event);
+
 
 		void tileObjectsMousePress(QMouseEvent* event);
 

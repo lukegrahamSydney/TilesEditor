@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>808</width>
+    <width>955</width>
     <height>448</height>
    </rect>
   </property>
@@ -607,6 +607,9 @@
           <height>0</height>
          </size>
         </property>
+        <property name="minimum">
+         <number>-99</number>
+        </property>
        </widget>
       </item>
       <item>
@@ -622,6 +625,29 @@
          <bool>false</bool>
         </property>
         <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="fadeLayersButton">
+        <property name="toolTip">
+         <string>Fade Inactive Layers</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="MainWindow.qrc">
+          <normaloff>:/MainWindow/icons/fugue/layer-shade.png</normaloff>:/MainWindow/icons/fugue/layer-shade.png</iconset>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>

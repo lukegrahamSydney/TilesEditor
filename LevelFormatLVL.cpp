@@ -34,6 +34,7 @@ namespace TilesEditor
 
                     level->setSize(hcount * 16, vcount * 16);
                     level->setTilesetName(jsonGetChildString(jsonRoot, "tileset", ""));
+                    level->setTilesetImageName(jsonGetChildString(jsonRoot, "tilesetImage", ""));
 
                     level->setUnitWidth(1);
                     level->setUnitHeight(1);
@@ -265,8 +266,13 @@ namespace TilesEditor
         cJSON_AddNumberToObject(jsonRoot, "vcount", level->getHeight() / 16);
 
         
-        if (!level->getTilesetName().isEmpty())
+        if (!level->getTilesetName().isEmpty()) {
             cJSON_AddStringToObject(jsonRoot, "tileset", level->getTilesetName().toLocal8Bit().data());
+        }
+
+        if (!level->getTilesetImageName().isEmpty()) {
+            cJSON_AddStringToObject(jsonRoot, "tilesetImage", level->getTilesetImageName().toLocal8Bit().data());
+        }
 
 
         if (level->getTileLayers().size() > 0)

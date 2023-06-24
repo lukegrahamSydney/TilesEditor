@@ -90,6 +90,7 @@ namespace TilesEditor
 		connect(ui_tilesetsClass.graphicsView, &GraphicsView::mousePress, this, &EditorTabWidget::tilesetMousePress);
 		connect(ui_tilesetsClass.graphicsView, &GraphicsView::mouseRelease, this, &EditorTabWidget::tilesetMouseRelease);
 		connect(ui_tilesetsClass.graphicsView, &GraphicsView::mouseMove, this, &EditorTabWidget::tilesetMouseMove);
+		connect(ui_tilesetsClass.graphicsView, &GraphicsView::mouseWheelEvent, this, &EditorTabWidget::tilesetMouseWheel);
 		connect(ui_tilesetsClass.tilesetsCombo, &QComboBox::currentIndexChanged, this, &EditorTabWidget::tilesetsIndexChanged);
 
 
@@ -146,7 +147,7 @@ namespace TilesEditor
 		connect(ui.deleteButton, &QToolButton::clicked, this, &EditorTabWidget::deleteClicked);
 		connect(ui.screenshotButton, &QToolButton::clicked, this, &EditorTabWidget::screenshotClicked);
 
-
+		connect(ui.fadeLayersButton, &QToolButton::clicked, m_graphicsView, &GraphicsView::redraw);
 		connect(ui.hcountSpinBox, &QSpinBox::valueChanged, this, &EditorTabWidget::gridValueChanged);
 		connect(ui.vcountSpinBox, &QSpinBox::valueChanged, this, &EditorTabWidget::gridValueChanged);
 		connect(ui.gridButton, &QToolButton::released, m_graphicsView, &GraphicsView::redraw);
@@ -268,7 +269,7 @@ namespace TilesEditor
 				{
 					if (m_visibleLayers.find(tilemap->getLayerIndex()) == m_visibleLayers.end() || m_visibleLayers[tilemap->getLayerIndex()])
 					{
-						auto fade = m_selectedTilesLayer != tilemap->getLayerIndex();
+						auto fade = m_selectedTilesLayer != tilemap->getLayerIndex() && ui.fadeLayersButton->isChecked();
 						if (fade)
 						{
 							painter->setOpacity(0.33);
@@ -594,6 +595,7 @@ namespace TilesEditor
 
 		auto imageName = m_tileset.getImageName();
 
+
 		if (m_tilesetImage != nullptr)
 		{
 			if (m_tilesetImage->getName() == imageName)
@@ -622,10 +624,12 @@ namespace TilesEditor
 		if (m_overworld)
 		{
 			m_overworld->setTilesetName(tileset->text());
+			m_overworld->setTilesetImageName(tileset->getImageName());
 			setModified(nullptr);
 		}
 		else if (m_level) {
 			m_level->setTilesetName(tileset->text());
+			m_level->setTilesetImageName(tileset->getImageName());
 			setModified(m_level);
 		}
 	}
@@ -1714,6 +1718,11 @@ namespace TilesEditor
 		
 	}
 
+	void EditorTabWidget::tilesetMouseWheel(QWheelEvent* event)
+	{
+		event->ignore();
+	}
+
 	void EditorTabWidget::tileObjectsMousePress(QMouseEvent* event)
 	{
 		auto tileObject = getCurrentTileObject();
@@ -2784,6 +2793,16 @@ namespace TilesEditor
 		auto tilesetName = ui_tilesetsClass.tilesetsCombo->currentText();
 
 		setTileset(tilesetName);
+
+		if (m_overworld)
+		{
+			m_overworld->setTilesetImageName(m_tileset.getImageName());
+			setModified(nullptr);
+		}
+		else if (m_level) {
+			m_level->setTilesetImageName(m_tileset.getImageName());
+			setModified(m_level);
+		}
 
 		m_resourceManager.updateResource(m_tileset.getImageName());
 		ui_tilesetsClass.graphicsView->redraw();

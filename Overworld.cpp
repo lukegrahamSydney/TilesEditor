@@ -97,6 +97,9 @@ namespace TilesEditor
 					if (words[0] == "TILESET" && wordCount >= 2) {
 						m_tilesetName = words[1];
 					}
+					else if (words[0] == "TILESETIMAGE")
+					{
+					}
 					else m_gmapFileLines.append(line);
 
 					if (words[0] == "WIDTH" && wordCount >= 2) {
@@ -342,7 +345,10 @@ namespace TilesEditor
 
 		if(!m_tilesetName.isEmpty())
 			stream << "TILESET " << m_tilesetName << Qt::endl;
-		
+
+		if (!m_tilesetImageName.isEmpty())
+			stream << "TILESETIMAGE " << m_tilesetImageName << Qt::endl;
+
 		return true;
 	}
 

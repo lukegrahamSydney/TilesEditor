@@ -24,6 +24,7 @@ namespace TilesEditor
 		QString m_name;
 		QString m_fileName;
 		QString m_tilesetName;
+		QString m_tilesetImageName;
 		QStringList m_gmapFileLines;
 		 
 		cJSON* m_json;
@@ -50,6 +51,9 @@ namespace TilesEditor
 
 		const QString& getTilesetName() const { return m_tilesetName; }
 		void setTilesetName(const QString& name) { m_tilesetName = name; }
+
+		void setTilesetImageName(const QString& name) { m_tilesetImageName = name; }
+		const QString& getTilesetImageName() const { return m_tilesetImageName; }
 
 		bool loadFile();
 		bool loadStream(QIODevice* stream);
