@@ -2078,7 +2078,7 @@ namespace TilesEditor
 				if (m_overworld)
 				{
 					QString result;
-					QTextStream(&result) << "Mouse: " << tileX << ", " << tileY << " (" << localTileX << ", " << localTileY << ") Tile: " << displayTile;
+					QTextStream(&result) << "Mouse: " << tileX << ", " << tileY << " (" << localTileX << ", " << localTileY << ", " << level->getName() << ") Tile: " << displayTile;
 					emit setStatusBar(result, 0, 20000);
 				}
 				else {
@@ -2732,7 +2732,11 @@ namespace TilesEditor
 				QString fullPath;
 
 				if (m_resourceManager.locateFile(m_level->getName(), &fullPath))
+				{
+					QFileInfo fi(fullPath);
+					getResourceManager().addSearchDirRecursive(fi.absolutePath());
 					m_level->setFileName(fullPath);
+				}
 			}
 			if (saveLevel(m_level))
 			{
@@ -2754,6 +2758,7 @@ namespace TilesEditor
 				m_level->setName(fi.fileName());
 				m_level->setFileName(fullPath);
 
+				getResourceManager().addSearchDirRecursive(fi.absolutePath());
 				FileFormatManager::instance()->applyFormat(m_level);
 				if (saveLevel(m_level))
 					setUnmodified();
@@ -3287,7 +3292,7 @@ namespace TilesEditor
 	}
 
 	bool EditorTabWidget::saveLevel(Level* level)
-	{
+	{ 
 		if (level->getFileName().isEmpty())
 		{
 			auto fullPath = m_resourceManager.getFileSystem()->getSaveFileName("Save Level", QString(), FileFormatManager::instance()->getLevelSaveFilters());
@@ -3298,6 +3303,8 @@ namespace TilesEditor
 
 				level->setName(fi.fileName());
 				level->setFileName(fullPath);
+				getResourceManager().addSearchDirRecursive(fi.absolutePath());
+
 				FileFormatManager::instance()->applyFormat(m_level);
 			}
 		}
