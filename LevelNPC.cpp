@@ -8,7 +8,7 @@
 namespace TilesEditor
 {
 
-	QRegularExpression LevelNPC::m_imgPartExpression("(?:^|[^/])setimgpart[\\( ]+(.*?),*([\\s\\d]+)*,*([\\s\\d]+)*,*([\\s\\d]+)*,([\\s\\d]+)\\)?");
+	QRegularExpression LevelNPC::m_imgPartExpression("(?:^|[^/])(?:setimgpart|setgifpart)[\\( ]+(.*?),*([\\s\\d]+)*,*([\\s\\d]+)*,*([\\s\\d]+)*,([\\s\\d]+)\\)?");
 
 	LevelNPC::LevelNPC(IWorld* world, double x, double y, int width, int height) :
 		AbstractLevelEntity(world, x, y)

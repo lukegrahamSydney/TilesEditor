@@ -44,8 +44,8 @@ namespace TilesEditor
 
 
         m_resourceManager.addSearchDir("./");
-        m_resourceManager.addSearchDir("./levels/");
-        m_resourceManager.addSearchDir("./world/");
+       // m_resourceManager.addSearchDir("./levels/");
+       // m_resourceManager.addSearchDir("./world/");
 
         auto tilesets = settings.value("tilesets").toStringList();
         for (auto& tilesetName : tilesets)
@@ -160,7 +160,8 @@ namespace TilesEditor
         connect(tabPage, &EditorTabWidget::openLevel, this, &MainWindow::openLevel);
         connect(tabPage, &EditorTabWidget::changeTabText, this, &MainWindow::changeTabText);
         connect(tabPage, &EditorTabWidget::setStatusBar, this, &MainWindow::setStatusText);
-        
+      
+
         return tabPage;
     }
 
@@ -187,8 +188,8 @@ namespace TilesEditor
         for (auto& ext : allLevelExtensions)
             ext = "*." + ext;
 
-        auto allSupportedFilesFilter = QString("All Supported Files (*.gmap *.world %1)").arg(allLevelExtensions.join(" "));
-        auto filters = QStringList({ allSupportedFilesFilter, "Overworld Files (*.gmap *.world)", FileFormatManager::instance()->getLevelLoadFilters(), "All Files (*.*)"}).join(";;");
+        auto allSupportedFilesFilter = QString("All Supported Files (*.gmap *.world *.txt %1)").arg(allLevelExtensions.join(" "));
+        auto filters = QStringList({ allSupportedFilesFilter, "Overworld Files (*.gmap *.world *.txt)", FileFormatManager::instance()->getLevelLoadFilters(), "All Files (*.*)"}).join(";;");
         auto fileName = QFileDialog::getOpenFileName(nullptr, "Select level", QString(), filters);
         
         if (!fileName.isEmpty())

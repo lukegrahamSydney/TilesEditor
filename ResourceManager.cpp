@@ -28,6 +28,8 @@ namespace TilesEditor
 			{
 				m_searchDirectories.insert(searchDir);
 				m_searchDirectoriesList.push_back(searchDir);
+
+				qDebug() << searchDir;
 			}
 		}
 	}

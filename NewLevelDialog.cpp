@@ -25,12 +25,12 @@ namespace TilesEditor
 
 	int NewLevelDialog::getHCount() const
 	{
-		return ui.heightLineEdit->text().toInt();
+		return ui.widthLineEdit->text().toInt();
 	}
 
 	int NewLevelDialog::getVCount() const
 	{
-		return ui.widthLineEdit->text().toInt();
+		return ui.heightLineEdit->text().toInt();
 	}
 
 	QString NewLevelDialog::getFormat() const
