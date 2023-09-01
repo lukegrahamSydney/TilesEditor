@@ -1,4 +1,5 @@
 #include "AboutDialog.h"
+#include "DarkTitleBar.h"
 
 namespace TilesEditor
 {
@@ -6,7 +7,7 @@ namespace TilesEditor
 		: QDialog(parent)
 	{
 		ui.setupUi(this);
-
+		DarkTitleBar::ApplyStyle(this->winId());
 		this->setFixedSize(this->size());
 	}
 

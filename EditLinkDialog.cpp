@@ -3,6 +3,7 @@
 #include "EditLinkDialog.h"
 #include "LevelLink.h"
 #include "Level.h"
+#include "DarkTitleBar.h"
 
 namespace TilesEditor
 {
@@ -63,6 +64,7 @@ namespace TilesEditor
 		: QDialog(parent)
 	{
 		ui.setupUi(this);
+		DarkTitleBar::ApplyStyle(this->winId());
 		m_allowDelete = allowDelete;
 		m_link = link;
 		m_world = world;

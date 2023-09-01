@@ -2,6 +2,7 @@
 #include "EditChestDialog.h"
 #include "EditSignsDialog.h"
 #include "LevelCommands.h"
+#include "DarkTitleBar.h"
 
 namespace TilesEditor
 {
@@ -10,7 +11,7 @@ namespace TilesEditor
 		: QDialog(parent)
 	{
 		ui.setupUi(this);
-
+		DarkTitleBar::ApplyStyle(this->winId());
 		m_chest = chest;
 		m_world = world;
 

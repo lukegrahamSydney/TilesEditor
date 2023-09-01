@@ -1,6 +1,7 @@
 #include <QIntValidator>
 #include "NewLevelDialog.h"
 #include "FileFormatManager.h"
+#include "DarkTitleBar.h"
 
 namespace TilesEditor
 {
@@ -8,7 +9,7 @@ namespace TilesEditor
 		: QDialog(parent)
 	{
 		ui.setupUi(this);
-
+		DarkTitleBar::ApplyStyle(this->winId());
 	
 		ui.widthLineEdit->setValidator(new QIntValidator(1, 999999999));
 		ui.heightLineEdit->setValidator(new QIntValidator(1, 999999999));

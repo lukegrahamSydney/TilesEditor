@@ -174,6 +174,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="saveFolderButton">
+        <property name="minimumSize">
+         <size>
+          <width>75</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="toolTip">
          <string>Save an image of individual levels to a folder</string>
         </property>
@@ -184,6 +190,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="saveFileButton">
+        <property name="minimumSize">
+         <size>
+          <width>75</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>Save File</string>
         </property>
@@ -191,6 +203,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="closeButton">
+        <property name="minimumSize">
+         <size>
+          <width>75</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>Close</string>
         </property>

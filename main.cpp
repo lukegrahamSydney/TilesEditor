@@ -1,13 +1,27 @@
 #include "MainWindow.h"
 #include <QtWidgets/QApplication>
 #include <QImageReader>
+
+
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-   // app.setStyle("fusion");
-    if (false)
+    app.setStyle("fusion");
+    if (true)
     {
+
+        QFile f(":/qdarkstyle/dark/darkstyle.qss");
+        if (!f.exists()) {
+            printf("Unable to set stylesheet, file not found\n");
+        }
+        else {
+            f.open(QFile::ReadOnly | QFile::Text);
+            QTextStream ts(&f);
+            app.setStyleSheet(ts.readAll());
+        }
+        /*
         QPalette darkPalette;
         darkPalette = app.palette();
 
@@ -33,6 +47,7 @@ int main(int argc, char *argv[])
         darkPalette.setColor(QPalette::Disabled, QPalette::HighlightedText, QColor(127, 127, 127));
 
         app.setPalette(darkPalette);
+        */
     }
     QImageReader::setAllocationLimit(1024 * 4);
 

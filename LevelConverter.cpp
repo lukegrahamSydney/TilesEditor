@@ -5,6 +5,7 @@
 #include "Level.h"
 #include "MainFileSystem.h"
 #include "FileFormatManager.h"
+#include "DarkTitleBar.h"
 
 
 namespace TilesEditor
@@ -13,6 +14,8 @@ namespace TilesEditor
 		: QDialog(parent)
 	{
 		ui.setupUi(this);
+		DarkTitleBar::ApplyStyle(this->winId());
+
 		m_tilesetsModel = tilesetsModel;
 		m_dummyTab = new EditorTabWidget(nullptr, &m_fileSystem);
 		m_dummyTab->hide();

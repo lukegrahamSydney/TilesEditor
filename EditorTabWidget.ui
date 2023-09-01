@@ -613,7 +613,13 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="showLayerButton">
+       <widget class="QToolButton" name="showLayerButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -624,7 +630,7 @@
         <property name="checkable">
          <bool>false</bool>
         </property>
-        <property name="flat">
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>
@@ -638,8 +644,8 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="MainWindow.qrc">
-          <normaloff>:/MainWindow/icons/fugue/layer-shade.png</normaloff>:/MainWindow/icons/fugue/layer-shade.png</iconset>
+         <iconset>
+          <normaloff>icons/layers.png</normaloff>icons/layers.png</iconset>
         </property>
         <property name="checkable">
          <bool>true</bool>

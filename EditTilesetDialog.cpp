@@ -1,5 +1,6 @@
 #include <QFileDialog>
 #include "EditTilesetDialog.h"
+#include "DarkTitleBar.h"
 
 
 namespace TilesEditor
@@ -8,7 +9,7 @@ namespace TilesEditor
 		: QDialog(parent), m_resourceManager(resourceManager)
 	{
 		ui.setupUi(this);
-
+		DarkTitleBar::ApplyStyle(this->winId());
 		this->setWindowFlag(Qt::Window);
 		this->setWindowFlag(Qt::WindowMaximizeButtonHint);
 

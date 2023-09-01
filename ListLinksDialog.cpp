@@ -1,5 +1,6 @@
 #include "ListLinksDialog.h"
 #include "EditLinkDialog.h"
+#include "DarkTitleBar.h"
 
 namespace TilesEditor
 {
@@ -9,10 +10,12 @@ namespace TilesEditor
 		: QDialog(parent)
 	{
 		ui.setupUi(this);
+		DarkTitleBar::ApplyStyle(this->winId());
 		m_level = level;
 		m_world = world;
 
-
+		for(int i = 0; i < ui.linksTable->columnCount()-1; ++i)
+			ui.linksTable->setColumnWidth(i, 65);
 		connect(ui.deleteButton, &QAbstractButton::clicked, this, &ListLinksDialog::deleteClicked);
 		connect(ui.editButton, &QAbstractButton::clicked, this, &ListLinksDialog::editClicked);
 

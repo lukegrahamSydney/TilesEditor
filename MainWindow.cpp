@@ -15,6 +15,8 @@
 #include "LevelFormatGraal.h"
 #include "LevelFormatLVL.h"
 
+#include "DarkTitleBar.h"
+
 namespace TilesEditor
 {
 
@@ -22,14 +24,15 @@ namespace TilesEditor
         : QMainWindow(parent), m_resourceManager(&m_mainFileSystem)
     {
         ui.setupUi(this);
+
+        DarkTitleBar::ApplyStyle(this->winId());
+
         QMainWindow::setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
 
         // Do multipart status bar
         m_statusLeft = new QLabel("", this);
-        m_statusLeft->setFrameStyle(QFrame::Panel | QFrame::Sunken);
 
         m_statusMiddle = new QLabel("", this);
-        m_statusMiddle->setFrameStyle(QFrame::Panel | QFrame::Sunken);
 
         statusBar()->addPermanentWidget(m_statusLeft, 0);
         statusBar()->addPermanentWidget(m_statusMiddle, 1);

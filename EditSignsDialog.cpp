@@ -1,6 +1,7 @@
 #include <QDoubleValidator>
 #include "EditSignsDialog.h"
 #include "LevelCommands.h"
+#include "DarkTitleBar.h"
 
 namespace TilesEditor
 {
@@ -9,6 +10,7 @@ namespace TilesEditor
 	{
 		ui.setupUi(this);
 
+		DarkTitleBar::ApplyStyle(this->winId());
 		m_level = level;
 		m_world = world;
 		this->setWindowTitle("Edit Signs: " + level->getName());

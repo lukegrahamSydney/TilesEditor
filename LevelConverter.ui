@@ -258,6 +258,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="okButton">
+        <property name="minimumSize">
+         <size>
+          <width>75</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>Ok</string>
         </property>
@@ -268,6 +274,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="cancelButton">
+        <property name="minimumSize">
+         <size>
+          <width>75</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>Close</string>
         </property>

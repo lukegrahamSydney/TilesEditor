@@ -1,5 +1,6 @@
 #include "SaveOverworldDialog.h"
 #include "Level.h"
+#include "DarkTitleBar.h"
 
 namespace TilesEditor
 {
@@ -7,6 +8,7 @@ namespace TilesEditor
 		: QDialog(parent)
 	{
 		ui.setupUi(this);
+		DarkTitleBar::ApplyStyle(this->winId());
 
 		auto levels = world->getModifiedLevels();
 

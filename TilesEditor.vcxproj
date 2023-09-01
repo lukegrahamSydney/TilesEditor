@@ -71,6 +71,9 @@
     <ClCompile>
       <PreprocessorDefinitions>KGL_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>Dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
@@ -158,6 +161,7 @@
     <ClCompile Include="Tileset.cpp" />
     <ClCompile Include="TilesetsWidget.cpp" />
     <QtRcc Include="MainWindow.qrc" />
+    <QtRcc Include="qdarkstyle\dark\darkstyle.qrc" />
     <QtUic Include="AboutDialog.ui" />
     <QtUic Include="EditAnonymousNPC.ui" />
     <QtUic Include="EditBaddy.ui" />
@@ -202,6 +206,7 @@
     <QtMoc Include="EditBaddy.h" />
     <QtMoc Include="FixMapNamesDialog.h" />
     <QtMoc Include="ExternalNPCInspector.h" />
+    <ClInclude Include="DarkTitleBar.h" />
     <ClInclude Include="IFileRequester.h" />
     <ClInclude Include="ILevelFormat.h" />
     <ClInclude Include="LevelChest.h" />

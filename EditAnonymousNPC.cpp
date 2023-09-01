@@ -6,6 +6,7 @@
 #include "Level.h"
 #include "LevelNPC.h"
 #include "LevelCommands.h"
+#include "DarkTitleBar.h"
 
 namespace TilesEditor
 {
@@ -94,6 +95,7 @@ namespace TilesEditor
 	EditAnonymousNPC::EditAnonymousNPC(LevelNPC* npc, IWorld* world, QWidget* parent)
 		: QDialog(parent)
 	{
+		DarkTitleBar::ApplyStyle(this->winId());
 		using namespace kgl;
 		m_modified = false;
 
@@ -106,6 +108,8 @@ namespace TilesEditor
 
 		// ## MainWindow::MainWindow
 		static QCodeEditorDesign design;
+
+
 		// modify design ...
 		static QList<QSyntaxRule> rules =
 			QSyntaxRules::loadFromFile(":/MainWindow/rule_cpp.xml", design);

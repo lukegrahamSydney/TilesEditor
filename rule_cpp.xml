@@ -11,6 +11,7 @@
         <font>
             <bold>true</bold>
         </font>
+		<forecolor>#fc9100</forecolor>
     </rule>
     <rule>
         <!-- Styles strings and muli-line strings -->

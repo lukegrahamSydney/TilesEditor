@@ -523,7 +523,7 @@ namespace TilesEditor
 		Rectangle viewRect(rect.x(), rect.y(), rect.width(), rect.height());
 
 
-		painter->fillRect(rect, QApplication::palette().color(QPalette::Window));
+		//painter->fillRect(rect, QApplication::palette().color(QPalette::AlternateBase));
 
 		if (m_tilesetImage)
 		{

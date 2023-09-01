@@ -1,4 +1,5 @@
 #include "EditBaddy.h"
+#include "DarkTitleBar.h"
 
 namespace TilesEditor
 {
@@ -7,7 +8,7 @@ namespace TilesEditor
 		: QDialog(parent)
 	{
 		ui.setupUi(this);
-
+		DarkTitleBar::ApplyStyle(this->winId());
 		m_baddy = baddy;
 		m_world = world;
 

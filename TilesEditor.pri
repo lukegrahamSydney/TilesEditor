@@ -67,6 +67,7 @@ HEADERS += ./AbstractFileSystem.h \
     ./LevelConverter.h \
     ./ListLinksDialog.h \
     ./NewOverworldDialog.h \
+    ./NewLevelDialog.h \
     ./SaveOverworldDialog.h \
     ./ObjectsWidget.h \
     ./ScreenshotDialog.h \
@@ -85,7 +86,7 @@ HEADERS += ./AbstractFileSystem.h \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorHighlighter.hpp \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorLineWidget.hpp \
     ./QCodeEditor/include/KGL/Widgets/QCodeEditorPopup.hpp \
-    ./NewLevelDialog.h
+    ./DarkTitleBar.h
 SOURCES += ./AboutDialog.cpp \
     ./AbstractLevelEntity.cpp \
     ./AbstractSelection.cpp \
@@ -116,6 +117,7 @@ SOURCES += ./AboutDialog.cpp \
     ./LevelSign.cpp \
     ./ListLinksDialog.cpp \
     ./MainFileSystem.cpp \
+    ./NewLevelDialog.cpp \
     ./NewOverworldDialog.cpp \
     ./ObjectFactory.cpp \
     ./ObjectListModel.cpp \
@@ -146,8 +148,7 @@ SOURCES += ./AboutDialog.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorHighlighter.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorLineWidget.cpp \
     ./QCodeEditor/src/Widgets/QCodeEditorPopup.cpp \
-    ./QCodeEditor/src/Widgets/QCodeEditorSlots.cpp \
-    ./NewLevelDialog.cpp
+    ./QCodeEditor/src/Widgets/QCodeEditorSlots.cpp
 FORMS += ./AboutDialog.ui \
     ./EditAnonymousNPC.ui \
     ./EditBaddy.ui \
@@ -162,11 +163,12 @@ FORMS += ./AboutDialog.ui \
     ./LevelConverter.ui \
     ./ListLinksDialog.ui \
     ./MainWindow.ui \
+    ./NewLevelDialog.ui \
     ./NewOverworldDialog.ui \
     ./ObjectsWidget.ui \
     ./SaveOverworldDialog.ui \
     ./ScreenshotDialog.ui \
     ./TileObjectsWidget.ui \
-    ./TilesetsWidget.ui \
-    ./NewLevelDialog.ui
-RESOURCES += MainWindow.qrc
+    ./TilesetsWidget.ui
+RESOURCES += MainWindow.qrc \
+    qdarkstyle/dark/darkstyle.qrc

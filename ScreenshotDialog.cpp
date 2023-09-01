@@ -2,6 +2,7 @@
 #include "ScreenshotDialog.h"
 #include "Level.h"
 #include "LevelNPC.h"
+#include "DarkTitleBar.h"
 
 namespace TilesEditor
 {
@@ -10,6 +11,7 @@ namespace TilesEditor
 		: QDialog(parent)
 	{
 		ui.setupUi(this);
+		DarkTitleBar::ApplyStyle(this->winId());
 
 		this->setWindowFlag(Qt::Window);
 		this->setWindowFlag(Qt::WindowMaximizeButtonHint);
