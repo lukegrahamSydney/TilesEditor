@@ -52,4 +52,5 @@ cmake -S. -Bbuild/
 cmake --build build/ -j $(nproc)
 ```
 
-![Alt text](https://user-images.githubusercontent.com/132313681/242452341-b0a0f8db-4527-443c-87ce-a3b7f9f1b085.png "Optional Title")
+
+![Alt text](https://user-images.githubusercontent.com/132313681/265017810-9a0d8758-eddc-473c-b6c5-65e1301539da.png  "Optional Title")
