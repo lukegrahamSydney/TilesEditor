@@ -7,7 +7,7 @@ build/
 dist/
 cmake-*/
 release/
-*.py
+.py
 settings.ini
 tileObjects.json
 TilesEditor.vcxproj.filters
