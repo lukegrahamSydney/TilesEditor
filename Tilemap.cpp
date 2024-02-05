@@ -52,6 +52,8 @@ namespace TilesEditor
 
     void Tilemap::draw(QPainter* painter, const IRectangle& viewRect, Image* tilesetImage, double x, double y)
     {
+        qreal startOpacity = painter->opacity();
+
         int tileWidth = 16;
         int tileHeight = 16;
 
@@ -88,17 +90,31 @@ namespace TilesEditor
                         auto translucency = Tilemap::GetTileTranslucency(tile);
                         if (translucency != currentTranslucency) {
                             currentTranslucency = translucency;
-                            painter->setOpacity(1.0 - (translucency / 15.0));
+
+                            //If completely invisible
+                            if(currentTranslucency != 15)
+                                painter->setOpacity(startOpacity * (1.0 - (translucency / 15.0)));
+                            else painter->setOpacity(0.05);
                         }
 
 
                         srcRect.moveTo(Tilemap::GetTileX(tile) * tileWidth, Tilemap::GetTileY(tile) * tileHeight);
              
                         painter->drawPixmap(QPoint(x + (x2 * tileWidth), y + (y2 * tileHeight)), pixmap, srcRect);
+
+                        if (currentTranslucency == 15) {
+                            auto oldOpacity = painter->opacity();
+                            auto oldPen = painter->pen();
+                            painter->setOpacity(1.0);
+                            painter->setPen(QColor(255, 0, 0));
+                            painter->drawLine(QPoint(x + (x2 * tileWidth), y + (y2 * tileHeight)), QPoint(x + (x2 * tileWidth) + 16, y + (y2 * tileHeight) + 16));
+                            painter->setOpacity(oldOpacity);
+                            painter->setPen(oldPen);
+                        }
                     }
                 }
             }
-            painter->setOpacity(1.0);
+            painter->setOpacity(startOpacity);
         }
     }
 };

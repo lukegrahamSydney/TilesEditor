@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{173B1197-A80A-470E-A998-3E489F207F22}</ProjectGuid>
     <Keyword>QtVS_v304</Keyword>
-    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">10.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">10.0</WindowsTargetPlatformVersion>
     <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
   </PropertyGroup>
@@ -66,6 +66,9 @@
     <ClCompile>
       <PreprocessorDefinitions>KGL_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>Dwmapi.lib;%(AdditionalDependencies);$(Qt_LIBS_)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -104,6 +107,7 @@
     <ClCompile Include="AbstractLevelEntity.cpp" />
     <ClCompile Include="AbstractSelection.cpp" />
     <ClCompile Include="cJSON\cJSON.c" />
+    <ClCompile Include="CustomPaintWidget.cpp" />
     <ClCompile Include="EditAnonymousNPC.cpp" />
     <ClCompile Include="EditBaddy.cpp" />
     <ClCompile Include="EditChestDialog.cpp" />

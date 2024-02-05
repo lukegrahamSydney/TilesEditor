@@ -56,6 +56,7 @@ namespace TilesEditor
 			cJSON_AddNumberToObject(json, "x", getX());
 			cJSON_AddNumberToObject(json, "y", getY());
 		}
+		cJSON_AddNumberToObject(json, "layer", getLayerIndex());
 		cJSON_AddStringToObject(json, "item", getItemName().toLocal8Bit().data());
 		cJSON_AddNumberToObject(json, "sign", getSignIndex());
 		return json;
@@ -65,6 +66,7 @@ namespace TilesEditor
 	{
 		setX(jsonGetChildDouble(json, "x"));
 		setY(jsonGetChildDouble(json, "y"));
+		setLayerIndex(jsonGetChildInt(json, "layer"));
 		setItemName(jsonGetChildString(json, "item"));
 		setSignIndex(jsonGetChildInt(json, "sign"));
 	}

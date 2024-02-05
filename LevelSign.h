@@ -52,6 +52,7 @@ namespace TilesEditor
 		AbstractLevelEntity* duplicate() override {
 			auto sign = new LevelSign(this->getWorld(), getX(), getY(), getWidth(), getHeight());
 			sign->m_text = this->m_text;
+			sign->setLayerIndex(getLayerIndex());
 			return sign;
 		}
 

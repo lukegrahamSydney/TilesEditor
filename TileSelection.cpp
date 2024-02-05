@@ -10,10 +10,12 @@
 
 namespace TilesEditor
 {
-	TileSelection::TileSelection(double x, double y, int hcount, int vcount):
+	TileSelection::TileSelection(double x, double y, int hcount, int vcount, int layer):
 		AbstractSelection(x, y)
 	{
 		static int invisibleTile = Tilemap::MakeInvisibleTile(0);
+		m_applyNewTranslucency = false;
+		m_selectionLayer = layer;
 		m_tilesetImage = nullptr;
 		m_width = hcount * 16;
 		m_height = vcount * 16;
@@ -25,6 +27,7 @@ namespace TilesEditor
 		m_selectionStartHCount = m_selectionStartVCount = -1;
 
 		m_hasInserted = false;
+		m_hasDragged = false;
 		m_lastInsertX = 0.0;
 		m_lastInsertY = 0.0;
 
@@ -100,7 +103,7 @@ namespace TilesEditor
 			}
 		}
 
-		world->addUndoCommand(new CommandPutTiles(world, this->getX(), this->getY(), layer, &oldTiles, m_tilemap));
+		world->addUndoCommand(new CommandPutTiles(world, this->getX(), this->getY(), layer, &oldTiles, m_tilemap, m_applyNewTranslucency));
 		m_hasInserted = true;
 		m_lastInsertX = getX();
 		m_lastInsertY = getY();
@@ -144,7 +147,7 @@ namespace TilesEditor
 			QString line = "";
 			for (int x = 0; x < m_tilemap->getHCount(); ++x)
 			{
-				auto tile = getTile(x, y);
+				unsigned int tile = getTile(x, y);
 				QString tileString = "";
 				do {
 					tileString = base64[tile & 0x3F] + tileString;
@@ -172,12 +175,32 @@ namespace TilesEditor
 
 	void TileSelection::clearSelection(IWorld* world)
 	{
-		m_cleared = true;
+		m_cleared = true;				
+		if (m_selectionLayer != NO_LAYER)
+		{
+			//On first move, clear the tiles
+			world->addUndoCommand(new CommandDeleteTiles(world, getX(), getY(), m_selectionLayer, getTilemap(), world->getDefaultTile()));
+		}
 	}
 
 	void TileSelection::drag(double x, double y, bool snap, double snapX, double snapY, IWorld* world)
 	{
+		auto oldX = getX();
+		auto oldY = getY();
 		AbstractSelection::drag(x, y, true, std::ceil(snapX / 16.0) * 16.0, std::ceil(snapY / 16.0) * 16.0, world);
+
+		if (!m_hasDragged)
+		{
+			if (oldX != getX() || oldY != getY())
+			{
+				if (m_selectionLayer != NO_LAYER)
+				{
+					//On first move, clear the tiles
+					world->addUndoCommand(new CommandDeleteTiles(world, oldX, oldY, m_selectionLayer, getTilemap(), world->getDefaultTile()));
+				}
+				m_hasDragged = true;
+			}
+		}
 	}
 
 	void TileSelection::setDragOffset(double x, double y, bool snap, double snapX, double snapY)

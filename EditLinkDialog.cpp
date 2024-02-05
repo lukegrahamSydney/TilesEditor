@@ -19,6 +19,7 @@ namespace TilesEditor
 			m_link->setY(ui.yText->text().toDouble() * m_link->getUnitHeight());
 			m_link->setWidth(ui.widthText->text().toInt() * m_link->getUnitWidth());
 			m_link->setHeight(ui.heightText->text().toInt() * m_link->getUnitHeight());
+			m_link->setNextLayer(ui.nextLayerLineEdit->text().toInt());
 
 			m_world->updateMovedEntity(m_link);
 
@@ -78,6 +79,7 @@ namespace TilesEditor
 		ui.nextLevelText->setText(link->getNextLevel());
 		ui.nextXText->setText(link->getNextX());
 		ui.nextYText->setText(link->getNextY());
+		ui.nextLayerLineEdit->setText(QString::number(link->getNextLayer()));
 
 		ui.xText->setText(QString::number(std::floor((link->getX() / link->getUnitWidth()) * 100.0) / 100.0));
 		ui.yText->setText(QString::number(std::floor((link->getY() / link->getUnitHeight()) * 100.0) / 100.0));
@@ -95,7 +97,7 @@ namespace TilesEditor
 		connect(ui.nextLevelText, &QLineEdit::textEdited, this, &EditLinkDialog::textEdited);
 		connect(ui.nextXText, &QLineEdit::textEdited, this, &EditLinkDialog::textEdited);
 		connect(ui.nextYText, &QLineEdit::textEdited, this, &EditLinkDialog::textEdited);
-
+		connect(ui.nextLayerLineEdit, &QLineEdit::textEdited, this, &EditLinkDialog::textEdited);
 		connect(ui.deleteButton, &QPushButton::pressed, this, &EditLinkDialog::deletePressed);
 		this->setFixedSize(this->size());
 

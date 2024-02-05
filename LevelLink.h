@@ -16,6 +16,7 @@ namespace TilesEditor
 		QString m_nextX;
 		QString m_nextY;
 
+		int m_nextLayer;
 		int m_width;
 		int m_height;
 
@@ -28,10 +29,11 @@ namespace TilesEditor
 		void setNextLevel(const QString& nextLevel);
 		void setNextX(const QString& nextX);
 		void setNextY(const QString& nextY);
-
+		void setNextLayer(int layer);
 		const QString& getNextLevel() const { return m_nextLevel; }
 		const QString& getNextX() const { return m_nextX; }
 		const QString& getNextY() const { return m_nextY; }
+		int getNextLayer() const { return m_nextLayer; }
 
 		LevelEntityType getEntityType() const override { return LevelEntityType::ENTITY_LINK; }
 

@@ -19,8 +19,8 @@ namespace TilesEditor
 	{
 		if (snap)
 		{
-			m_x = (std::floor(x / snapX) * snapX) - m_dragOffsetX;
-			m_y = (std::floor(y / snapY) * snapY) - m_dragOffsetY;
+			m_x = (std::round(x / snapX) * snapX) - m_dragOffsetX;
+			m_y = (std::round(y / snapY) * snapY) - m_dragOffsetY;
 		}
 		else {
 			m_x = x - m_dragOffsetX;

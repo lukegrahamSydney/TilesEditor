@@ -245,6 +245,9 @@
           <height>16</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Double click to clear default tile</string>
+        </property>
        </widget>
       </item>
      </layout>

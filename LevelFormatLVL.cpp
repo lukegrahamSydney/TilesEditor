@@ -36,8 +36,8 @@ namespace TilesEditor
                     level->setTilesetName(jsonGetChildString(jsonRoot, "tileset", ""));
                     level->setTilesetImageName(jsonGetChildString(jsonRoot, "tilesetImage", ""));
 
-                    level->setUnitWidth(1);
-                    level->setUnitHeight(1);
+                    level->setUnitWidth(16);
+                    level->setUnitHeight(16);
 
 
                     auto jsonLayers = cJSON_GetObjectItem(jsonRoot, "tileLayers");
@@ -229,7 +229,7 @@ namespace TilesEditor
                                 static const QString base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
                                 QString tileString;
-                                int tile = tilemap->getTile(left, top);
+                                unsigned int tile = (unsigned)tilemap->getTile(left, top);
 
                                 do {
 
@@ -357,7 +357,7 @@ namespace TilesEditor
 
     void LevelFormatLVL::applyFormat(Level* level)
     {
-        level->setUnitWidth(1);
-        level->setUnitHeight(1);
+        level->setUnitWidth(16);
+        level->setUnitHeight(16);
     }
 };

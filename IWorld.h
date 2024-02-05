@@ -51,9 +51,11 @@ namespace TilesEditor
 		virtual int getWidth() const = 0;
 		virtual int getHeight() const = 0;
 
+		virtual int getTileTranslucency() const = 0;
+		virtual int getDefaultTile() const = 0;
 		virtual Image* getTilesetImage() = 0;
 		virtual void getTiles(double x, double y, int layer, Tilemap* output) = 0;
-		virtual void putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible) = 0;
+		virtual void putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible, bool applyTranslucency) = 0;
 		virtual void deleteTiles(double x, double y, int layer, int hcount, int vcount, int replacementTile) = 0;
 		virtual void floodFillPattern(double x, double y, int layer, const Tilemap* pattern, QList<TileInfo>* outputNodes = nullptr) = 0;
 		virtual void addUndoCommand(QUndoCommand* command) = 0;

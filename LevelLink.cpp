@@ -13,7 +13,7 @@ namespace TilesEditor
 		m_width = width;
 		m_height = height;
 		m_possibleEdgeLink = possibleEdgeLink;
-
+		m_nextLayer = 0;
 	}
 
 	LevelLink::LevelLink(IWorld* world, cJSON* json):
@@ -37,6 +37,11 @@ namespace TilesEditor
 		m_nextY = nextY;
 	}
 
+	void LevelLink::setNextLayer(int layer)
+	{
+		m_nextLayer = layer;
+	}
+
 	cJSON* LevelLink::serializeJSON(bool useLocalCoordinates)
 	{
 		auto json = cJSON_CreateObject();
@@ -51,12 +56,13 @@ namespace TilesEditor
 			cJSON_AddNumberToObject(json, "x", getX());
 			cJSON_AddNumberToObject(json, "y", getY());
 		}
-
+		cJSON_AddNumberToObject(json, "layer", getLayerIndex());
 		cJSON_AddNumberToObject(json, "width", getWidth());
 		cJSON_AddNumberToObject(json, "height", getHeight());
 		cJSON_AddStringToObject(json, "nextLevel", getNextLevel().toLocal8Bit().data());
 		cJSON_AddStringToObject(json, "nextX", getNextX().toLocal8Bit().data());
 		cJSON_AddStringToObject(json, "nextY", getNextY().toLocal8Bit().data());
+		cJSON_AddNumberToObject(json, "nextLayer", getNextLayer());
 		return json;
 	}
 
@@ -64,13 +70,14 @@ namespace TilesEditor
 	{
 		setX(jsonGetChildDouble(json, "x"));
 		setY(jsonGetChildDouble(json, "y"));
-
+		setLayerIndex(jsonGetChildInt(json, "layer"));
 		setWidth(jsonGetChildInt(json, "width"));
 		setHeight(jsonGetChildInt(json, "height"));
 
 		setNextLevel(jsonGetChildString(json, "nextLevel"));
 		setNextX(jsonGetChildString(json, "nextX"));
 		setNextY(jsonGetChildString(json, "nextY"));
+		setNextLayer(jsonGetChildInt(json, "nextLayer"));
 	}
 
 
@@ -106,6 +113,7 @@ namespace TilesEditor
 		link->m_nextLevel = this->m_nextLevel;
 		link->m_nextX = this->m_nextX;
 		link->m_nextY = this->m_nextY;
+		link->setLayerIndex(getLayerIndex());
 		return link;
 	}
 

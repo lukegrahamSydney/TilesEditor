@@ -271,7 +271,7 @@ namespace TilesEditor
         return true;
     }
 
-    void ObjectSelection::deserializeJSON(cJSON* json, IWorld* world)
+    void ObjectSelection::deserializeJSON(cJSON* json, IWorld* world, int newLayer)
     {
         auto x = jsonGetChildInt(json, "x");
         auto y = jsonGetChildInt(json, "y");
@@ -295,6 +295,7 @@ namespace TilesEditor
 
                         entity->setX(getX() + offsetX);
                         entity->setY(getY() + offsetY);
+                        entity->setLayerIndex(newLayer);
                         addObject(entity);
 
                         entity->loadResources();

@@ -102,7 +102,7 @@ namespace TilesEditor
 		void deleteEdgeLinksClicked(bool checked);
 		void trimScriptEndingsClicked(bool checked);
 		void trimSignEndingsClicked(bool checked);
-
+		void tileIconMouseDoubleClick(QMouseEvent* event);
 		void gridValueChanged(int);
 	
 		//When the selector goes (he we will disable the button to create link/sign)
@@ -197,6 +197,7 @@ namespace TilesEditor
 		double getSnapX() const;
 		double getSnapY() const;
 
+
 	public:
 
 		void init(QStandardItemModel* tilesetList, TileGroupListModel* tileGroupList);
@@ -238,7 +239,7 @@ namespace TilesEditor
 
 
 		void getTiles(double x, double y, int layer, Tilemap* output) override;
-		void putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible) override;
+		void putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible, bool applyTranslucency) override;
 		void deleteTiles(double x, double y, int layer, int hcount, int vcount, int replacementTile) override;
 
 		void floodFillPattern(double x, double y, int layer, const Tilemap* pattern, QList<TileInfo>* outputNodes = nullptr) override;
@@ -247,6 +248,8 @@ namespace TilesEditor
 		int getUnitHeight() const override;
 		int getWidth() const override;
 		int getHeight() const override;
+		int getTileTranslucency() const override;
+		int getDefaultTile() const override;
 		Image* getTilesetImage() override { return m_tilesetImage; }
 
 		void doPaste(bool centerScreen);

@@ -166,7 +166,7 @@ namespace TilesEditor
 			cJSON_AddNumberToObject(json, "x", getX());
 			cJSON_AddNumberToObject(json, "y", getY());
 		}
-
+		cJSON_AddNumberToObject(json, "layer", getLayerIndex());
 		cJSON_AddStringToObject(json, "code", getCode().toLocal8Bit().data());
 
 
@@ -178,7 +178,7 @@ namespace TilesEditor
 		
 		setX(jsonGetChildDouble(json, "x"));
 		setY(jsonGetChildDouble(json, "y"));
-
+		setLayerIndex(jsonGetChildInt(json, "layer"));
 		setWidth(48);
 		setHeight(48);
 		setImageName(jsonGetChildString(json, "image"));

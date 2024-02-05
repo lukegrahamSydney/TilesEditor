@@ -36,11 +36,12 @@ namespace TilesEditor
 		double m_x;
 		double m_y;
 		int m_layer;
+		bool m_applyNewTranslucency;
 		Tilemap* m_oldTiles;
 		Tilemap* m_newTiles;
 
 	public:
-		CommandPutTiles(IWorld* world, double x, double y, int layer, const Tilemap* oldTiles, const Tilemap* newTiles);
+		CommandPutTiles(IWorld* world, double x, double y, int layer, const Tilemap* oldTiles, const Tilemap* newTiles, bool applyNewTranslucency);
 		~CommandPutTiles();
 		void undo() override;
 		void redo() override;

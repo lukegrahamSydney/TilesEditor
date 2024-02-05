@@ -23,7 +23,7 @@ namespace TilesEditor
 			QString line = "";
 			for (int x = 0; x < this->getHCount(); ++x)
 			{
-				auto tile = getTile(x, y);
+				unsigned int tile = getTile(x, y);
 				QString tileString = "";
 				do {
 					tileString = base64[tile & 0x3F] + tileString;

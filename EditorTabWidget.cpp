@@ -202,6 +202,8 @@ namespace TilesEditor
 		m_graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 		m_graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 		m_graphicsView->setCornerWidget(ui_tilesetsClass.tileIcon);
+
+		connect(ui_tilesetsClass.tileIcon, &TilesEditor::CustomPaintWidget::mouseDoubleClick, this, &EditorTabWidget::tileIconMouseDoubleClick);
 	}
 
 	EditorTabWidget::~EditorTabWidget()
@@ -415,8 +417,20 @@ namespace TilesEditor
 			if (entity->getEntityType() == LevelEntityType::ENTITY_SIGN && !m_showSigns->isChecked())
 				continue;
 
-			entity->loadResources();
-			entity->draw(painter, viewRect);
+			if (m_visibleLayers.find(entity->getLayerIndex()) == m_visibleLayers.end() || m_visibleLayers[entity->getLayerIndex()])
+			{
+				auto fade = m_selectedTilesLayer != entity->getLayerIndex() && ui.fadeLayersButton->isChecked();
+				entity->loadResources();
+
+				if (fade)
+				{
+					painter->setOpacity(0.33);
+					entity->draw(painter, viewRect);
+					painter->setOpacity(1.0);
+				} else entity->draw(painter, viewRect);
+				
+				
+			}
 		}
 
 		if (m_selection != nullptr)
@@ -765,6 +779,17 @@ namespace TilesEditor
 		return 1.0;
 	}
 
+	int EditorTabWidget::getTileTranslucency() const
+	{
+		return ui.tileTranslucency->value();
+	}
+
+	int EditorTabWidget::getDefaultTile() const
+	{
+		return m_defaultTile;
+	}
+
+
 	bool EditorTabWidget::selectingLevel()
 	{
 		if (ui.editLinksButton->isChecked() || ui.editSignsButton->isChecked())
@@ -821,7 +846,7 @@ namespace TilesEditor
 
 			if (hcount * vcount > 0)
 			{
-				auto tileSelection = new TileSelection(selectionRect.getX(), selectionRect.getY(), hcount, vcount);
+				auto tileSelection = new TileSelection(selectionRect.getX(), selectionRect.getY(), hcount, vcount, m_selectedTilesLayer);
 
 				auto levels = getLevelsInRect(selectionRect);
 
@@ -841,7 +866,7 @@ namespace TilesEditor
 
 								if (tilemap->tryGetTile(x + sourceTileX, y + sourceTileY, &tile) && !Tilemap::IsInvisibleTile(tile))
 								{
-									setModified(level);
+									//setModified(level);
 
 
 									tileSelection->setTile(x, y, tile);
@@ -857,7 +882,7 @@ namespace TilesEditor
 
 				setSelection(tileSelection);
 
-				addUndoCommand(new CommandDeleteTiles(this, selectionRect.getX(), selectionRect.getY(), m_selectedTilesLayer, tileSelection->getTilemap(), m_defaultTile));
+				//addUndoCommand(new CommandDeleteTiles(this, selectionRect.getX(), selectionRect.getY(), m_selectedTilesLayer, tileSelection->getTilemap(), m_defaultTile));
 			}
 		}
 	}
@@ -1076,8 +1101,12 @@ namespace TilesEditor
 		for (auto it = entities.rbegin(); it != entities.rend(); ++it)
 		{
 			auto entity = *it;
-			if (!checkAllowedSelect || canSelectObject(entity->getEntityType()))
-				return entity;
+
+			if (entity->getLayerIndex() == m_selectedTilesLayer)
+			{
+				if (!checkAllowedSelect || canSelectObject(entity->getEntityType()))
+					return entity;
+			}
 		}
 
 		return nullptr;
@@ -1106,7 +1135,8 @@ namespace TilesEditor
 			for (auto it = entities.begin(); it != entities.end();)
 			{
 				auto entity = *it;
-				if (canSelectObject(entity->getEntityType())) {
+
+				if (entity->getLayerIndex() == m_selectedTilesLayer && canSelectObject(entity->getEntityType())) {
 					++it;
 				}
 				else {
@@ -1189,8 +1219,8 @@ namespace TilesEditor
 				auto pasteX = centerScreen ? std::floor((viewRect.getCenterX() - (hcount * 16) / 2) / 16.0) * 16.0 : x;
 				auto pasteY = centerScreen ? std::floor((viewRect.getCenterY() - (vcount * 16) / 2) / 16.0) * 16.0 : y;
 
-				auto tileSelection = new TileSelection(pasteX, pasteY, hcount, vcount);
-
+				auto tileSelection = new TileSelection(pasteX, pasteY, hcount, vcount, TileSelection::NO_LAYER);
+				//tileSelection->setApplyTranslucency(true);
 				auto tileArray = cJSON_GetObjectItem(json, "tiles");
 
 				if (tileArray && tileArray->type == cJSON_Array)
@@ -1235,7 +1265,7 @@ namespace TilesEditor
 			{
 				auto selection = new ObjectSelection(centerScreen ? viewRect.getCenterX() : x, centerScreen ? viewRect.getCenterY() : y);
 				selection->setSelectMode(ObjectSelection::SelectMode::MODE_INSERT);
-				selection->deserializeJSON(json, this);
+				selection->deserializeJSON(json, this, m_selectedTilesLayer);
 
 
 				setSelection(selection);
@@ -1477,7 +1507,7 @@ namespace TilesEditor
 
 	}
 
-	void EditorTabWidget::putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible)
+	void EditorTabWidget::putTiles(double x, double y, int layer, Tilemap* input, bool ignoreInvisible, bool applyTranslucency)
 	{
 		Rectangle rect(x, y, input->getWidth(), input->getHeight());
 
@@ -1496,7 +1526,7 @@ namespace TilesEditor
 				{
 					for (int x = 0; x < input->getHCount(); ++x)
 					{
-						int tile = input->getTile(x, y);
+						int tile = applyTranslucency ? Tilemap::ReplaceTranslucency(input->getTile(x, y), this->getTileTranslucency()) :  input->getTile(x, y);
 
 
 						if (!ignoreInvisible || !Tilemap::IsInvisibleTile(tile))
@@ -1539,7 +1569,7 @@ namespace TilesEditor
 							tilemap->setTile(destTileX + x, destTileY + y, invisibleTile);
 							modified = true;
 						}
-						else if(!Tilemap::IsInvisibleTile(replacementTile))
+						else //if(!Tilemap::IsInvisibleTile(replacementTile))
 						{
 							modified = true;
 							tilemap->setTile(destTileX + x, destTileY + y, replacementTile);
@@ -1569,7 +1599,8 @@ namespace TilesEditor
 				{
 					auto hcount = rect.getWidth() / 16;
 					auto vcount = rect.getHeight() / 16;
-					auto tileSelection = new TileSelection(-1000000, -1000000, hcount, vcount);
+					auto tileSelection = new TileSelection(-1000000, -1000000, hcount, vcount, TileSelection::NO_LAYER);
+					tileSelection->setApplyTranslucency(true);
 
 					for (int y = 0; y < vcount; ++y)
 					{
@@ -1635,7 +1666,8 @@ namespace TilesEditor
 			{
 				auto hcount = 1;
 				auto vcount = 1;
-				auto tileSelection = new TileSelection(-1000000, -1000000, hcount, vcount);
+				auto tileSelection = new TileSelection(-1000000, -1000000, hcount, vcount, TileSelection::NO_LAYER);
+				tileSelection->setApplyTranslucency(true);
 
 				auto tileLeft = int(pos.x() / 16);
 				auto tileTop = int(pos.y() / 16);
@@ -1652,6 +1684,7 @@ namespace TilesEditor
 
 				setSelection(tileSelection);
 				m_graphicsView->redraw();
+
 				return;
 			}
 
@@ -1666,6 +1699,35 @@ namespace TilesEditor
 				);
 
 				ui.floodFillPatternButton->setEnabled(hasSelectionTiles());
+
+				auto rect = m_tilesSelector.getSelection();
+				if (rect.intersects(Rectangle(pos.x(), pos.y(), 1, 1)))
+				{
+					auto hcount = rect.getWidth() / 16;
+					auto vcount = rect.getHeight() / 16;
+					auto tileSelection = new TileSelection(-1000000, -1000000, hcount, vcount, TileSelection::NO_LAYER);
+					tileSelection->setApplyTranslucency(true);
+
+					for (int y = 0; y < vcount; ++y)
+					{
+						for (int x = 0; x < hcount; ++x)
+						{
+							auto tileLeft = int(rect.getX() / 16) + x;
+							auto tileTop = int(rect.getY() / 16) + y;
+							auto tileType = m_tileset.getTileType(tileLeft, tileTop);
+
+							auto tile = Tilemap::MakeTile(tileLeft, tileTop, tileType);
+							tileSelection->setTile(x, y, tile);
+						}
+					}
+
+					if (m_tilesetImage)
+						tileSelection->setTilesetImage(m_tilesetImage);
+					tileSelection->setAlternateSelectionMethod(true);
+
+					setSelection(tileSelection);
+					m_graphicsView->redraw();
+				}
 			}
 
 
@@ -1732,7 +1794,8 @@ namespace TilesEditor
 			auto hcount = tileObject->getHCount();
 			auto vcount = tileObject->getVCount();
 
-			auto tileSelection = new TileSelection(-10000, -10000, hcount, vcount);
+			auto tileSelection = new TileSelection(-10000, -10000, hcount, vcount, TileSelection::NO_LAYER);
+			tileSelection->setApplyTranslucency(true);
 
 			for (int y = 0; y < vcount; ++y)
 			{
@@ -2137,7 +2200,7 @@ namespace TilesEditor
 			{
 				auto oldRect = m_selection->getDrawRect();
 
-				m_selection->drag(pos.x() - m_selection->getWidth() / 2, pos.y() - m_selection->getHeight() / 2,
+				m_selection->drag(pos.x() - m_selection->getWidth() / 2.0, pos.y() - m_selection->getHeight() / 2.0,
 					true, getSnapX(), getSnapY(), this);
 
 				auto newRect = m_selection->getDrawRect();
@@ -2535,6 +2598,7 @@ namespace TilesEditor
 		{
 			auto link = new LevelLink(this, rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), false);
 			link->setLevel(rootLinkLevel);
+			link->setLayerIndex(m_selectedTilesLayer);
 
 			EditLinkDialog frm(link, this, false);
 			if (frm.exec() == QDialog::Accepted)
@@ -2575,7 +2639,7 @@ namespace TilesEditor
 		{
 			auto sign = new LevelSign(this, rect.getX(), rect.getY(), 32, 16);
 			sign->setLevel(rootSignLevel);
-
+			sign->setLayerIndex(m_selectedTilesLayer);
 			addUndoCommand(new CommandAddEntity(this, sign));
 
 			EditSignsDialog frm(rootSignLevel, this, sign);
@@ -3044,7 +3108,7 @@ namespace TilesEditor
 		auto selection = new ObjectSelection(0, 0);
 
 		auto npc = new LevelNPC(this, 0, 0, 48, 48);
-		
+		npc->setLayerIndex(m_selectedTilesLayer);
 		npc->setImageName("");
 		selection->addObject(npc);
 		selection->setAlternateSelectionMethod(true);
@@ -3058,6 +3122,7 @@ namespace TilesEditor
 		auto selection = new ObjectSelection(0, 0);
 
 		auto chest = new LevelChest(this, 0, 0, "greenrupee", -1);
+		chest->setLayerIndex(m_selectedTilesLayer);
 		selection->addObject(chest);
 		selection->setAlternateSelectionMethod(true);
 		selection->setSelectMode(ObjectSelection::SelectMode::MODE_INSERT);
@@ -3069,8 +3134,9 @@ namespace TilesEditor
 	{
 		auto selection = new ObjectSelection(0, 0);
 
-		auto chest = new LevelGraalBaddy(this, 0.0, 0.0, 0);
-		selection->addObject(chest);
+		auto baddy = new LevelGraalBaddy(this, 0.0, 0.0, 0);
+		baddy->setLayerIndex(m_selectedTilesLayer);
+		selection->addObject(baddy);
 		selection->setAlternateSelectionMethod(true);
 		selection->setSelectMode(ObjectSelection::SelectMode::MODE_INSERT);
 		setSelection(selection);
@@ -3247,6 +3313,11 @@ namespace TilesEditor
 				}
 			}
 		}
+	}
+
+	void EditorTabWidget::tileIconMouseDoubleClick(QMouseEvent* event)
+	{
+		setDefaultTile(Tilemap::MakeInvisibleTile(0));
 	}
 
 	void EditorTabWidget::gridValueChanged(int)

@@ -15,10 +15,13 @@ namespace TilesEditor
 
     signals:
         void paint(QPainter* painter, const QRectF& rect);
+        void mouseDoubleClick(QMouseEvent* event);
 
     public:
         CustomPaintWidget(QWidget* parent) :
             QWidget(parent) {}
+
+
     protected:
         void paintEvent(QPaintEvent* p) override
         { 
@@ -27,6 +30,8 @@ namespace TilesEditor
 
             emit paint(&painter, rect);
         }
+
+        void mouseDoubleClickEvent(QMouseEvent* event) override;
     };
 };
 #endif

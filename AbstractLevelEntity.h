@@ -32,6 +32,7 @@ namespace TilesEditor
 		Rectangle m_startRect;
 
 		Level* m_level;
+		int m_tileLayer;
 		double m_dragOffsetX;
 		double m_dragOffsetY;
 		double m_microDepth;
@@ -48,6 +49,7 @@ namespace TilesEditor
 			m_x = x;
 			m_y = y;
 			m_level = nullptr;
+			m_tileLayer = 0;
 
 			m_dragOffsetX = m_dragOffsetY = 0.0;
 			m_microDepth = nextMicroDepth;
@@ -89,6 +91,14 @@ namespace TilesEditor
 		virtual void setY(double val) {
 			m_y = val;
 
+		}
+
+		void setLayerIndex(int layer) {
+			m_tileLayer = layer;
+		}
+
+		int getLayerIndex() const {
+			return m_tileLayer;
 		}
 
 		virtual QString toString() const { return ""; }

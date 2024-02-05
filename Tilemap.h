@@ -102,6 +102,9 @@ namespace TilesEditor
 			return retval;
 		}
 
+		static int ReplaceTranslucency(int tile, int transValue) {
+			return ((transValue & 0xF) << 28) | (tile & 0xFFFFFFF);
+		}
 		static int MakeInvisibleTile(int type) {
 			return MakeTile(0x3FF, 0x3FF, type, 0);
 		}

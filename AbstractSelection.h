@@ -49,7 +49,7 @@ namespace TilesEditor
 
 		virtual void drag(double x, double y, bool snap, double snapX, double snapY, IWorld* world);
 		virtual bool canResize() const { return false; }
-		virtual void deserializeJSON(cJSON* json, IWorld* world) {};
+		virtual void deserializeJSON(cJSON* json, IWorld* world, int newLayer) {};
 		void setAlternateSelectionMethod(bool val) { m_alternateSelectionMethod = val; }
 		bool getAlternateSelectionMethod() const { return m_alternateSelectionMethod; }
 

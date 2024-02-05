@@ -9,13 +9,17 @@ namespace TilesEditor
 	class TileSelection:
 		public AbstractSelection
 	{
+	public:
+		static const int NO_LAYER = -4624876;
 	private:
 		Image* m_tilesetImage;
 
 		bool m_cleared;
+		bool m_applyNewTranslucency;
 		int m_width;
 		int m_height;
-
+		int m_selectionLayer;
+		bool m_hasDragged;
 		bool m_hasInserted;
 		double m_lastInsertX;
 		double m_lastInsertY;
@@ -30,7 +34,7 @@ namespace TilesEditor
 
 
 	public:
-		TileSelection(double x, double y, int hcount, int vcount);
+		TileSelection(double x, double y, int hcount, int vcount, int layer);
 		~TileSelection();
 
 		Tilemap* getTilemap() { return m_tilemap; }
@@ -55,7 +59,7 @@ namespace TilesEditor
 		bool canResize() const override { return true; }
 		void drag(double x, double y, bool snap, double snapX, double snapY, IWorld* world) override;
 		void setDragOffset(double x, double y, bool snap, double snapX, double snapY) override;
-
+		void setApplyTranslucency(bool value) { m_applyNewTranslucency = value; }
 		void beginResize(int edges, IWorld* world) override;
 		int getResizeEdge(int mouseX, int mouseY) override;
 		void updateResize(int mouseX, int mouseY, bool snap, double snapX, double snapY, IWorld* world) override;

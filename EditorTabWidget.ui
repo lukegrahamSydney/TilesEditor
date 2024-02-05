@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>955</width>
+    <width>817</width>
     <height>448</height>
    </rect>
   </property>
@@ -356,7 +356,7 @@
          <number>300</number>
         </property>
         <property name="autoRepeatInterval">
-         <number>30</number>
+         <number>5</number>
         </property>
         <property name="autoRaise">
          <bool>true</bool>
@@ -795,6 +795,20 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Tile Translucency:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="tileTranslucency">
+        <property name="maximum">
+         <number>15</number>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

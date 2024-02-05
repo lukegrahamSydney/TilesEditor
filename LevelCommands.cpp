@@ -22,7 +22,7 @@ namespace TilesEditor
 
 	void CommandDeleteTiles::undo()
 	{
-		m_world->putTiles(m_x, m_y, m_layer, m_oldTiles, true);
+		m_world->putTiles(m_x, m_y, m_layer, m_oldTiles, true, false);
 	}
 
 	void CommandDeleteTiles::redo()
@@ -32,9 +32,10 @@ namespace TilesEditor
 
 
 	//Put Tiles
-	CommandPutTiles::CommandPutTiles(IWorld* world, double x, double y, int layer, const Tilemap* oldTiles, const Tilemap* newTiles)
+	CommandPutTiles::CommandPutTiles(IWorld* world, double x, double y, int layer, const Tilemap* oldTiles, const Tilemap* newTiles, bool applyNewTranslucency)
 	{
 		m_world = world;
+		m_applyNewTranslucency = applyNewTranslucency;
 		m_x = x;
 		m_y = y;
 		m_layer = layer;
@@ -50,12 +51,12 @@ namespace TilesEditor
 
 	void CommandPutTiles::undo()
 	{
-		m_world->putTiles(m_x, m_y, m_layer, m_oldTiles, false);
+		m_world->putTiles(m_x, m_y, m_layer, m_oldTiles, false, false);
 	}
 
 	void CommandPutTiles::redo()
 	{
-		m_world->putTiles(m_x, m_y, m_layer, m_newTiles, true);
+		m_world->putTiles(m_x, m_y, m_layer, m_newTiles, true, m_applyNewTranslucency);
 	}
 
 	

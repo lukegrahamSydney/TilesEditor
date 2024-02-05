@@ -105,12 +105,17 @@ namespace TilesEditor
                             else if ((y == 0 || y == 63 * 16) && height == 16)
                                 possibleEdgeLink = true;
 
-
+                            auto nextLayer = wordCount >= 9 ? words[8].toInt() : 0;
+                            auto layerIndex = wordCount >= 10 ? words[9].toInt() : 0;
+                            
                             auto levelLink = new LevelLink(level->getWorld(), level->getX() + x, level->getY() + y, width, height, possibleEdgeLink);
+                            
                             levelLink->setLevel(level);
                             levelLink->setNextLevel(words[1]);
                             levelLink->setNextX(nextX);
                             levelLink->setNextY(nextY);
+                            levelLink->setNextLayer(nextLayer);
+                            levelLink->setLayerIndex(layerIndex);
 
                             level->addObject(levelLink);
                         }
@@ -121,21 +126,25 @@ namespace TilesEditor
                             auto x = words[1].toDouble() * 16;
                             auto y = words[2].toDouble() * 16;
 
-                            auto signIndex = words[4].toInt();
 
+                            auto signIndex = words[4].toInt();
+                            auto layerIndex = wordCount >= 6 ? words[5].toInt() : 0;
                             auto chest = new LevelChest(level->getWorld(), x + level->getX(), y + level->getY(), itemName, signIndex);
+                            chest->setLayerIndex(layerIndex);
                             chest->setLevel(level);
 
                             level->addObject(chest);
 
                         }
-                        else if (words[0] == "BADDY" && wordCount >= 3)
+                        else if (words[0] == "BADDY" && wordCount >= 4)
                         {
                             auto x = words[1].toDouble() * 16;
                             auto y = words[2].toDouble() * 16;
                             auto type = words[3].toInt();
+                            auto layerIndex = wordCount >= 5 ? words[4].toInt() : 0;
 
                             auto baddy = new LevelGraalBaddy(level->getWorld(), x + level->getX(), y + level->getY(), type);
+                            baddy->setLayerIndex(layerIndex);
                             baddy->setLevel(level);
 
                             int verseIndex = 0;
@@ -155,6 +164,9 @@ namespace TilesEditor
                                 level->getY() + words[2].toDouble() * 16,
                                 32,
                                 16);
+
+                            auto layerIndex = wordCount >= 4 ? words[3].toInt() : 0;
+                            sign->setLayerIndex(layerIndex);
 
                             sign->setLevel(level);
 
@@ -176,6 +188,8 @@ namespace TilesEditor
                             double x = words[2].toDouble() * 16.0,
                                 y = words[3].toDouble() * 16.0;
 
+                            auto layerIndex = wordCount >= 5 ? words[4].toInt() : 0;
+
                             int width = 48, height = 48;
 
                             for (++i; i < lineCount && lines[i] != "NPCEND"; ++i)
@@ -186,7 +200,7 @@ namespace TilesEditor
 
                             auto levelNPC = new LevelNPC(level->getWorld(), x + level->getX(), y + level->getY(), width, height);
                             levelNPC->setLevel(level);
-
+                            levelNPC->setLayerIndex(layerIndex);
                             levelNPC->setImageName(image);
                             levelNPC->setCode(code);
 
@@ -264,12 +278,22 @@ namespace TilesEditor
 
         for (auto link : level->getLinks())
         {
-            stream << "LINK " << link->getNextLevel() << " " << int((link->getX() - level->getX()) / 16.0) << " " << int((link->getY() - level->getY()) / 16.0) << " " << link->getWidth() / 16 << " " << link->getHeight() / 16 << " " << link->getNextX() << " " << link->getNextY() << Qt::endl;
+            stream << "LINK " << link->getNextLevel() << " " << int((link->getX() - level->getX()) / 16.0) << " " << int((link->getY() - level->getY()) / 16.0) << " " << link->getWidth() / 16 << " " << link->getHeight() / 16 << " " << link->getNextX() << " " << link->getNextY();
+            
+            if (link->getNextLayer() != 0 || link->getLayerIndex() != 0)
+                stream << " " << link->getNextLayer() << " " << link->getLayerIndex();
+
+            stream << Qt::endl;
         }
 
         for (auto sign : level->getSigns())
         {
-            stream << "SIGN " << int((sign->getX() - level->getX()) / 16.0) << " " << int((sign->getY() - level->getY()) / 16.0) << Qt::endl;
+            stream << "SIGN " << int((sign->getX() - level->getX()) / 16.0) << " " << int((sign->getY() - level->getY()) / 16.0);
+            if (sign->getLayerIndex() != 0)
+                stream << " " << sign->getLayerIndex();
+
+            stream << Qt::endl;
+
             stream << sign->getText();
 
             if (!sign->getText().endsWith('\n'))
@@ -291,7 +315,12 @@ namespace TilesEditor
                 if (imageName.isEmpty())
                     imageName = "-";
 
-                stream << "NPC " << imageName << " " << std::floor(((npc->getX() - level->getX()) / 16.0) * 1000.0) / 1000.0 << " " << std::floor(((npc->getY() - level->getY()) / 16.0) * 1000.0) / 1000.0 << Qt::endl;
+
+                stream << "NPC " << imageName << " " << std::floor(((npc->getX() - level->getX()) / 16.0) * 1000.0) / 1000.0 << " " << std::floor(((npc->getY() - level->getY()) / 16.0) * 1000.0) / 1000.0;
+                if (npc->getLayerIndex() != 0)
+                    stream << " " << npc->getLayerIndex();
+
+                stream << Qt::endl;
 
                 stream << npc->getCode();
 
@@ -305,7 +334,11 @@ namespace TilesEditor
             {
                 auto chest = static_cast<LevelChest*>(obj);
 
-                stream << "CHEST " << int((chest->getX() - level->getX()) / 16.0) << " " << int((chest->getY() - level->getY()) / 16.0) << " " << chest->getItemName() << " " << chest->getSignIndex() << Qt::endl;
+                stream << "CHEST " << int((chest->getX() - level->getX()) / 16.0) << " " << int((chest->getY() - level->getY()) / 16.0) << " " << chest->getItemName() << " " << chest->getSignIndex();
+                if (chest->getLayerIndex() != 0)
+                    stream << " " << chest->getLayerIndex();
+
+                stream << Qt::endl;
             }
             break;
 
@@ -313,7 +346,11 @@ namespace TilesEditor
             {
                 auto baddy = static_cast<LevelGraalBaddy*>(obj);
 
-                stream << "BADDY " << int((baddy->getX() - level->getX()) / 16.0) << " " << int((baddy->getY() - level->getY()) / 16.0) << " " << baddy->getBaddyType() << Qt::endl;
+                stream << "BADDY " << int((baddy->getX() - level->getX()) / 16.0) << " " << int((baddy->getY() - level->getY()) / 16.0) << " " << baddy->getBaddyType();
+                if (baddy->getLayerIndex() != 0)
+                    stream << " " << baddy->getLayerIndex();
+
+                stream << Qt::endl;
                 for (auto i = 0; i < 3; ++i)
                 {
                     stream << baddy->getBaddyVerse(i) << Qt::endl;

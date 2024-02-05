@@ -34,7 +34,7 @@ namespace TilesEditor
 		int getHeight() const override;
 		bool canResize() const override;
 		bool clipboardCopy() override;
-		void deserializeJSON(cJSON* json, IWorld* world) override;
+		void deserializeJSON(cJSON* json, IWorld* world, int newLayer) override;
 
 		AbstractLevelEntity* getEntityAtPoint(double x, double y);
 		SelectionType getSelectionType() const override { return SelectionType::SELECTION_OBJECTS; };

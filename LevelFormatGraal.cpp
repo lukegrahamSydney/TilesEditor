@@ -613,5 +613,9 @@ namespace TilesEditor
             if(layer->getLayerIndex() != 0)
                 level->deleteTileLayer(layer->getLayerIndex());
         }
+
+        auto& objects = level->getObjects();
+        for (auto object : objects)
+            object->setLayerIndex(0);
     }
 };
