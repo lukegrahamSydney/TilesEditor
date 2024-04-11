@@ -21,6 +21,8 @@ namespace TilesEditor
 		void imageBrowsePressed();
 		void positionChanged();
 		void deletePressed();
+		void convertPressed();
+		void revertPressed();
 		void textEdited(const QString& text);
 
 	private:

@@ -132,17 +132,30 @@ namespace TilesEditor
 			auto match = m_imgPartExpression.match(code);
 			if (match.hasMatch())
 			{
-				auto imageLeft = match.captured(2).toInt();
-				auto imageTop = match.captured(3).toInt();
-				auto imageWidth = match.captured(4).toInt();
-				auto imageHeight = match.captured(5).toInt();
-				setImageShape(imageLeft, imageTop, imageWidth, imageHeight);
+				auto imageName = match.captured(1);
+
+
+				if (imageName.trimmed() == m_imageName)
+				{
+					auto imageLeft = match.captured(2).toInt();
+					auto imageTop = match.captured(3).toInt();
+					auto imageWidth = match.captured(4).toInt();
+					auto imageHeight = match.captured(5).toInt();
+
+
+					setImageShape(imageLeft, imageTop, imageWidth, imageHeight);
+				}
 			}
 			else if (m_useImageShape) {
 				m_useImageShape = false;
 				getWorld()->updateEntityRect(this);
 			}
 		}
+	}
+
+	void LevelNPC::setCodeRaw(const QString& code)
+	{
+		m_code = code;
 	}
 
 	void LevelNPC::openEditor()

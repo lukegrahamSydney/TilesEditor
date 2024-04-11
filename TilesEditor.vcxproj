@@ -57,10 +57,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <IncludePath>.\;.\QCodeEditor\include;.\QCodeEditor\include\KGL\Widgets;$(IncludePath)</IncludePath>
+    <IncludePath>.\;.\QCodeEditor\include;.\QCodeEditor\include\KGL\Widgets;.\gs1\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <IncludePath>.\;.\QCodeEditor\include;.\QCodeEditor\include\KGL\Widgets;$(IncludePath)</IncludePath>
+    <IncludePath>.\;.\QCodeEditor\include;.\QCodeEditor\include\KGL\Widgets;.\gs1\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -106,6 +106,7 @@
     <ClCompile Include="AboutDialog.cpp" />
     <ClCompile Include="AbstractLevelEntity.cpp" />
     <ClCompile Include="AbstractSelection.cpp" />
+    <ClCompile Include="ByteStream.cpp" />
     <ClCompile Include="cJSON\cJSON.c" />
     <ClCompile Include="CustomPaintWidget.cpp" />
     <ClCompile Include="EditAnonymousNPC.cpp" />
@@ -120,6 +121,23 @@
     <ClCompile Include="FileFormatManager.cpp" />
     <ClCompile Include="FixMapNamesDialog.cpp" />
     <ClCompile Include="GraphicsView.cpp" />
+    <ClCompile Include="gs1\GS1Converter.cpp" />
+    <ClCompile Include="gs1\src\gs1common\ByteBuffer.cpp" />
+    <ClCompile Include="gs1\src\gs1common\GValue.cpp" />
+    <ClCompile Include="gs1\src\gs1common\Log.cpp" />
+    <ClCompile Include="gs1\src\gs1common\Operation.cpp" />
+    <ClCompile Include="gs1\src\gs1common\Util.cpp" />
+    <ClCompile Include="gs1\src\gs1compiler\BytecodeBody.cpp" />
+    <ClCompile Include="gs1\src\gs1compiler\BytecodeHeader.cpp" />
+    <ClCompile Include="gs1\src\gs1compiler\CompileVisitor.cpp" />
+    <ClCompile Include="gs1\src\gs1compiler\DepthVisitor.cpp" />
+    <ClCompile Include="gs1\src\gs1parse\Diag.cpp" />
+    <ClCompile Include="gs1\src\gs1parse\Lexer.cpp" />
+    <ClCompile Include="gs1\src\gs1parse\Parser.cpp" />
+    <ClCompile Include="gs1\src\gs1parse\Source.cpp" />
+    <ClCompile Include="gs1\src\gs1parse\SyntaxTree.cpp" />
+    <ClCompile Include="gs1\src\gs1parse\SyntaxTreeVisitor.cpp" />
+    <ClCompile Include="gs1\src\gs1parse\Token.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImageDimensions.cpp" />
     <ClCompile Include="Level.cpp" />
@@ -203,6 +221,7 @@
     <QtMoc Include="CustomPaintWidget.h" />
     <QtMoc Include="EditExternalNPC.h" />
     <ClInclude Include="AbstractSpatialGridItem.h" />
+    <ClInclude Include="ByteStream.h" />
     <ClInclude Include="cJSON\cJSON.h" />
     <ClInclude Include="cJSON\JsonHelper.h" />
     <QtMoc Include="EditTilesetDialog.h" />
@@ -211,6 +230,7 @@
     <QtMoc Include="FixMapNamesDialog.h" />
     <QtMoc Include="ExternalNPCInspector.h" />
     <ClInclude Include="DarkTitleBar.h" />
+    <ClInclude Include="gs1\GS1Converter.h" />
     <ClInclude Include="IFileRequester.h" />
     <ClInclude Include="ILevelFormat.h" />
     <ClInclude Include="LevelChest.h" />

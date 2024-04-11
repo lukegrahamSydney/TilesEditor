@@ -32,6 +32,7 @@ namespace TilesEditor
 		void accept() override;
 
 	private:
+		QStringList		m_filters;
 		QStandardItemModel* m_tilesetsModel;
 		Ui::LevelConverterClass ui;
 		QStringList m_files;

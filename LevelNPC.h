@@ -47,6 +47,7 @@ namespace TilesEditor
 		void setImageName(const QString& name);
 		const QString& getImageName() const { return m_imageName; }
 		void setCode(const QString& code);
+		void setCodeRaw(const QString& code);
 		const QString& getCode() const { return m_code; }
 		int getWidth() const override { return m_width; }
 		int getHeight() const override { return m_height; }

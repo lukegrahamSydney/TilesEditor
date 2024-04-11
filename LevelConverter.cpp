@@ -6,7 +6,7 @@
 #include "MainFileSystem.h"
 #include "FileFormatManager.h"
 #include "DarkTitleBar.h"
-
+#include "gs1/GS1Converter.h"
 
 namespace TilesEditor
 {
@@ -82,6 +82,68 @@ namespace TilesEditor
 				}
 			}
 
+			//Go through NPCs and change any code references to our old level names. Change to the new one.
+			for (auto object : level->getObjects())
+			{
+				if (object->getEntityType() == LevelEntityType::ENTITY_NPC)
+				{
+					auto npc = static_cast<LevelNPC*>(object);
+
+					auto start = 0;
+					auto code = npc->getCode();
+					bool changed = false;
+					for (auto& filter : m_filters)
+					{
+						
+						for (auto pos = code.indexOf(filter, start); pos >= 0; pos = code.indexOf(filter, start))
+						{
+							start = pos + 1;
+							for (auto i = pos - 1; i >= 0; --i)
+							{
+								
+								if (!code[i].isLetterOrNumber() && code[i] != '_' && code[i] != '-')
+								{
+									auto startPos = i + 1;
+									auto length = pos - startPos + filter.length();
+
+									auto fileName = code.mid(startPos, length);
+
+									if (m_levelNames.contains(fileName))
+									{
+										auto i = fileName.lastIndexOf('.');
+
+										if (i >= 0)
+										{
+											fileName = QString("%1.%2").arg(fileName.left(i)).arg(ui.formatCombo->currentText());
+											code.replace(startPos, length, fileName);
+											qDebug() << "FOUND: " << fileName;
+											changed = true;
+										}
+										
+									}
+
+									start = startPos + fileName.length();
+									break;
+								}
+							}
+						}
+					}
+
+					if (ui.gS1ToSGScriptCheckBox->isChecked())
+					{
+						if (code.indexOf("//sgscript") == -1)
+						{
+							code = QString::fromStdString(GS1Converter::convert3(code.toStdString()));
+							changed = true;
+						}
+					}
+
+					if(changed)
+						npc->setCodeRaw(code);
+					
+				}
+			}
+
 			auto newName = QString("%1.%2").arg(info.completeBaseName()).arg(ui.formatCombo->currentText());
 			auto newPath = ui.outFolderEdit->text() + subDir;
 			auto newFullPath = newPath + newName;
@@ -106,8 +168,8 @@ namespace TilesEditor
 
 	void LevelConverter::accept()
 	{
-		auto filters = ui.inputMaskEdit->text().split(",");
-		QDirIterator it(ui.inputEdit->text(), filters, QDir::Files, ui.subFoldersCheckBox->checkState() == Qt::CheckState::Checked ? QDirIterator::Subdirectories : QDirIterator::NoIteratorFlags);
+		m_filters = ui.inputMaskEdit->text().split(",");
+		QDirIterator it(ui.inputEdit->text(), m_filters, QDir::Files, ui.subFoldersCheckBox->checkState() == Qt::CheckState::Checked ? QDirIterator::Subdirectories : QDirIterator::NoIteratorFlags);
 
 		m_files.clear();
 		m_levelNames.clear();
@@ -122,6 +184,13 @@ namespace TilesEditor
 		
 		ui.progressBar->setValue(0);
 		ui.progressBar->setMaximum(m_files.size());
+
+		//Remove the * from filter strings
+		for (auto& filter : m_filters)
+		{
+			while (filter.startsWith('*'))
+				filter = filter.mid(1);
+		}
 		timer();
 
 	}

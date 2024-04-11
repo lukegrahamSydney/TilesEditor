@@ -1,12 +1,14 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDoubleValidator>
+#include <QMenu>
 #include "EditAnonymousNPC.h"
 #include "ImageDimensions.h"
 #include "Level.h"
 #include "LevelNPC.h"
 #include "LevelCommands.h"
 #include "DarkTitleBar.h"
+#include "gs1/GS1Converter.h"
 
 namespace TilesEditor
 {
@@ -86,6 +88,38 @@ namespace TilesEditor
 		}
 	}
 
+	void EditAnonymousNPC::convertPressed()
+	{
+		
+		auto originalCode = ui.plainTextEdit->toPlainText();
+
+		//Clear
+		auto doc = ui.plainTextEdit->document();
+		QTextCursor curs(doc);
+		curs.select(QTextCursor::Document);
+		curs.removeSelectedText();
+
+		curs.insertText(QString::fromStdString(GS1Converter::convert3(originalCode.toStdString())));
+		m_modified = true;
+
+		
+		
+	}
+
+	void EditAnonymousNPC::revertPressed()
+	{
+		auto originalCode = ui.plainTextEdit->toPlainText();
+		//Clear
+		auto doc = ui.plainTextEdit->document();
+		QTextCursor curs(doc);
+		curs.select(QTextCursor::Document);
+		curs.removeSelectedText();
+
+		curs.insertText(QString::fromStdString(GS1Converter::revert(originalCode.toStdString())));
+		m_modified = true;
+
+	}
+
 	void EditAnonymousNPC::textEdited(const QString& text)
 	{
 		m_modified = true;
@@ -142,7 +176,10 @@ namespace TilesEditor
 		connect(ui.yText, &QLineEdit::textEdited, this, &EditAnonymousNPC::textEdited);
 		connect(ui.imageText, &QLineEdit::textEdited, this, &EditAnonymousNPC::textEdited);
 		connect(ui.deleteButton, &QPushButton::pressed, this, &EditAnonymousNPC::deletePressed);
+		connect(ui.convertButton, &QPushButton::pressed, this, &EditAnonymousNPC::convertPressed);
+		connect(ui.revertButton, &QPushButton::pressed, this, &EditAnonymousNPC::revertPressed);
 
+		//connect(ui.convertButton, &QToolButton::triggered, this, &EditAnonymousNPC::convertPressed);
 		if (!savedGeometry.isNull())
 			restoreGeometry(savedGeometry);
 

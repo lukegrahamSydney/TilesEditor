@@ -4,6 +4,7 @@
 #include "LevelSign.h"
 #include "LevelChest.h"
 #include "LevelGraalBaddy.h"
+#include <qdebug.h>
 
 namespace TilesEditor
 {
