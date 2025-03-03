@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EditTilesetDialogClass</class>
+ <widget class="QDialog" name="EditTilesetDialogClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>708</width>
+    <height>437</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Edit Tileset</string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>1</number>
+   </property>
+   <property name="leftMargin">
+    <number>1</number>
+   </property>
+   <property name="topMargin">
+    <number>1</number>
+   </property>
+   <property name="rightMargin">
+    <number>1</number>
+   </property>
+   <property name="bottomMargin">
+    <number>1</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="formWidget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <property name="sizeConstraint">
+       <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="fileLabel">
+        <property name="text">
+         <string>File:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="fileLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="imageLabel">
+        <property name="text">
+         <string>Image:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QWidget" name="imageWidget" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLineEdit" name="imageTextBox"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="browseButton">
+           <property name="minimumSize">
+            <size>
+             <width>75</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Browse</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="1" column="4">
+       <widget class="QRadioButton" name="radioButtonType11">
+        <property name="toolTip">
+         <string>11</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 128, 255);</string>
+        </property>
+        <property name="text">
+         <string>Bed Head (11)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QRadioButton" name="radioButtonType8">
+        <property name="toolTip">
+         <string>8</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: red;</string>
+        </property>
+        <property name="text">
+         <string>Lava (8)</string>
+        </property>
+        <property name="shortcut">
+         <string>8</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="radioButtonType7">
+        <property name="toolTip">
+         <string>7</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(128, 128, 255);</string>
+        </property>
+        <property name="text">
+         <string>Shallow Water (7)</string>
+        </property>
+        <property name="shortcut">
+         <string>7</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="5">
+       <widget class="QRadioButton" name="radioButtonType5">
+        <property name="toolTip">
+         <string>5</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: teal;</string>
+        </property>
+        <property name="text">
+         <string>Jump (5)</string>
+        </property>
+        <property name="shortcut">
+         <string>5</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QRadioButton" name="radioButtonType2">
+        <property name="toolTip">
+         <string>2</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: yellow</string>
+        </property>
+        <property name="text">
+         <string>Throw Through (2)</string>
+        </property>
+        <property name="shortcut">
+         <string>2</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QRadioButton" name="radioButtonType9">
+        <property name="toolTip">
+         <string>9</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 128, 128);</string>
+        </property>
+        <property name="text">
+         <string>Shallow Lava (9)</string>
+        </property>
+        <property name="shortcut">
+         <string>9</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QRadioButton" name="radioButtonType4">
+        <property name="toolTip">
+         <string>4</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(128, 64, 0);</string>
+        </property>
+        <property name="text">
+         <string>Chair(4)</string>
+        </property>
+        <property name="shortcut">
+         <string>4</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="radioButtonType0">
+        <property name="toolTip">
+         <string>0</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: lime</string>
+        </property>
+        <property name="text">
+         <string>Non-Blocking (0)</string>
+        </property>
+        <property name="shortcut">
+         <string>0</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="6">
+       <widget class="QRadioButton" name="radioButtonType6">
+        <property name="toolTip">
+         <string>6</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: green</string>
+        </property>
+        <property name="text">
+         <string>Swamp (6)</string>
+        </property>
+        <property name="shortcut">
+         <string>6</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QRadioButton" name="radioButtonType1">
+        <property name="toolTip">
+         <string>1</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: gray</string>
+        </property>
+        <property name="text">
+         <string>Blocking (1)</string>
+        </property>
+        <property name="shortcut">
+         <string>1</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QRadioButton" name="radioButtonType3">
+        <property name="toolTip">
+         <string>3</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: blue</string>
+        </property>
+        <property name="text">
+         <string>Water (3)</string>
+        </property>
+        <property name="shortcut">
+         <string>3</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QRadioButton" name="radioButtonType10">
+        <property name="toolTip">
+         <string>10</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(192, 255, 255);</string>
+        </property>
+        <property name="text">
+         <string>Bed (10)</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="TilesEditor::GraphicsView" name="graphicsView">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget_2" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Overlay:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSlider" name="overlaySlider">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="value">
+         <number>50</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QDialogButtonBox" name="buttonBox">
+        <property name="standardButtons">
+         <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>TilesEditor::GraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">GraphicsView.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../Resources/MainWindow.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>EditTilesetDialogClass</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>562</x>
+     <y>401</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>353</x>
+     <y>211</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>EditTilesetDialogClass</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>562</x>
+     <y>401</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>353</x>
+     <y>211</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

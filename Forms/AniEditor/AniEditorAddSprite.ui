@@ -1,0 +1,767 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AniEditorAddSpriteClass</class>
+ <widget class="QDialog" name="AniEditorAddSpriteClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>687</width>
+    <height>586</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Add Sprites</string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <property name="spacing">
+    <number>2</number>
+   </property>
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
+    <number>2</number>
+   </property>
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="handleWidth">
+      <number>2</number>
+     </property>
+     <widget class="QWidget" name="widget_3" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
+        <number>2</number>
+       </property>
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QWidget" name="widget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <layout class="QFormLayout" name="formLayout">
+          <property name="verticalSpacing">
+           <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="imageSourceLabel">
+            <property name="text">
+             <string>Image Source:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="imageSourceComboBox">
+            <item>
+             <property name="text">
+              <string>CUSTOM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>SPRITES</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>BODY</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>HEAD</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>SWORD</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>SHIELD</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>HORSE</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PICS</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ATTR1</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ATTR2</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ATTR3</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ATTR4</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ATTR5</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ATTR6</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ATTR7</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ATTR8</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ATTR9</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ATTR10</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PARAM1</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PARAM2</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PARAM3</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PARAM4</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PARAM5</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PARAM6</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PARAM7</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PARAM8</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PARAM9</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PARAM10</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="imageFileLabel">
+            <property name="text">
+             <string>Image File:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="imageFileLineEdit"/>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="commentLabel">
+            <property name="text">
+             <string>Comment:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="commentLineEdit">
+            <property name="text">
+             <string>New Sprite</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="spriteIndexLabel">
+            <property name="text">
+             <string>Sprite Index:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QSpinBox" name="spiteIndexSpinBox">
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+            </property>
+            <property name="maximum">
+             <number>99999999</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Sprite Size</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>6</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <item>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="2">
+             <widget class="QSpinBox" name="leftSpinBox">
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+              </property>
+              <property name="maximum">
+               <number>9999999</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <widget class="QLabel" name="label_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Top:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="label">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Left:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="4">
+             <widget class="QSpinBox" name="topSpinBox">
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+              </property>
+              <property name="maximum">
+               <number>9999999</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="label_3">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Width:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QSpinBox" name="widthSpinBox">
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+              </property>
+              <property name="maximum">
+               <number>9999999</number>
+              </property>
+              <property name="value">
+               <number>32</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3">
+             <widget class="QLabel" name="label_4">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Height:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="4">
+             <widget class="QSpinBox" name="heightSpinBox">
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+              </property>
+              <property name="maximum">
+               <number>9999999</number>
+              </property>
+              <property name="value">
+               <number>32</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QWidget" name="widget_5" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>32</height>
+             </size>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>269</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QToolButton" name="magicWandButton">
+               <property name="toolTip">
+                <string>Auto Detect Sprite</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../Resources/MainWindow.qrc">
+                 <normaloff>:/MainWindow/icons/tinycolor/icons8-magic-wand-16.png</normaloff>:/MainWindow/icons/tinycolor/icons8-magic-wand-16.png</iconset>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="autoRaise">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Orientation::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Policy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Grid Settings</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="2">
+             <widget class="QLabel" name="label_6">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Columns:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <widget class="QSpinBox" name="gridColumnsSpinBox">
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>9999</number>
+              </property>
+              <property name="value">
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="4">
+             <widget class="QLabel" name="label_5">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Rows:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="5">
+             <widget class="QSpinBox" name="gridRowsSpinBox">
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>9999</number>
+              </property>
+              <property name="value">
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Column Separation:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QSpinBox" name="columnSeparationSpinBox">
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+              </property>
+              <property name="maximum">
+               <number>99999</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Row Separation:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="rowSeparationSpinBox">
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+              </property>
+              <property name="maximum">
+               <number>99999</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="widget_2" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>1</number>
+       </property>
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Preview:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="TilesEditor::GraphicsView" name="graphicsView">
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget_4" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
+       <number>8</number>
+      </property>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>417</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="addButton">
+        <property name="text">
+         <string>Add</string>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="cancelButton">
+        <property name="text">
+         <string>Close</string>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>TilesEditor::GraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">GraphicsView.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../Resources/MainWindow.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>AniEditorAddSpriteClass</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>712</x>
+     <y>539</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>377</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

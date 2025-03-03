@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EditTileDefsClass</class>
+ <widget class="QDialog" name="EditTileDefsClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>546</width>
+    <height>259</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Graal Tile Definitions</string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTableWidget" name="tiledefsWidget">
+     <property name="editTriggers">
+      <set>QAbstractItemView::EditTrigger::DoubleClicked</set>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+     </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+     </property>
+     <attribute name="horizontalHeaderCascadingSectionResizes">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="horizontalHeaderDefaultSectionSize">
+      <number>60</number>
+     </attribute>
+     <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>Prefix</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Image</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>X</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Y</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Saved</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget_3" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="newButton">
+        <property name="text">
+         <string>&amp;New</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="deleteButton">
+        <property name="text">
+         <string>Delete</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>235</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>tiledefsWidget</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>EditTileDefsClass</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>168</x>
+     <y>294</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>168</x>
+     <y>157</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>EditTileDefsClass</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>168</x>
+     <y>294</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>168</x>
+     <y>157</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

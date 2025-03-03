@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EditLinkDialogClass</class>
+ <widget class="QDialog" name="EditLinkDialogClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>304</width>
+    <height>379</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Edit Link</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QWidget" name="widget" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>Source</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QWidget" name="widget_5" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>70</height>
+            </size>
+           </property>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Y:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="4">
+             <widget class="QLabel" name="label_5">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Height:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <widget class="QLabel" name="localXText">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>X:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="4">
+             <widget class="QLabel" name="label_4">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Width:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QSpinBox" name="ySpinBox">
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+              </property>
+              <property name="minimum">
+               <number>-100</number>
+              </property>
+              <property name="maximum">
+               <number>999999</number>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="3">
+             <widget class="QLabel" name="localYText">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QSpinBox" name="xSpinBox">
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+              </property>
+              <property name="minimum">
+               <number>-100</number>
+              </property>
+              <property name="maximum">
+               <number>999999</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="5">
+             <widget class="QSpinBox" name="widthSpinBox">
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+              </property>
+              <property name="minimum">
+               <number>-100</number>
+              </property>
+              <property name="maximum">
+               <number>999999</number>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="5">
+             <widget class="QSpinBox" name="heightSpinBox">
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+              </property>
+              <property name="minimum">
+               <number>-100</number>
+              </property>
+              <property name="maximum">
+               <number>999999</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>Destination</string>
+        </property>
+        <layout class="QFormLayout" name="formLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Next Level:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="nextLevelText"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Next X:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="nextXText"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Next Y:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="nextYText"/>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="nextLayerLabel">
+           <property name="text">
+            <string>Next Layer:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="nextLayerLineEdit"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget_2" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="deleteButton">
+        <property name="minimumSize">
+         <size>
+          <width>75</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Delete</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../Resources/MainWindow.qrc">
+          <normaloff>:/MainWindow/icons/tinycolor/icons8-trash-16.png</normaloff>:/MainWindow/icons/tinycolor/icons8-trash-16.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDialogButtonBox" name="buttonBox">
+        <property name="standardButtons">
+         <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="../Resources/MainWindow.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>EditLinkDialogClass</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>169</x>
+     <y>211</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>127</x>
+     <y>116</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>EditLinkDialogClass</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>169</x>
+     <y>211</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>127</x>
+     <y>116</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

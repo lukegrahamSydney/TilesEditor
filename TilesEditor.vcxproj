@@ -21,6 +21,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -31,14 +32,14 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>6.4</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtInstall>6.8</QtInstall>
+    <QtModules>core;gui;widgets;multimedia</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
     <QtHeaderSearchPath>$(QtHeaderSearchPath)</QtHeaderSearchPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
-    <QtInstall>6.4</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtInstall>6.8</QtInstall>
+    <QtModules>core;gui;widgets;multimedia</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
     <QtHeaderSearchPath>$(QtHeaderSearchPath)</QtHeaderSearchPath>
   </PropertyGroup>
@@ -57,14 +58,18 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <IncludePath>.\;.\QCodeEditor\include;.\QCodeEditor\include\KGL\Widgets;.\gs1\include;$(IncludePath)</IncludePath>
+    <IncludePath>.\src\;.\src\QCodeEditor\include;.\src\QCodeEditor\include\internal;.\src\AniEditor;.\src\gs1\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)bin\</OutDir>
+    <TargetName>$(ProjectName)D</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <IncludePath>.\;.\QCodeEditor\include;.\QCodeEditor\include\KGL\Widgets;.\gs1\include;$(IncludePath)</IncludePath>
+    <IncludePath>.\src\;.\src\QCodeEditor\include;.\src\QCodeEditor\include\internal;.\src\AniEditor;.\src\gs1\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)bin\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PreprocessorDefinitions>KGL_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Dwmapi.lib;%(AdditionalDependencies);$(Qt_LIBS_)</AdditionalDependencies>
@@ -72,7 +77,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>KGL_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>KGL_STATIC;QT_VERSION_QT6;QGOODWINDOW;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -103,197 +109,295 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AboutDialog.cpp" />
-    <ClCompile Include="AbstractLevelEntity.cpp" />
-    <ClCompile Include="AbstractSelection.cpp" />
-    <ClCompile Include="ByteStream.cpp" />
-    <ClCompile Include="cJSON\cJSON.c" />
-    <ClCompile Include="CustomPaintWidget.cpp" />
-    <ClCompile Include="EditAnonymousNPC.cpp" />
-    <ClCompile Include="EditBaddy.cpp" />
-    <ClCompile Include="EditChestDialog.cpp" />
-    <ClCompile Include="EditExternalNPC.cpp" />
-    <ClCompile Include="EditLinkDialog.cpp" />
-    <ClCompile Include="EditorTabWidget.cpp" />
-    <ClCompile Include="EditSignsDialog.cpp" />
-    <ClCompile Include="EditTilesetDialog.cpp" />
-    <ClCompile Include="ExternalNPCInspector.cpp" />
-    <ClCompile Include="FileFormatManager.cpp" />
-    <ClCompile Include="FixMapNamesDialog.cpp" />
-    <ClCompile Include="GraphicsView.cpp" />
-    <ClCompile Include="gs1\GS1Converter.cpp" />
-    <ClCompile Include="gs1\src\gs1common\ByteBuffer.cpp" />
-    <ClCompile Include="gs1\src\gs1common\GValue.cpp" />
-    <ClCompile Include="gs1\src\gs1common\Log.cpp" />
-    <ClCompile Include="gs1\src\gs1common\Operation.cpp" />
-    <ClCompile Include="gs1\src\gs1common\Util.cpp" />
-    <ClCompile Include="gs1\src\gs1compiler\BytecodeBody.cpp" />
-    <ClCompile Include="gs1\src\gs1compiler\BytecodeHeader.cpp" />
-    <ClCompile Include="gs1\src\gs1compiler\CompileVisitor.cpp" />
-    <ClCompile Include="gs1\src\gs1compiler\DepthVisitor.cpp" />
-    <ClCompile Include="gs1\src\gs1parse\Diag.cpp" />
-    <ClCompile Include="gs1\src\gs1parse\Lexer.cpp" />
-    <ClCompile Include="gs1\src\gs1parse\Parser.cpp" />
-    <ClCompile Include="gs1\src\gs1parse\Source.cpp" />
-    <ClCompile Include="gs1\src\gs1parse\SyntaxTree.cpp" />
-    <ClCompile Include="gs1\src\gs1parse\SyntaxTreeVisitor.cpp" />
-    <ClCompile Include="gs1\src\gs1parse\Token.cpp" />
-    <ClCompile Include="Image.cpp" />
-    <ClCompile Include="ImageDimensions.cpp" />
-    <ClCompile Include="Level.cpp" />
-    <ClCompile Include="LevelChest.cpp" />
-    <ClCompile Include="LevelCommands.cpp" />
-    <ClCompile Include="LevelConverter.cpp" />
-    <ClCompile Include="LevelFormatGraal.cpp" />
-    <ClCompile Include="LevelFormatLVL.cpp" />
-    <ClCompile Include="LevelFormatNW.cpp" />
-    <ClCompile Include="LevelGraalBaddy.cpp" />
-    <ClCompile Include="LevelLink.cpp" />
-    <ClCompile Include="LevelNPC.cpp" />
-    <ClCompile Include="LevelSign.cpp" />
-    <ClCompile Include="ListLinksDialog.cpp" />
-    <ClCompile Include="MainFileSystem.cpp" />
-    <ClCompile Include="NewLevelDialog.cpp" />
-    <ClCompile Include="NewOverworldDialog.cpp" />
-    <ClCompile Include="ObjectFactory.cpp" />
-    <ClCompile Include="ObjectListModel.cpp" />
-    <ClCompile Include="ObjectSelection.cpp" />
-    <ClCompile Include="ObjectsWidget.cpp" />
-    <ClCompile Include="Overworld.cpp" />
-    <ClCompile Include="QCodeEditor\src\Design\QCodeEditorDesign.cpp" />
-    <ClCompile Include="QCodeEditor\src\Design\QCodeEditorSheets.cpp" />
-    <ClCompile Include="QCodeEditor\src\Design\QLineColumnPadding.cpp" />
-    <ClCompile Include="QCodeEditor\src\Design\QSyntaxRule.cpp" />
-    <ClCompile Include="QCodeEditor\src\Design\XmlHelper.cpp" />
-    <ClCompile Include="QCodeEditor\src\Widgets\QCodeEditor.cpp" />
-    <ClCompile Include="QCodeEditor\src\Widgets\QCodeEditorEvents.cpp" />
-    <ClCompile Include="QCodeEditor\src\Widgets\QCodeEditorHighlighter.cpp" />
-    <ClCompile Include="QCodeEditor\src\Widgets\QCodeEditorLineWidget.cpp" />
-    <ClCompile Include="QCodeEditor\src\Widgets\QCodeEditorPopup.cpp" />
-    <ClCompile Include="QCodeEditor\src\Widgets\QCodeEditorSlots.cpp" />
-    <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="SaveOverworldDialog.cpp" />
-    <ClCompile Include="ScreenshotDialog.cpp" />
-    <ClCompile Include="TileGroupListModel.cpp" />
-    <ClCompile Include="TileGroupModel.cpp" />
-    <ClCompile Include="Tilemap.cpp" />
-    <ClCompile Include="TileObject.cpp" />
-    <ClCompile Include="TileObjectsWidget.cpp" />
-    <ClCompile Include="TileSelection.cpp" />
-    <ClCompile Include="Tileset.cpp" />
-    <ClCompile Include="TilesetsWidget.cpp" />
-    <QtRcc Include="MainWindow.qrc" />
-    <QtRcc Include="qdarkstyle\dark\darkstyle.qrc" />
-    <QtUic Include="AboutDialog.ui" />
-    <QtUic Include="EditAnonymousNPC.ui" />
-    <QtUic Include="EditBaddy.ui" />
-    <QtUic Include="EditChestDialog.ui" />
-    <QtUic Include="EditExternalNPC.ui" />
-    <QtUic Include="EditLinkDialog.ui" />
-    <QtUic Include="EditorTabWidget.ui" />
-    <QtUic Include="EditSignsDialog.ui" />
-    <QtUic Include="EditTilesetDialog.ui" />
-    <QtUic Include="ExternalNPCInspector.ui" />
-    <QtUic Include="FixMapNamesDialog.ui" />
-    <QtUic Include="LevelConverter.ui" />
-    <QtUic Include="ListLinksDialog.ui" />
-    <QtUic Include="MainWindow.ui" />
-    <QtMoc Include="MainWindow.h" />
-    <ClCompile Include="MainWindow.cpp" />
-    <ClCompile Include="main.cpp" />
-    <QtUic Include="NewLevelDialog.ui" />
-    <QtUic Include="NewOverworldDialog.ui" />
-    <QtUic Include="ObjectsWidget.ui" />
-    <QtUic Include="SaveOverworldDialog.ui" />
-    <QtUic Include="ScreenshotDialog.ui" />
-    <QtUic Include="TileObjectsWidget.ui" />
-    <QtUic Include="TilesetsWidget.ui" />
+    <ClCompile Include="src\AboutDialog.cpp" />
+    <ClCompile Include="src\AbstractLevelEntity.cpp" />
+    <ClCompile Include="src\AbstractLevelFormat.cpp" />
+    <ClCompile Include="src\AbstractResourceManager.cpp" />
+    <ClCompile Include="src\AbstractScriptableDialog.cpp" />
+    <ClCompile Include="src\AbstractSelection.cpp" />
+    <ClCompile Include="src\AniEditor\Ani.cpp" />
+    <ClCompile Include="src\AniEditor\AniEditor.cpp" />
+    <ClCompile Include="src\AniEditor\AniEditorAddSprite.cpp" />
+    <ClCompile Include="src\AniEditor\AniEditorWindow.cpp" />
+    <ClCompile Include="src\AniEditor\AniInstance.cpp" />
+    <ClCompile Include="src\cJSON\cJSON.c" />
+    <ClCompile Include="src\CustomPaintWidget.cpp" />
+    <ClCompile Include="src\DarkStyle.cpp" />
+    <ClCompile Include="src\EditAnonymousNPC.cpp" />
+    <ClCompile Include="src\EditBaddy.cpp" />
+    <ClCompile Include="src\EditChestDialog.cpp" />
+    <ClCompile Include="src\EditExternalNPC.cpp" />
+    <ClCompile Include="src\EditLinkDialog.cpp" />
+    <ClCompile Include="src\EditorObject.cpp" />
+    <ClCompile Include="src\EditorTabWidget.cpp" />
+    <ClCompile Include="src\EditScriptForm.cpp" />
+    <ClCompile Include="src\EditSignsDialog.cpp" />
+    <ClCompile Include="src\EditTileDefs.cpp">
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">input</DynamicSource>
+      <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).moc</QtMocFileName>
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Release|x64'">input</DynamicSource>
+      <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).moc</QtMocFileName>
+    </ClCompile>
+    <ClCompile Include="src\EditTilesetDialog.cpp" />
+    <ClCompile Include="src\EditTilesets.cpp" />
+    <ClCompile Include="src\FileFormatManager.cpp" />
+    <ClCompile Include="src\FixMapNamesDialog.cpp" />
+    <ClCompile Include="src\GraphicsView.cpp" />
+    <ClCompile Include="src\gs1\GS1Converter.cpp" />
+    <ClCompile Include="src\gs1\src\gs1common\ByteBuffer.cpp" />
+    <ClCompile Include="src\gs1\src\gs1common\GValue.cpp" />
+    <ClCompile Include="src\gs1\src\gs1common\Log.cpp" />
+    <ClCompile Include="src\gs1\src\gs1common\Operation.cpp" />
+    <ClCompile Include="src\gs1\src\gs1common\Util.cpp" />
+    <ClCompile Include="src\gs1\src\gs1compiler\BytecodeBody.cpp" />
+    <ClCompile Include="src\gs1\src\gs1compiler\BytecodeHeader.cpp" />
+    <ClCompile Include="src\gs1\src\gs1compiler\CompileVisitor.cpp" />
+    <ClCompile Include="src\gs1\src\gs1compiler\DepthVisitor.cpp" />
+    <ClCompile Include="src\gs1\src\gs1parse\Diag.cpp" />
+    <ClCompile Include="src\gs1\src\gs1parse\Lexer.cpp" />
+    <ClCompile Include="src\gs1\src\gs1parse\Parser.cpp" />
+    <ClCompile Include="src\gs1\src\gs1parse\Source.cpp" />
+    <ClCompile Include="src\gs1\src\gs1parse\SyntaxTree.cpp" />
+    <ClCompile Include="src\gs1\src\gs1parse\SyntaxTreeVisitor.cpp" />
+    <ClCompile Include="src\gs1\src\gs1parse\Token.cpp" />
+    <ClCompile Include="src\Image.cpp" />
+    <ClCompile Include="src\ImageDimensions.cpp" />
+    <ClCompile Include="src\Level.cpp" />
+    <ClCompile Include="src\LevelChest.cpp" />
+    <ClCompile Include="src\LevelCommands.cpp" />
+    <ClCompile Include="src\LevelConverter.cpp" />
+    <ClCompile Include="src\LevelFormatGraal.cpp" />
+    <ClCompile Include="src\LevelFormatLVL.cpp" />
+    <ClCompile Include="src\LevelFormatNW.cpp" />
+    <ClCompile Include="src\LevelFormatScriptable.cpp" />
+    <ClCompile Include="src\LevelGraalBaddy.cpp" />
+    <ClCompile Include="src\LevelLink.cpp" />
+    <ClCompile Include="src\LevelNPC.cpp" />
+    <ClCompile Include="src\LevelObjectInstance.cpp" />
+    <ClCompile Include="src\LevelSign.cpp" />
+    <ClCompile Include="src\ListLinksDialog.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\MainWindow.cpp" />
+    <ClCompile Include="src\NewCustomTheme.cpp" />
+    <ClCompile Include="src\NewLevelDialog.cpp" />
+    <ClCompile Include="src\NewOverworldDialog.cpp" />
+    <ClCompile Include="src\ObjectClass.cpp" />
+    <ClCompile Include="src\ObjectClassParam.cpp" />
+    <ClCompile Include="src\ObjectFactory.cpp" />
+    <ClCompile Include="src\ObjectListModel.cpp" />
+    <ClCompile Include="src\ObjectManager.cpp" />
+    <ClCompile Include="src\ObjectSelection.cpp" />
+    <ClCompile Include="src\ObjectsWidget.cpp" />
+    <ClCompile Include="src\Overworld.cpp" />
+    <ClCompile Include="src\QCodeEditor\src\internal\QCodeEditor.cpp" />
+    <ClCompile Include="src\QCodeEditor\src\internal\QCXXHighlighter.cpp" />
+    <ClCompile Include="src\QCodeEditor\src\internal\QFramedTextAttribute.cpp" />
+    <ClCompile Include="src\QCodeEditor\src\internal\QGLSLCompleter.cpp" />
+    <ClCompile Include="src\QCodeEditor\src\internal\QGLSLHighlighter.cpp" />
+    <ClCompile Include="src\QCodeEditor\src\internal\QJSONHighlighter.cpp" />
+    <ClCompile Include="src\QCodeEditor\src\internal\QLanguage.cpp" />
+    <ClCompile Include="src\QCodeEditor\src\internal\QLineNumberArea.cpp" />
+    <ClCompile Include="src\QCodeEditor\src\internal\QLuaCompleter.cpp" />
+    <ClCompile Include="src\QCodeEditor\src\internal\QLuaHighlighter.cpp" />
+    <ClCompile Include="src\QCodeEditor\src\internal\QPythonCompleter.cpp" />
+    <ClCompile Include="src\QCodeEditor\src\internal\QPythonHighlighter.cpp" />
+    <ClCompile Include="src\QCodeEditor\src\internal\QStyleSyntaxHighlighter.cpp" />
+    <ClCompile Include="src\QCodeEditor\src\internal\QSyntaxStyle.cpp" />
+    <ClCompile Include="src\QCodeEditor\src\internal\QXMLHighlighter.cpp" />
+    <ClCompile Include="src\ResourceManagerFileSystem.cpp" />
+    <ClCompile Include="src\SaveOverworldDialog.cpp" />
+    <ClCompile Include="src\ScreenshotDialog.cpp" />
+    <ClCompile Include="src\sgscript\sgs_bcg.c" />
+    <ClCompile Include="src\sgscript\sgs_ctx.c" />
+    <ClCompile Include="src\sgscript\sgs_fnt.c" />
+    <ClCompile Include="src\sgscript\sgs_proc.c" />
+    <ClCompile Include="src\sgscript\sgs_regex.c" />
+    <ClCompile Include="src\sgscript\sgs_srlz.c" />
+    <ClCompile Include="src\sgscript\sgs_std.c" />
+    <ClCompile Include="src\sgscript\sgs_stdL.c" />
+    <ClCompile Include="src\sgscript\sgs_tok.c" />
+    <ClCompile Include="src\sgscript\sgs_util.c" />
+    <ClCompile Include="src\sgscript\sgs_xpc.c" />
+    <ClCompile Include="src\StringHash.cpp" />
+    <ClCompile Include="src\TileGroupListModel.cpp" />
+    <ClCompile Include="src\TileGroupModel.cpp" />
+    <ClCompile Include="src\Tilemap.cpp" />
+    <ClCompile Include="src\TileObject.cpp" />
+    <ClCompile Include="src\TileObjectsWidget.cpp" />
+    <ClCompile Include="src\TileSelection.cpp" />
+    <ClCompile Include="src\Tileset.cpp" />
+    <ClCompile Include="src\TilesetsWidget.cpp" />
+    <QtRcc Include="Resources\darkstyle2.qrc" />
+    <QtRcc Include="Resources\MainWindow.qrc" />
+    <QtRcc Include="Resources\otherStyleSheets\DarkOrangeStyle.qrc" />
+    <QtRcc Include="Resources\qdarkstyle\dark\darkstyle.qrc" />
+    <QtRcc Include="Resources\qdarkstyle\light\lightstyle.qrc" />
+    <QtRcc Include="Resources\QSS-master\QSS.qrc" />
+    <QtRcc Include="src\QCodeEditor\resources\qcodeeditor_resources.qrc" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="AboutDialog.h" />
-    <ClInclude Include="AbstractFileSystem.h" />
-    <ClInclude Include="AbstractLevelEntity.h" />
-    <ClInclude Include="AbstractSelection.h" />
-    <QtMoc Include="TilesetsWidget.h" />
-    <QtMoc Include="EditAnonymousNPC.h" />
-    <QtMoc Include="EditLinkDialog.h" />
-    <QtMoc Include="EditSignsDialog.h" />
-    <QtMoc Include="CustomPaintWidget.h" />
-    <QtMoc Include="EditExternalNPC.h" />
-    <ClInclude Include="AbstractSpatialGridItem.h" />
-    <ClInclude Include="ByteStream.h" />
-    <ClInclude Include="cJSON\cJSON.h" />
-    <ClInclude Include="cJSON\JsonHelper.h" />
-    <QtMoc Include="EditTilesetDialog.h" />
-    <QtMoc Include="EditChestDialog.h" />
-    <QtMoc Include="EditBaddy.h" />
-    <QtMoc Include="FixMapNamesDialog.h" />
-    <QtMoc Include="ExternalNPCInspector.h" />
-    <ClInclude Include="DarkTitleBar.h" />
-    <ClInclude Include="gs1\GS1Converter.h" />
-    <ClInclude Include="IFileRequester.h" />
-    <ClInclude Include="ILevelFormat.h" />
-    <ClInclude Include="LevelChest.h" />
-    <ClInclude Include="LevelCommands.h" />
-    <QtMoc Include="LevelConverter.h" />
-    <ClInclude Include="LevelFactory.h" />
-    <ClInclude Include="LevelFormatGraal.h" />
-    <ClInclude Include="LevelFormatLVL.h" />
-    <ClInclude Include="FileFormatManager.h" />
-    <ClInclude Include="LevelFormatNW.h" />
-    <ClInclude Include="LevelGraalBaddy.h" />
-    <ClInclude Include="LevelLink.h" />
-    <ClInclude Include="LevelNPC.h" />
-    <ClInclude Include="LevelSign.h" />
-    <QtMoc Include="ListLinksDialog.h" />
-    <QtMoc Include="NewOverworldDialog.h" />
-    <QtMoc Include="NewLevelDialog.h" />
-    <ClInclude Include="ObjectFactory.h" />
-    <ClInclude Include="ObjectListModel.h" />
-    <ClInclude Include="ObjectSelection.h" />
-    <QtMoc Include="QCodeEditor\include\KGL\Design\QCodeEditorDesign.hpp" />
-    <QtMoc Include="QCodeEditor\include\KGL\Design\QCodeEditorSheets.hpp" />
-    <QtMoc Include="QCodeEditor\include\KGL\Design\QLineColumnPadding.hpp" />
-    <QtMoc Include="QCodeEditor\include\KGL\Design\QSyntaxRule.hpp" />
-    <QtMoc Include="QCodeEditor\include\KGL\Design\XmlHelper.hpp" />
-    <QtMoc Include="QCodeEditor\include\KGL\KGLConfig.hpp" />
-    <QtMoc Include="QCodeEditor\include\KGL\Widgets\QCodeEditor.hpp" />
-    <QtMoc Include="QCodeEditor\include\KGL\Widgets\QCodeEditorHighlighter.hpp" />
-    <QtMoc Include="QCodeEditor\include\KGL\Widgets\QCodeEditorLineWidget.hpp" />
-    <QtMoc Include="QCodeEditor\include\KGL\Widgets\QCodeEditorPopup.hpp" />
-    <QtMoc Include="SaveOverworldDialog.h" />
-    <QtMoc Include="ObjectsWidget.h" />
-    <QtMoc Include="ScreenshotDialog.h" />
-    <ClInclude Include="SelectionType.h" />
-    <ClInclude Include="Selector.h" />
-    <QtMoc Include="TileObjectsWidget.h" />
-    <ClInclude Include="TileGroupListModel.h" />
-    <ClInclude Include="TileGroupModel.h" />
-    <ClInclude Include="TileObject.h" />
-    <ClInclude Include="TileSelection.h" />
-    <ClInclude Include="IWorld.h" />
-    <QtMoc Include="GraphicsView.h" />
-    <ClInclude Include="ImageDimensions.h" />
-    <ClInclude Include="Level.h" />
-    <ClInclude Include="Overworld.h" />
-    <ClInclude Include="StringTools.h" />
-    <ClInclude Include="Tilemap.h" />
-    <ClInclude Include="Tileset.h" />
-    <QtMoc Include="EditorTabWidget.h" />
-    <ClInclude Include="EntitySpatialGrid.h" />
-    <ClInclude Include="IEntitySpatialMap.h" />
-    <ClInclude Include="Image.h" />
-    <ClInclude Include="ISpatialMapItem.h" />
-    <ClInclude Include="LevelEntityType.h" />
-    <ClInclude Include="MainFileSystem.h" />
-    <ClInclude Include="Rectangle.h" />
-    <ClInclude Include="RefCounter.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="ResourceType.h" />
+    <ClInclude Include="src\AniEditor\AniInstance.h" />
+    <QtMoc Include="src\EditTileDefs.h" />
+    <ClInclude Include="src\AniEditor\IAniInstance.h" />
+    <ClInclude Include="src\gs1\GS1Prototypes.h" />
+    <ClInclude Include="src\IObjectClassInstance.h" />
+    <ClInclude Include="src\ScriptingLanguage.h" />
+    <ClInclude Include="src\StringHash.h" />
+    <ClInclude Include="src\StringTools.h" />
+    <ClInclude Include="src\TileDefs.h" />
+    <ClInclude Include="src\TileGroupListModel.h" />
+    <ClInclude Include="src\TileGroupModel.h" />
+    <ClInclude Include="src\Tilemap.h" />
+    <ClInclude Include="src\TileObject.h" />
+    <ClInclude Include="src\TileSelection.h" />
+    <ClInclude Include="src\Tileset.h" />
+    <QtMoc Include="src\TilesetsWidget.h" />
+    <QtMoc Include="src\TileObjectsWidget.h" />
+    <QtMoc Include="src\AboutDialog.h" />
+    <ClInclude Include="src\AbstractExternalNPCParamRow.h" />
+    <ClInclude Include="src\AbstractLevelEntity.h" />
+    <ClInclude Include="src\AbstractResourceManager.h" />
+    <ClInclude Include="src\AbstractScriptableDialog.h" />
+    <ClInclude Include="src\AbstractSelection.h" />
+    <ClInclude Include="src\AbstractSpatialGridItem.h" />
+    <ClInclude Include="src\AbstractTheme.h" />
+    <ClInclude Include="src\AniEditor\Ani.h" />
+    <ClInclude Include="src\AniEditor\AniCommands.h" />
+    <QtMoc Include="src\AniEditor\AniEditor.h" />
+    <QtMoc Include="src\AniEditor\AniEditorAddSprite.h" />
+    <QtMoc Include="src\AniEditor\AniEditorWindow.h" />
+    <ClInclude Include="src\AniEditor\IAniEditor.h" />
+    <ClInclude Include="src\cJSON\cJSON.h" />
+    <ClInclude Include="src\cJSON\JsonHelper.h" />
+    <ClInclude Include="src\CustomListWidgetItem.h" />
+    <QtMoc Include="src\CustomPaintWidget.h" />
+    <ClInclude Include="src\DarkOrangeTheme.h" />
+    <QtMoc Include="src\DarkStyle.h" />
+    <ClInclude Include="src\DarkStyleTheme.h" />
+    <ClInclude Include="src\DialogFeatures.h" />
+    <QtMoc Include="src\EditAnonymousNPC.h" />
+    <QtMoc Include="src\EditBaddy.h" />
+    <QtMoc Include="src\EditChestDialog.h" />
+    <QtMoc Include="src\EditExternalNPC.h" />
+    <QtMoc Include="src\EditLinkDialog.h" />
+    <QtMoc Include="src\EditorObject.h" />
+    <QtMoc Include="src\EditorTabWidget.h" />
+    <QtMoc Include="src\EditScriptForm.h" />
+    <QtMoc Include="src\EditSignsDialog.h" />
+    <QtMoc Include="src\EditTilesetDialog.h" />
+    <QtMoc Include="src\EditTilesets.h" />
+    <ClInclude Include="src\EntitySpatialGrid.h" />
+    <QtMoc Include="src\FileDataLoader.h" />
+    <ClInclude Include="src\FileFormatManager.h" />
+    <QtMoc Include="src\FixMapNamesDialog.h" />
+    <ClInclude Include="src\FusionDarkTheme.h" />
+    <ClInclude Include="src\FusionLightTheme.h" />
+    <ClInclude Include="src\GenericTheme.h" />
+    <QtMoc Include="src\GraphicsView.h" />
+    <ClInclude Include="src\gs1\GS1Converter.h" />
+    <QtMoc Include="src\QCodeEditor\include\internal\QCodeEditor.hpp" />
+    <QtMoc Include="src\QCodeEditor\include\internal\QCXXHighlighter.hpp" />
+    <QtMoc Include="src\QCodeEditor\include\internal\QFramedTextAttribute.hpp" />
+    <QtMoc Include="src\QCodeEditor\include\internal\QGLSLCompleter.hpp" />
+    <QtMoc Include="src\QCodeEditor\include\internal\QGLSLHighlighter.hpp" />
+    <ClInclude Include="src\IEditMode.h" />
+    <ClInclude Include="src\IEngine.h" />
+    <ClInclude Include="src\IEntitySpatialMap.h" />
+    <ClInclude Include="src\IExternalObjectEditor.h" />
+    <ClInclude Include="src\IFileRequester.h" />
+    <ClInclude Include="src\AbstractLevelFormat.h" />
+    <ClInclude Include="src\Image.h" />
+    <ClInclude Include="src\ImageDimensions.h" />
+    <ClInclude Include="src\ISpatialMapItem.h" />
+    <ClInclude Include="src\IWorld.h" />
+    <QtMoc Include="src\Level.h" />
+    <ClInclude Include="src\LevelChest.h" />
+    <ClInclude Include="src\LevelCommands.h" />
+    <QtMoc Include="src\LevelConverter.h" />
+    <ClInclude Include="src\LevelEntityType.h" />
+    <ClInclude Include="src\LevelFactory.h" />
+    <ClInclude Include="src\LevelFormatGraal.h" />
+    <ClInclude Include="src\LevelFormatLVL.h" />
+    <ClInclude Include="src\LevelFormatNW.h" />
+    <ClInclude Include="src\LevelFormatScriptable.h" />
+    <ClInclude Include="src\LevelGraalBaddy.h" />
+    <ClInclude Include="src\LevelLink.h" />
+    <ClInclude Include="src\LevelNPC.h" />
+    <ClInclude Include="src\LevelObjectInstance.h" />
+    <ClInclude Include="src\LevelSign.h" />
+    <QtMoc Include="src\ListLinksDialog.h" />
+    <ClInclude Include="src\LoadState.h" />
+    <QtMoc Include="src\MainWindow.h" />
+    <QtMoc Include="src\NewCustomTheme.h" />
+    <QtMoc Include="src\NewLevelDialog.h" />
+    <QtMoc Include="src\NewOverworldDialog.h" />
+    <QtMoc Include="src\ObjectClass.h" />
+    <QtMoc Include="src\ObjectClassParam.h" />
+    <ClInclude Include="src\ObjectFactory.h" />
+    <ClInclude Include="src\ObjectListModel.h" />
+    <ClInclude Include="src\ObjectManager.h" />
+    <ClInclude Include="src\ObjectSelection.h" />
+    <QtMoc Include="src\ObjectsWidget.h" />
+    <ClInclude Include="src\Overworld.h" />
+    <ClInclude Include="src\QCodeEditor\include\internal\QHighlightBlockRule.hpp" />
+    <ClInclude Include="src\QCodeEditor\include\internal\QHighlightRule.hpp" />
+    <QtMoc Include="src\QCodeEditor\include\internal\QJSONHighlighter.hpp" />
+    <QtMoc Include="src\QCodeEditor\include\internal\QLanguage.hpp" />
+    <QtMoc Include="src\QCodeEditor\include\internal\QLineNumberArea.hpp" />
+    <QtMoc Include="src\QCodeEditor\include\internal\QLuaCompleter.hpp" />
+    <QtMoc Include="src\QCodeEditor\include\internal\QLuaHighlighter.hpp" />
+    <QtMoc Include="src\QCodeEditor\include\internal\QPythonCompleter.hpp" />
+    <QtMoc Include="src\QCodeEditor\include\internal\QPythonHighlighter.hpp" />
+    <ClInclude Include="src\QCodeEditor\include\internal\QStyleSyntaxHighlighter.hpp" />
+    <QtMoc Include="src\QCodeEditor\include\internal\QSyntaxStyle.hpp" />
+    <QtMoc Include="src\QCodeEditor\include\internal\QXMLHighlighter.hpp" />
+    <ClInclude Include="src\RefCounter.h" />
+    <ClInclude Include="src\RenderMode.h" />
+    <ClInclude Include="src\Resource.h" />
+    <ClInclude Include="src\ResourceManagerFileSystem.h" />
+    <ClInclude Include="src\ResourceType.h" />
+    <QtMoc Include="src\SaveOverworldDialog.h" />
+    <QtMoc Include="src\ScreenshotDialog.h" />
+    <ClInclude Include="src\SelectionType.h" />
+    <ClInclude Include="src\Selector.h" />
+    <ClInclude Include="src\sgscript\sgscript.h" />
+    <ClInclude Include="src\sgscript\sgs_int.h" />
+    <ClInclude Include="src\sgscript\sgs_msvc_dirent.h" />
+    <ClInclude Include="src\sgscript\sgs_regex.h" />
+    <ClInclude Include="src\sgscript\sgs_util.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="TilesEditor.rc" />
+    <QtUic Include="Forms\AboutDialog.ui" />
+    <QtUic Include="Forms\AniEditor\AniEditor.ui" />
+    <QtUic Include="Forms\AniEditor\AniEditorAddSprite.ui" />
+    <QtUic Include="Forms\AniEditor\AniEditorWindow.ui" />
+    <QtUic Include="Forms\EditAnonymousNPC.ui" />
+    <QtUic Include="Forms\EditBaddy.ui" />
+    <QtUic Include="Forms\EditChestDialog.ui" />
+    <QtUic Include="Forms\EditExternalNPC.ui" />
+    <QtUic Include="Forms\EditLinkDialog.ui" />
+    <QtUic Include="Forms\EditorObject.ui" />
+    <QtUic Include="Forms\EditorTabWidget.ui" />
+    <QtUic Include="Forms\EditScriptForm.ui" />
+    <QtUic Include="Forms\EditSignsDialog.ui" />
+    <QtUic Include="Forms\EditTileDefs.ui" />
+    <QtUic Include="Forms\EditTilesetDialog.ui" />
+    <QtUic Include="Forms\EditTilesets.ui" />
+    <QtUic Include="Forms\FixMapNamesDialog.ui" />
+    <QtUic Include="Forms\LevelConverter.ui" />
+    <QtUic Include="Forms\ListLinksDialog.ui" />
+    <QtUic Include="Forms\MainWindow.ui" />
+    <QtUic Include="Forms\NewCustomTheme.ui" />
+    <QtUic Include="Forms\NewLevelDialog.ui" />
+    <QtUic Include="Forms\NewOverworldDialog.ui" />
+    <QtUic Include="Forms\ObjectsWidget.ui" />
+    <QtUic Include="Forms\SaveOverworldDialog.ui" />
+    <QtUic Include="Forms\ScreenshotDialog.ui" />
+    <QtUic Include="Forms\TileObjectsWidget.ui" />
+    <QtUic Include="Forms\TilesetsWidget.ui" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources\TilesEditor.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
