@@ -2,7 +2,7 @@
 A level editor that will support multiple level formats
 
 Windows users can download this:
-[Windows Release](https://github.com/lukegrahamSydney/TilesEditor/blob/main/release.zip)
+[Windows Release]([https://github.com/lukegrahamSydney/TilesEditor/blob/main/release.zip](https://github.com/lukegrahamSydney/TilesEditor/releases/tag/2.0))
 
 # Features
 1. Supports .gmap and .nw/.graal file formats
