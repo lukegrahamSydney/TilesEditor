@@ -7,8 +7,11 @@
 message("You are running qmake on a generated .pro file. This may not work!")
 
 
-HEADERS += ./src/StringHash.h \
+HEADERS += ./src/IObjectClassInstance.h \
+    ./src/ScriptingLanguage.h \
+    ./src/StringHash.h \
     ./src/StringTools.h \
+    ./src/TileDefs.h \
     ./src/TileGroupListModel.h \
     ./src/TileGroupModel.h \
     ./src/Tilemap.h \
@@ -16,31 +19,27 @@ HEADERS += ./src/StringHash.h \
     ./src/TileSelection.h \
     ./src/Tileset.h \
     ./src/AbstractExternalNPCParamRow.h \
-    ./src/AbstractFileSystem.h \
     ./src/AbstractLevelEntity.h \
     ./src/AbstractResourceManager.h \
     ./src/AbstractScriptableDialog.h \
     ./src/AbstractSelection.h \
     ./src/AbstractSpatialGridItem.h \
     ./src/AbstractTheme.h \
-    ./src/ByteStream.h \
     ./src/CustomListWidgetItem.h \
     ./src/DarkOrangeTheme.h \
     ./src/DarkStyleTheme.h \
-    ./src/DarkTitleBar.h \
     ./src/DialogFeatures.h \
     ./src/EntitySpatialGrid.h \
     ./src/FileFormatManager.h \
     ./src/FusionDarkTheme.h \
     ./src/FusionLightTheme.h \
     ./src/GenericTheme.h \
-    ./src/globals.h \
     ./src/IEditMode.h \
     ./src/IEngine.h \
     ./src/IEntitySpatialMap.h \
     ./src/IExternalObjectEditor.h \
     ./src/IFileRequester.h \
-    ./src/ILevelFormat.h \
+    ./src/AbstractLevelFormat.h \
     ./src/Image.h \
     ./src/ImageDimensions.h \
     ./src/ISpatialMapItem.h \
@@ -59,21 +58,19 @@ HEADERS += ./src/StringHash.h \
     ./src/LevelObjectInstance.h \
     ./src/LevelSign.h \
     ./src/LoadState.h \
-    ./src/MainFileSystem.h \
     ./src/ObjectFactory.h \
     ./src/ObjectListModel.h \
     ./src/ObjectManager.h \
     ./src/ObjectSelection.h \
     ./src/Overworld.h \
-    ./src/Rectangle.h \
     ./src/RefCounter.h \
     ./src/RenderMode.h \
     ./src/Resource.h \
-    ./src/ResourceManager.h \
     ./src/ResourceManagerFileSystem.h \
     ./src/ResourceType.h \
     ./src/SelectionType.h \
     ./src/Selector.h \
+    ./src/EditTileDefs.h \
     ./src/TilesetsWidget.h \
     ./src/TileObjectsWidget.h \
     ./src/AboutDialog.h \
@@ -107,6 +104,7 @@ HEADERS += ./src/StringHash.h \
     ./src/ScreenshotDialog.h \
     ./src/cJSON/cJSON.h \
     ./src/cJSON/JsonHelper.h \
+    ./src/gs1/GS1Prototypes.h \
     ./src/gs1/GS1Converter.h \
     ./src/QCodeEditor/include/internal/QHighlightBlockRule.hpp \
     ./src/QCodeEditor/include/internal/QHighlightRule.hpp \
@@ -130,6 +128,8 @@ HEADERS += ./src/StringHash.h \
     ./src/sgscript/sgs_msvc_dirent.h \
     ./src/sgscript/sgs_regex.h \
     ./src/sgscript/sgs_util.h \
+    ./src/AniEditor/AniInstance.h \
+    ./src/AniEditor/IAniInstance.h \
     ./src/AniEditor/Ani.h \
     ./src/AniEditor/AniCommands.h \
     ./src/AniEditor/IAniEditor.h \
@@ -138,10 +138,11 @@ HEADERS += ./src/StringHash.h \
     ./src/AniEditor/AniEditorWindow.h
 SOURCES += ./src/AboutDialog.cpp \
     ./src/AbstractLevelEntity.cpp \
+    ./src/AbstractLevelFormat.cpp \
     ./src/AbstractResourceManager.cpp \
     ./src/AbstractScriptableDialog.cpp \
     ./src/AbstractSelection.cpp \
-    ./src/ByteStream.cpp \
+    ./src/AniEditor/AniInstance.cpp \
     ./src/CustomPaintWidget.cpp \
     ./src/DarkStyle.cpp \
     ./src/EditAnonymousNPC.cpp \
@@ -153,9 +154,9 @@ SOURCES += ./src/AboutDialog.cpp \
     ./src/EditorTabWidget.cpp \
     ./src/EditScriptForm.cpp \
     ./src/EditSignsDialog.cpp \
+    ./src/EditTileDefs.cpp \
     ./src/EditTilesetDialog.cpp \
     ./src/EditTilesets.cpp \
-    ./src/EntitySpatialGrid.cpp \
     ./src/FileFormatManager.cpp \
     ./src/FixMapNamesDialog.cpp \
     ./src/GraphicsView.cpp \
@@ -176,7 +177,6 @@ SOURCES += ./src/AboutDialog.cpp \
     ./src/LevelSign.cpp \
     ./src/ListLinksDialog.cpp \
     ./src/main.cpp \
-    ./src/MainFileSystem.cpp \
     ./src/MainWindow.cpp \
     ./src/NewCustomTheme.cpp \
     ./src/NewLevelDialog.cpp \
@@ -189,7 +189,6 @@ SOURCES += ./src/AboutDialog.cpp \
     ./src/ObjectSelection.cpp \
     ./src/ObjectsWidget.cpp \
     ./src/Overworld.cpp \
-    ./src/ResourceManager.cpp \
     ./src/ResourceManagerFileSystem.cpp \
     ./src/SaveOverworldDialog.cpp \
     ./src/ScreenshotDialog.cpp \
@@ -260,6 +259,7 @@ FORMS += ./Forms/AboutDialog.ui \
     ./Forms/EditorTabWidget.ui \
     ./Forms/EditScriptForm.ui \
     ./Forms/EditSignsDialog.ui \
+    ./Forms/EditTileDefs.ui \
     ./Forms/EditTilesetDialog.ui \
     ./Forms/EditTilesets.ui \
     ./Forms/FixMapNamesDialog.ui \
