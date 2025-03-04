@@ -155,14 +155,17 @@ namespace TilesEditor
 
 	public:
 		LevelNPCSGScriptParser(const QString& code, LevelNPC* npc);
+		static QVariant parseTokenValue(sgs_FTNode* node);
 
 	private:
 		void parseCallNode(sgs_FTNode* node);
 		void parseAssignmentNode(sgs_FTNode* node);
 		void parseThisAssignment(const QString& memberName, const QVariant& value);
 		void parseThisIndexAssignment(const QString& memberName, const QVariant& key, const QVariant& value);
+		void parseFunctionCall(const QString& objectName, const QString& functionName, const QVariantList& arguments);
+
 		QVariantList getArguments(sgs_FTNode* expressionList);
-		QVariant parseTokenValue(sgs_FTNode* node);
+
 	};
 };
 

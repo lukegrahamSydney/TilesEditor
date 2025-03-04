@@ -1093,15 +1093,6 @@ namespace TilesEditor
                         QTextStream stream(&newFile);
 
                         stream << "NPC001" << Qt::endl;
-
-                        auto tabWidget = static_cast<EditorTabWidget*>(ui.levelsTab->currentWidget());
-                        if (tabWidget)
-                        {
-                            auto activeLevel = tabWidget->getActiveLevel();
-                            if (activeLevel && activeLevel->getLevelFlags().autoEmbedCodeForNewObjectClass) {
-                                stream << "EMBEDCODE" << Qt::endl;
-                            }
-                        }
                         newFile.close();
 
                         static_cast<QTreeView*>(ui.objectTree)->selectionModel()->clearSelection();

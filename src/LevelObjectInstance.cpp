@@ -254,7 +254,7 @@ namespace TilesEditor
 	{
 		if (m_objectClass != nullptr)
 		{
-			auto code = formatGraalCode(true);
+			auto code = formatGraalCode(true, false, getParams());
 
 			if (RegShouldUseGS1Parser.match(code).hasMatch())
 			{
@@ -268,20 +268,24 @@ namespace TilesEditor
 		}
 	}
 
-	QString LevelObjectInstance::formatGraalCode(bool forceEmbed) const
+	QString LevelObjectInstance::formatGraalCode(bool forceEmbed, bool insertHeader, const QStringList& params) const
 	{
 		if (m_objectClass != nullptr)
 		{
-			QString header = QString("//#OBJECT %1\n").arg(m_objectClass->getName());
-			if (m_useImageShape)
-				header += QString("//#IMAGERECT %1 %2 %3 %4\n").arg(m_imageShape[0]).arg(m_imageShape[1]).arg(m_imageShape[2]).arg(m_imageShape[3]);
-
-			for (auto& param : m_params)
-				header += QString("//#PARAM %1\n").arg(param);
+			QString header = "";
 			
-			if (hasResized())
-				header += QString("//#SIZE %1 %2\n").arg(getWidth()).arg(getHeight());
-		
+			if (insertHeader)
+			{ 
+				header += QString("//#OBJECT %1\n").arg(m_objectClass->getName());
+				if (m_useImageShape)
+					header += QString("//#IMAGERECT %1 %2 %3 %4\n").arg(m_imageShape[0]).arg(m_imageShape[1]).arg(m_imageShape[2]).arg(m_imageShape[3]);
+
+				for (auto& param : params)
+					header += QString("//#PARAM %1\n").arg(param);
+
+				if (hasResized())
+					header += QString("//#SIZE %1 %2\n").arg(getWidth()).arg(getHeight());
+			}
 
 			if (m_objectClass->shouldEmbedCode() || forceEmbed)
 			{
@@ -294,19 +298,27 @@ namespace TilesEditor
 
 
 				int paramIndex = 0;
-				for (auto& param : m_params)
+				for (auto& param : params)
 				{
 					if (paramIndex < m_objectClass->getParams().size())
 					{
 						if (m_objectClass->getParams()[paramIndex]->isString())
 						{
-							code = code.replace(QString("param%1").arg(++paramIndex), getWorld()->getEngine()->escapeString(param, getScriptingLanguage()));
+							auto newValue = getWorld()->getEngine()->escapeString(param, getScriptingLanguage());
+							//code = code.replace(QString("param%1").arg(++paramIndex), newValue);
+
+							//^ why does this leave a weird character...?
+							code = code.replace(QString("param") + QString::number(++paramIndex), newValue);
 							continue;
 						}
 					}
-					code = code.replace(QString("param%1").arg(++paramIndex), param);
+					code = code.replace(QString("param") + QString::number(++paramIndex), param);
+						//code.replace(QString("param%1").arg(++paramIndex), param);
 				}
-				return header + "\n" + code;
+
+				if (header.isEmpty())
+					return code;
+				else return header + "\n" + code;
 			}
 			return header;
 

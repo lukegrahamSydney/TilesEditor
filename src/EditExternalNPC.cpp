@@ -7,11 +7,13 @@
 #include "ObjectClassParam.h"
 #include "EditorObject.h"
 #include "LevelCommands.h"
+#include "LevelNPC.h"
 
 
 namespace TilesEditor
 {
 	QByteArray EditExternalNPC::savedGeometry;
+
 	EditExternalNPC::EditExternalNPC(IWorld* world, LevelObjectInstance* instance, QWidget* parent)
 		: QDialog(parent), m_world(world), m_objectInstance(instance)
 	{
@@ -39,6 +41,7 @@ namespace TilesEditor
 		connect(ui.browseButton, &QPushButton::clicked, this, &EditExternalNPC::imageBrowseClicked);
 		connect(ui.imageLineEdit, &QLineEdit::textEdited, this, &EditExternalNPC::textEdited);
 		connect(ui.toolButtonEditClass, &QPushButton::clicked, this, &EditExternalNPC::editClassClicked);
+		connect(ui.makeAnonymousButton, &QPushButton::clicked, this, &EditExternalNPC::makeAnonymousButtonClicked);
 		if (!savedGeometry.isNull())
 			restoreGeometry(savedGeometry);
 	}
@@ -178,24 +181,73 @@ namespace TilesEditor
 		markModified();
 	}
 
-	void EditExternalNPC::accept()
+	void EditExternalNPC::makeAnonymousButtonClicked(bool checked)
 	{
-		if (m_modified)
+		if (m_objectClass != nullptr)
 		{
-			auto undoCommand = new QUndoCommand("Edit NPC");
+			auto undoCommand = new QUndoCommand("Convert NPC to Anonymous");
 
-			new CommandSetEntityProperty(m_world, m_objectInstance, "image", ui.imageLineEdit->text(), m_objectInstance->getImageName(), undoCommand);
+			populateUndoCommand(undoCommand);
+
+			
 
 			QStringList params;
 
 			for (int paramIndex = 0; paramIndex < ui.paramsLayout->rowCount(); ++paramIndex)
 			{
 				auto paramRow = static_cast<AbstractExternalNPCParamRow*>(ui.paramsLayout->itemAt(paramIndex, QFormLayout::FieldRole)->widget()->layout()->itemAt(0)->widget());
-				params.push_back(paramRow->getValue());
+				auto value = paramRow->getValue();
+				params.push_back(value);
 			}
 
-			new CommandSetEntityProperty(m_world, m_objectInstance, "params", params, m_objectInstance->getParams(), undoCommand);
-			m_world->setModified(m_objectInstance->getLevel());
+			auto newNPC = new LevelNPC(m_world, m_objectInstance->getX(), m_objectInstance->getY(), m_objectInstance->getWidth(), m_objectInstance->getHeight());
+			newNPC->setLevel(m_objectInstance->getLevel());
+			newNPC->setImageName(ui.imageLineEdit->text());
+			newNPC->setEntityOrder(m_objectInstance->getEntityOrder());
+
+			auto code = m_objectInstance->formatGraalCode(true, false, params);
+			newNPC->setCode(code);
+
+			new CommandDeleteEntity(m_world, m_objectInstance, undoCommand);
+			new CommandAddEntity(m_world, newNPC, undoCommand);
+
+			if (undoCommand->childCount())
+				m_world->addUndoCommand(undoCommand);
+			else delete undoCommand;
+
+			QDialog::accept();
+		}
+
+	}
+
+	void EditExternalNPC::populateUndoCommand(QUndoCommand* parent)
+	{
+
+		new CommandSetEntityProperty(m_world, m_objectInstance, "image", ui.imageLineEdit->text(), m_objectInstance->getImageName(), parent);
+
+		QStringList params;
+
+		for (int paramIndex = 0; paramIndex < ui.paramsLayout->rowCount(); ++paramIndex)
+		{
+			auto paramRow = static_cast<AbstractExternalNPCParamRow*>(ui.paramsLayout->itemAt(paramIndex, QFormLayout::FieldRole)->widget()->layout()->itemAt(0)->widget());
+			auto value = paramRow->getValue();
+
+			params.push_back(value);
+		}
+
+		new CommandSetEntityProperty(m_world, m_objectInstance, "params", params, m_objectInstance->getParams(), parent);
+		m_world->setModified(m_objectInstance->getLevel());
+
+	}
+
+	void EditExternalNPC::accept()
+	{
+		if (m_modified)
+		{
+			auto undoCommand = new QUndoCommand("Edit NPC");
+
+			populateUndoCommand(undoCommand);
+
 
 			if (undoCommand->childCount())
 				m_world->addUndoCommand(undoCommand);

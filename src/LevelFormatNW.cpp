@@ -353,7 +353,7 @@ namespace TilesEditor
 
                     npcsStream << Qt::endl;
 
-                    npcsStream << objectInstance->formatGraalCode();
+                    npcsStream << objectInstance->formatGraalCode(false, true, objectInstance->getParams());
                     if (!npc->getCode().endsWith('\n'))
                         npcsStream << Qt::endl;
                     npcsStream << "NPCEND" << Qt::endl << Qt::endl;

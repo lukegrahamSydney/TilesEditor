@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>318</width>
-    <height>358</height>
+    <width>322</width>
+    <height>345</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -215,8 +215,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>306</width>
-              <height>173</height>
+              <width>310</width>
+              <height>160</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -355,6 +355,20 @@
         </property>
         <property name="centerButtons">
          <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="makeAnonymousButton">
+        <property name="toolTip">
+         <string>Change To Anonymous NPC</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../Resources/MainWindow.qrc">
+          <normaloff>:/MainWindow/icons/tinycolor/icons8-star-16.png</normaloff>:/MainWindow/icons/tinycolor/icons8-star-16.png</iconset>
         </property>
        </widget>
       </item>

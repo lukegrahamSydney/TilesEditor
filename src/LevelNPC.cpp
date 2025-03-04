@@ -14,7 +14,7 @@ namespace TilesEditor
 	//If any of these keywords are found in the code, it will trigger one of the script parsers
 	QRegularExpression LevelNPC::RegShouldUseGS1Parser("showcharacter|setcharani|setcoloreffect|setimgpart|setgifpart|addtiledef2|addtiledef");
 
-	QRegularExpression LevelNPC::RegIsSGScript("function +oncreated|onplayerenters\\s*\\(", QRegularExpression::CaseInsensitiveOption);
+	QRegularExpression LevelNPC::RegIsSGScript("function +oncreated|onplayerenters|onplayerenterslevel\\s*\\(", QRegularExpression::CaseInsensitiveOption);
 
 	LevelNPC::LevelNPC(IWorld* world, double x, double y, int width, int height) :
 		AbstractLevelEntity(world, x, y)
@@ -719,6 +719,16 @@ namespace TilesEditor
 		return retval;
 	}
 
+	static void printNode(sgs_FTNode* node, QString tab)
+	{
+		qDebug() << tab << "Type: " << node->type;
+		qDebug() << tab << "Token: " << node->token[0];
+		qDebug() << tab << "Token Value: " << LevelNPCSGScriptParser::parseTokenValue(node);
+		for (auto child = node->child; child; child = child->next)
+		{
+			printNode(child, tab + "    ");
+		}
+	}
 
 	LevelNPCSGScriptParser::LevelNPCSGScriptParser(const QString& code, LevelNPC* npc):
 		m_npc(npc)
@@ -756,12 +766,13 @@ namespace TilesEditor
 							{
 								auto functionName = QString::fromStdString(std::string((char*)&name->token[2], name->token[1])).toLower();
 								
-								if (functionName == "oncreated" || "onplayerenters")
+								if (functionName == "oncreated" || functionName == "onplayerenters" || functionName == "onplayerenterslevel")
 								{
 									if (body->type == SGS_SFT_BLOCK)
 									{
 										for (auto blockChild = body->child; blockChild; blockChild = blockChild->next)
 										{
+			
 											if (blockChild->type == SGS_SFT_EXPLIST)
 											{
 												for (auto statement = blockChild->child; statement; statement = statement->next)
@@ -797,78 +808,41 @@ namespace TilesEditor
 
 	void LevelNPCSGScriptParser::parseCallNode(sgs_FTNode* node)
 	{
-		auto name = node->child;
-		if (name->type == SGS_SFT_IDENT && name->token[0] == SGS_ST_IDENT && name->next->type == SGS_SFT_EXPLIST)
+		//printNode(node, "");
+
+		if (node->child)
 		{
-			auto functionName = QString::fromStdString(std::string((char*)&name->token[2], name->token[1])).toLower();
-			if (functionName == "showcharacter")
+			if (node->child->type == SGS_SFT_OPER && node->child->token[0] == SGS_ST_OP_MMBR && node->child->child && node->child->next)
 			{
-				m_npc->showCharacter();
-				m_npc->setAniName("idle.gani", 0);
-				m_npc->getAniInstance()->setProperty("HEAD", "head2.png", m_npc->getWorld()->getResourceManager());
-				m_npc->getAniInstance()->setProperty("BODY", "body.png", m_npc->getWorld()->getResourceManager());
-			} else if (functionName == "setcharani")
-			{
-				auto arguments = getArguments(name->next);
+				auto objectNameNode = node->child->child;
 
-				if (arguments.size() >= 1)
+				auto memberNameNode = objectNameNode->next;
+
+				if (memberNameNode)
 				{
-					if (arguments[0].userType() == QMetaType::QString)
-					{
-						auto aniName = arguments[0].toString() + ".gani";
-						m_npc->setAniName(aniName, 0);
+					auto objectName = parseTokenValue(objectNameNode);
+					auto memberName = parseTokenValue(memberNameNode);
 
-						for (int paramIndex = 1; paramIndex < arguments.size(); ++paramIndex)
-						{
-							auto paramValue = arguments[paramIndex].toString();
-							m_npc->getAniInstance()->setProperty(QString("PARAM%1").arg(paramIndex), paramValue, m_npc->getWorld()->getResourceManager());
-
-						}
-					}
+					auto arguments = getArguments(node->child->next);
+					parseFunctionCall("this", memberName.toString().toLower(), arguments);
 				}
 			}
-			else if (functionName == "setcoloreffect")
+			auto name = node->child;
+			if (name->type == SGS_SFT_IDENT && name->token[0] == SGS_ST_IDENT && name->next->type == SGS_SFT_EXPLIST && name->next)
 			{
+				auto functionName = QString::fromStdString(std::string((char*)&name->token[2], name->token[1])).toLower();
 				auto arguments = getArguments(name->next);
-				if (arguments.size() >= 4)
-				{
-					m_npc->setColourEffect(arguments[0].toDouble(), arguments[1].toDouble(), arguments[2].toDouble(), arguments[3].toDouble());
-				}
-			}
-			else if (functionName == "addtiledef")
-			{
-				auto arguments = getArguments(name->next);
-				if (arguments.size() >= 2)
-				{
-					m_npc->getWorld()->getEngine()->addTileDef2(arguments[0].toString(), arguments[1].toString(), 0, 0, false);
-				}
-			}
 
-			else if (functionName == "addtiledef2")
-			{
-				auto arguments = getArguments(name->next);
-				if (arguments.size() >= 4)
-				{
-					m_npc->getWorld()->getEngine()->addTileDef2(arguments[0].toString(), arguments[1].toString(), arguments[2].toInt(), arguments[3].toInt(), false);
-				}
+				parseFunctionCall("", functionName, arguments);
 			}
 		}
 	
 	}
 
-	static void printNode(sgs_FTNode* node, QString tab)
-	{
-		//qDebug() << tab << "Type: " << node->type;
-		//qDebug() << tab << "Token: " << node->token[0];
-		for (auto child = node->child; child; child = child->next)
-		{
-			printNode(child, tab + "    ");
-		}
-	}
 
 	void LevelNPCSGScriptParser::parseAssignmentNode(sgs_FTNode* node)
 	{
-		//printNode(node, "");
+		
 
 		if (node->child)
 		{
@@ -923,33 +897,127 @@ namespace TilesEditor
 
 	void LevelNPCSGScriptParser::parseThisAssignment(const QString& memberName, const QVariant& value)
 	{
-		if (memberName == "headimg")
+		if (memberName == "headimg" || (memberName == "head" && value.type() == QMetaType::QString))
+		{
 			m_npc->getAniInstance()->setProperty("HEAD", value.toString(), m_npc->getWorld()->getResourceManager());
+		}
 
-		else if (memberName == "shieldimg")
+		else if (memberName == "shieldimg" || (memberName == "shield" && value.type() == QMetaType::QString))
 			m_npc->getAniInstance()->setProperty("SHIELD", value.toString(), m_npc->getWorld()->getResourceManager());
 
-		else if (memberName == "bodyimg")
+		else if (memberName == "bodyimg" || (memberName == "body" && value.type() == QMetaType::QString))
 			m_npc->getAniInstance()->setProperty("BODY", value.toString(), m_npc->getWorld()->getResourceManager());
 
 		else if (memberName == "dir")
 			m_npc->setDir(value.toInt());
 
-		else if (memberName == "sprite")
+		else if (memberName == "sprite" || memberName == "gsprite")
 			m_npc->getAniInstance()->setAniName(m_npc, "def.gani", value.toInt(), m_npc->getWorld()->getResourceManager());
 
 	}
 
 	void LevelNPCSGScriptParser::parseThisIndexAssignment(const QString& memberName, const QVariant& key, const QVariant& value)
 	{
-		if (memberName == "colors")
+		/*
+		//sgscript
+
+function onCreated()
+{
+    this.showcharacter();
+    this.head = "headcleric.gif";
+    this.colours[BODY_SKIN] = "cynober";
+    this.colours[BODY_COAT] = "cynober";
+    this.colours[BODY_SLEEVE] = "blue";
+    this.colours[BODY_SHOES] = "darkblue";
+    this.colours[BODY_BELT] = "blue";
+    this.shield = "kirath-cleric.gif";
+    this.shieldPower = 1;
+    this.gsprite = 40;
+    this.dir = 2;
+
+}
+
+*/
+		if (memberName == "colors" || memberName == "colours")
 		{
-			auto colourIndex = key.toInt();
-			QColor colour(value.toString());
+			if (key.userType() == QMetaType::QString)
+			{
+				static QMap<QString, int> colourIndexLookup = {
+					{"BODY_SKIN", Image::BODY_SKIN},
+					{"BODY_COAT", Image::BODY_SHIRT},
+					{"BODY_SLEEVE", Image::BODY_SLEEVE},
+					{"BODY_SHOES", Image::BODY_SHOES},
+					{"BODY_BELT", Image::BODY_BELT}
+				};
+				auto it = colourIndexLookup.find(key.toString());
+				if (it != colourIndexLookup.end())
+				{
+					QColor colour(value.toString());
 
-			if (colour.isValid())
-				m_npc->getAniInstance()->setBodyColour(colourIndex, colour.rgba());
+					if (colour.isValid())
+						m_npc->getAniInstance()->setBodyColour(it.value(), colour.rgba());
+				}
 
+			}
+			else {
+				auto colourIndex = key.toInt();
+				QColor colour(value.toString());
+
+				if (colour.isValid())
+					m_npc->getAniInstance()->setBodyColour(colourIndex, colour.rgba());
+			}
+
+		}
+	}
+
+	void LevelNPCSGScriptParser::parseFunctionCall(const QString& objectName, const QString& functionName, const QVariantList& arguments)
+	{
+		if (functionName == "showcharacter")
+		{
+			m_npc->showCharacter();
+			m_npc->setAniName("idle.gani", 0);
+			m_npc->getAniInstance()->setProperty("HEAD", "head2.png", m_npc->getWorld()->getResourceManager());
+			m_npc->getAniInstance()->setProperty("BODY", "body.png", m_npc->getWorld()->getResourceManager());
+		}
+		else if (functionName == "setcharani")
+		{
+			if (arguments.size() >= 1)
+			{
+				if (arguments[0].userType() == QMetaType::QString)
+				{
+					auto aniName = arguments[0].toString() + ".gani";
+					m_npc->setAniName(aniName, 0);
+
+					for (int paramIndex = 1; paramIndex < arguments.size(); ++paramIndex)
+					{
+						auto paramValue = arguments[paramIndex].toString();
+						m_npc->getAniInstance()->setProperty(QString("PARAM%1").arg(paramIndex), paramValue, m_npc->getWorld()->getResourceManager());
+
+					}
+				}
+			}
+		}
+		else if (functionName == "setcoloreffect")
+		{
+			if (arguments.size() >= 4)
+			{
+				m_npc->setColourEffect(arguments[0].toDouble(), arguments[1].toDouble(), arguments[2].toDouble(), arguments[3].toDouble());
+			}
+		}
+		else if (functionName == "addtiledef")
+		{
+			if (arguments.size() >= 2)
+			{
+				m_npc->getWorld()->getEngine()->addTileDef2(arguments[0].toString(), arguments[1].toString(), 0, 0, false);
+			}
+		}
+
+		else if (functionName == "addtiledef2")
+		{
+			if (arguments.size() >= 4)
+			{
+				m_npc->getWorld()->getEngine()->addTileDef2(arguments[0].toString(), arguments[1].toString(), arguments[2].toInt(), arguments[3].toInt(), false);
+			}
 		}
 	}
 

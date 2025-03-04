@@ -39,7 +39,7 @@ namespace TilesEditor
 		bool canAddToLevel(Level* level) override;
 		void unsetObjectClass() override { m_objectClass = nullptr; }
 		void markObjectChanged() override;
-		QString formatGraalCode(bool forceEmbed = false) const;
+		QString formatGraalCode(bool forceEmbed, bool insertHeader, const QStringList& params) const;
 		QStringList& getParams() { return m_params; }
 		ObjectClass* getObjectClass() { return m_objectClass; }
 	};

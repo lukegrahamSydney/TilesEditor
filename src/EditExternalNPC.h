@@ -22,6 +22,7 @@ namespace TilesEditor
 		void editClassClicked(bool checked);
 		void textEdited(const QString& text);
 		void deleteParamPressed();
+		void makeAnonymousButtonClicked(bool checked);
 
 	private:
 		IWorld* m_world;
@@ -32,6 +33,8 @@ namespace TilesEditor
 		void addNewParamRow(const QString& label, AbstractExternalNPCParamRow* widget);
 
 		Ui::EditExternalNPCClass ui;
+
+		void populateUndoCommand(QUndoCommand* parent);
 
 	public:
 		EditExternalNPC(IWorld* world, LevelObjectInstance* instance, QWidget* parent = nullptr);

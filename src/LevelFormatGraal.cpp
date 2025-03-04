@@ -499,7 +499,7 @@ namespace TilesEditor
                         char x = 32 + char((npc->getX() - level->getX()) / 16.0);
                         char y = 32 + char((npc->getY() - level->getY()) / 16.0);
 
-                        auto code = npc->isObjectInstance() ? static_cast<LevelObjectInstance*>(npc)->formatGraalCode() : npc->getCode();
+                        auto code = npc->isObjectInstance() ? static_cast<LevelObjectInstance*>(npc)->formatGraalCode(false, true, static_cast<LevelObjectInstance*>(npc)->getParams()) : npc->getCode();
 
                         QByteArray npcLine;
                         npcLine.append(x);

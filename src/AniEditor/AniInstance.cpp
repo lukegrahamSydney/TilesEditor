@@ -1,5 +1,5 @@
 #include "AniInstance.h"
-#include <Qdebug>
+
 namespace TilesEditor
 {
 	AniInstance::AniInstance()
