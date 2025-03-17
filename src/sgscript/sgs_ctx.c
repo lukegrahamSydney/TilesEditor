@@ -948,7 +948,7 @@ SGSRESULT sgs_PushSGSFunctionBuf( SGS_CTX, const char* buf, size_t size )
 	else
 	{
 		
-
+		C->jt_first = C->jt_last = NULL;
 		/* not a bytecode file, try parsing as source */
 		sgs_iFunc* func = NULL;
 		sgs_TokenList tlist = NULL;
@@ -972,7 +972,7 @@ SGSRESULT sgs_PushSGSFunctionBuf( SGS_CTX, const char* buf, size_t size )
 				goto error;
 		}
 
-		C->jt_first = C->jt_last = NULL;
+
 		C->joinFiles = sgs_membuf_create();
 
 		if (C->filename != NULL)

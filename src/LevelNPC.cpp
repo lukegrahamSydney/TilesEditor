@@ -389,7 +389,6 @@ namespace TilesEditor
 		auto newNPC = new LevelNPC(this->getWorld(), getX(), getY(), getWidth(), getHeight());
 		newNPC->setImageName(getImageName());
 		newNPC->setCode(m_code);
-		//newNPC->m_code = this->m_code;
 		newNPC->setLevel(getLevel());
 		return newNPC;
 	}
@@ -452,7 +451,7 @@ namespace TilesEditor
 	//Simple things like setting the ani, color effect, etc within the oncreated/onplayerenters event
 	
 	//GS1 parsing
-	LevelNPCGS1Parser::LevelNPCGS1Parser(const QString& code, LevelNPC* npc):
+	LevelNPCGS1Parser::LevelNPCGS1Parser(const QString& code, IScriptableLevelObject* npc):
 		m_npc(npc)
 	{
 		auto observer = [](const gs1::Diag& d, void* userPointer) ->void
@@ -508,8 +507,12 @@ namespace TilesEditor
 		{
 			m_npc->showCharacter();
 			m_npc->setAniName("idle.gani", 0);
-			m_npc->getAniInstance()->setProperty("HEAD", "head2.png", m_npc->getWorld()->getResourceManager());
-			m_npc->getAniInstance()->setProperty("BODY", "body.png", m_npc->getWorld()->getResourceManager());
+
+			if (m_npc->getAniInstance())
+			{
+				m_npc->getAniInstance()->setProperty("HEAD", "head2.png", m_npc->getWorld()->getResourceManager());
+				m_npc->getAniInstance()->setProperty("BODY", "body.png", m_npc->getWorld()->getResourceManager());
+			}
 		}
 
 		else if (commandName == "setcharani")
@@ -530,7 +533,8 @@ namespace TilesEditor
 						{
 
 							auto paramValue = aniParts[i];
-							m_npc->getAniInstance()->setProperty(QString("PARAM%1").arg(param), paramValue, m_npc->getWorld()->getResourceManager());
+							if (m_npc->getAniInstance())
+								m_npc->getAniInstance()->setProperty(QString("PARAM%1").arg(param), paramValue, m_npc->getWorld()->getResourceManager());
 
 							++param;
 						}
@@ -577,7 +581,8 @@ namespace TilesEditor
 				auto it = propLookup.find(name);
 				if (it != propLookup.end())
 				{
-					m_npc->getAniInstance()->setProperty(it.value(), propValue, m_npc->getWorld()->getResourceManager());
+					if (m_npc->getAniInstance())
+						m_npc->getAniInstance()->setProperty(it.value(), propValue, m_npc->getWorld()->getResourceManager());
 				}
 				else {
 					auto it2 = bodyColourLookup.find(name);
@@ -586,7 +591,8 @@ namespace TilesEditor
 						QColor color = QColor(propValue);
 						if (color.isValid())
 						{
-							m_npc->getAniInstance()->setBodyColour(it2.value(), color.rgba());
+							if (m_npc->getAniInstance())
+								m_npc->getAniInstance()->setBodyColour(it2.value(), color.rgba());
 						}
 					}
 				}
@@ -683,7 +689,8 @@ namespace TilesEditor
 					if (node->right && node->right->GetType() == "ExprNumberLiteral")
 					{
 						auto value = QString::fromStdString(static_cast<gs1::ExprNumberLiteral*>(node->right)->literal->token.text).toInt();
-						m_npc->getAniInstance()->setAniName(m_npc, "def.gani", value, m_npc->getWorld()->getResourceManager());
+						if (m_npc->getAniInstance())
+							m_npc->getAniInstance()->setAniName(m_npc, "def.gani", value, m_npc->getWorld()->getResourceManager());
 					}
 				}
 				else if (ident == "dir")
@@ -730,7 +737,7 @@ namespace TilesEditor
 		}
 	}
 
-	LevelNPCSGScriptParser::LevelNPCSGScriptParser(const QString& code, LevelNPC* npc):
+	LevelNPCSGScriptParser::LevelNPCSGScriptParser(const QString& code, IScriptableLevelObject* npc):
 		m_npc(npc)
 	{
 
@@ -899,45 +906,36 @@ namespace TilesEditor
 	{
 		if (memberName == "headimg" || (memberName == "head" && value.type() == QMetaType::QString))
 		{
-			m_npc->getAniInstance()->setProperty("HEAD", value.toString(), m_npc->getWorld()->getResourceManager());
+			if(m_npc->getAniInstance())
+				m_npc->getAniInstance()->setProperty("HEAD", value.toString(), m_npc->getWorld()->getResourceManager());
 		}
 
 		else if (memberName == "shieldimg" || (memberName == "shield" && value.type() == QMetaType::QString))
-			m_npc->getAniInstance()->setProperty("SHIELD", value.toString(), m_npc->getWorld()->getResourceManager());
+		{
+			if (m_npc->getAniInstance())
+				m_npc->getAniInstance()->setProperty("SHIELD", value.toString(), m_npc->getWorld()->getResourceManager());
+		}
 
 		else if (memberName == "bodyimg" || (memberName == "body" && value.type() == QMetaType::QString))
-			m_npc->getAniInstance()->setProperty("BODY", value.toString(), m_npc->getWorld()->getResourceManager());
+		{
+			if (m_npc->getAniInstance())
+				m_npc->getAniInstance()->setProperty("BODY", value.toString(), m_npc->getWorld()->getResourceManager());
+		}
 
 		else if (memberName == "dir")
 			m_npc->setDir(value.toInt());
 
 		else if (memberName == "sprite" || memberName == "gsprite")
-			m_npc->getAniInstance()->setAniName(m_npc, "def.gani", value.toInt(), m_npc->getWorld()->getResourceManager());
+		{
+			if (m_npc->getAniInstance())
+				m_npc->getAniInstance()->setAniName(m_npc, "def.gani", value.toInt(), m_npc->getWorld()->getResourceManager());
+		}
 
 	}
 
 	void LevelNPCSGScriptParser::parseThisIndexAssignment(const QString& memberName, const QVariant& key, const QVariant& value)
 	{
-		/*
-		//sgscript
-
-function onCreated()
-{
-    this.showcharacter();
-    this.head = "headcleric.gif";
-    this.colours[BODY_SKIN] = "cynober";
-    this.colours[BODY_COAT] = "cynober";
-    this.colours[BODY_SLEEVE] = "blue";
-    this.colours[BODY_SHOES] = "darkblue";
-    this.colours[BODY_BELT] = "blue";
-    this.shield = "kirath-cleric.gif";
-    this.shieldPower = 1;
-    this.gsprite = 40;
-    this.dir = 2;
-
-}
-
-*/
+		
 		if (memberName == "colors" || memberName == "colours")
 		{
 			if (key.userType() == QMetaType::QString)
@@ -955,7 +953,10 @@ function onCreated()
 					QColor colour(value.toString());
 
 					if (colour.isValid())
-						m_npc->getAniInstance()->setBodyColour(it.value(), colour.rgba());
+					{
+						if (m_npc->getAniInstance())
+							m_npc->getAniInstance()->setBodyColour(it.value(), colour.rgba());
+					}
 				}
 
 			}
@@ -964,7 +965,10 @@ function onCreated()
 				QColor colour(value.toString());
 
 				if (colour.isValid())
-					m_npc->getAniInstance()->setBodyColour(colourIndex, colour.rgba());
+				{
+					if (m_npc->getAniInstance())
+						m_npc->getAniInstance()->setBodyColour(colourIndex, colour.rgba());
+				}
 			}
 
 		}
@@ -976,8 +980,12 @@ function onCreated()
 		{
 			m_npc->showCharacter();
 			m_npc->setAniName("idle.gani", 0);
-			m_npc->getAniInstance()->setProperty("HEAD", "head2.png", m_npc->getWorld()->getResourceManager());
-			m_npc->getAniInstance()->setProperty("BODY", "body.png", m_npc->getWorld()->getResourceManager());
+
+			if (m_npc->getAniInstance())
+			{
+				m_npc->getAniInstance()->setProperty("HEAD", "head2.png", m_npc->getWorld()->getResourceManager());
+				m_npc->getAniInstance()->setProperty("BODY", "body.png", m_npc->getWorld()->getResourceManager());
+			}
 		}
 		else if (functionName == "setcharani")
 		{
@@ -988,11 +996,14 @@ function onCreated()
 					auto aniName = arguments[0].toString() + ".gani";
 					m_npc->setAniName(aniName, 0);
 
-					for (int paramIndex = 1; paramIndex < arguments.size(); ++paramIndex)
+					if (m_npc->getAniInstance())
 					{
-						auto paramValue = arguments[paramIndex].toString();
-						m_npc->getAniInstance()->setProperty(QString("PARAM%1").arg(paramIndex), paramValue, m_npc->getWorld()->getResourceManager());
+						for (int paramIndex = 1; paramIndex < arguments.size(); ++paramIndex)
+						{
+							auto paramValue = arguments[paramIndex].toString();
+							m_npc->getAniInstance()->setProperty(QString("PARAM%1").arg(paramIndex), paramValue, m_npc->getWorld()->getResourceManager());
 
+						}
 					}
 				}
 			}

@@ -202,7 +202,7 @@ namespace TilesEditor
 
 		ui.plainTextEdit->setPlainText(m_npc->getCode());
 		ui.imageText->setText(m_npc->getImageName());
-
+		 
 		ui.xText->setValidator(new QDoubleValidator(-1000000000, 1000000000, 2, this));
 		ui.yText->setValidator(new QDoubleValidator(-1000000000, 1000000000, 2, this));
 
@@ -237,7 +237,10 @@ namespace TilesEditor
 		if (language == ScriptingLanguage::SCRIPT_UNDEFINED)
 		{
 			if (m_npc->getLevel())
+			{
 				language = m_npc->getLevel()->getDefaultScriptingLanguage();
+			}
+
 		}
 
 		if (language == ScriptingLanguage::SCRIPT_UNDEFINED)

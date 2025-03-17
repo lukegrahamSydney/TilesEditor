@@ -160,7 +160,7 @@ namespace TilesEditor
 
 		if (level > 3)
 			return;
-
+		 
 		if (sprite != nullptr)
 		{
 			//Draw behind attachments first

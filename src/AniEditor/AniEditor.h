@@ -21,6 +21,18 @@
 
 namespace TilesEditor
 {
+	class SpriteListWidgetItem :
+		public QListWidgetItem
+	{
+	public:
+		SpriteListWidgetItem(const QIcon& icon, const QString& text) :
+			QListWidgetItem(icon, text) {}
+
+		bool operator<(const QListWidgetItem& other) const override
+		{
+			return this->data(Qt::UserRole).toInt() < other.data(Qt::UserRole).toInt();
+		}
+	};
 
 	class AniEditor : public QWidget, public IAniEditor
 	{

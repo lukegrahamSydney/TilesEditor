@@ -100,6 +100,8 @@ namespace TilesEditor
 			newNPC->setWidth(getWidth());
 			newNPC->setHeight(getHeight());
 		}
+
+		newNPC->parseClassCode();
 		return newNPC;
 	}
 

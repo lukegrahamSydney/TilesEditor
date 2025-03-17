@@ -189,14 +189,13 @@ namespace TilesEditor
 
 							addNewPropertyRow("Scripting Langauge", new EditorObjectScriptingLanguageProperty(this, m_scriptingLanguage));
 						}
-						else if (!line.isEmpty())
-							properties += line + "\n";
+						else properties += line + "\n";
 					}
 				}
 			}
 
-			ui.propertiesEdit->setText(properties);
-		} else QMessageBox::warning(this, "Error reading object file", "This object file may not longer exist.");
+			ui.propertiesEdit->setText(rstrip(properties));
+		} else QMessageBox::warning(this, "Error reading object file", "This object file may no longer exist.");
 		connect(ui.browseButton, &QAbstractButton::pressed, this, &EditorObject::browseImagePressed);
 		connect(ui.testButton, &QPushButton::pressed, this, &EditorObject::testPressed);
 		connect(ui.clientCodeEdit, &QCodeEditor::textChanged, this, &EditorObject::textChanged);
@@ -237,11 +236,11 @@ namespace TilesEditor
 				auto propertyWidget = (AbstractEditorObjectProperty*)(item->widget()->layout()->itemAt(0)->widget());
 				propertyWidget->writeData(textStream);
 			}
-			textStream << Qt::endl;
+
 			auto otherProperties = ui.propertiesEdit->toPlainText();
 
 			if (!otherProperties.isEmpty())
-				textStream << rstrip(otherProperties) << Qt::endl << Qt::endl;
+				textStream << rstrip(otherProperties) << Qt::endl;
 
 			auto clientCode = ui.clientCodeEdit->toPlainText();
 			if (!clientCode.isEmpty())

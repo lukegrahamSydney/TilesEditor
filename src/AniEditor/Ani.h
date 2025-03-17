@@ -25,6 +25,7 @@ namespace TilesEditor
 		friend class AniInstance;
 
 	public:
+		inline static const int SPRITE_INDEX_STRING = -21374783;
 		class AniSprite
 		{
 		public:

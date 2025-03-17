@@ -241,6 +241,7 @@
     <ClInclude Include="src\AniEditor\IAniInstance.h" />
     <ClInclude Include="src\gs1\GS1Prototypes.h" />
     <ClInclude Include="src\IObjectClassInstance.h" />
+    <ClInclude Include="src\IScriptableLevelObject.h" />
     <ClInclude Include="src\ScriptingLanguage.h" />
     <ClInclude Include="src\StringHash.h" />
     <ClInclude Include="src\StringTools.h" />

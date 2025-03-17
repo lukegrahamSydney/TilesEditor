@@ -13,13 +13,14 @@
 #include "Image.h"
 #include "cJSON/cJSON.h"
 #include "sgscript/sgscript.h"
-
+#include "IScriptableLevelObject.h"
 namespace TilesEditor
 {
 	class Level;
 	class AbstractLevelEntity :
 		public AbstractSpatialGridItem, 
-		public RefCounter
+		public RefCounter,
+		public IScriptableLevelObject
 	{
 
 	private:
@@ -49,7 +50,7 @@ namespace TilesEditor
 		virtual LevelEntityType getEntityType() const = 0;
 
 		
-		IWorld* getWorld() const { return m_world; }
+		IWorld* getWorld() const override { return m_world; }
 		void setLevel(Level* level) { m_level = level; }
 		Level* getLevel() { return m_level; }
 		const Level* getLevel() const { return m_level; }

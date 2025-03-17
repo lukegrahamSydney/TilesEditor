@@ -361,7 +361,7 @@
       <item>
        <widget class="QPushButton" name="makeAnonymousButton">
         <property name="toolTip">
-         <string>Change To Anonymous NPC</string>
+         <string>Morph into an anonymous NPC</string>
         </property>
         <property name="text">
          <string/>

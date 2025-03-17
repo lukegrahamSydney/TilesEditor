@@ -209,7 +209,7 @@ namespace TilesEditor
 			return m_frames[index];
 		return nullptr;
 	}
-
+	 
 	Ani::AniSprite* Ani::getAniSprite(int index, const QString& name)
 	{
 		return getAniSprite(this, index, name);
@@ -217,7 +217,7 @@ namespace TilesEditor
 
 	Ani::AniSprite* Ani::getAniSprite(IAniInstance* propertyProvider, int index, const QString& name)
 	{
-		if (index == -1)
+		if (index == SPRITE_INDEX_STRING)
 		{
 			bool ok = false;
 			int newIndex = propertyProvider->getPropertyValue(name).toInt(&ok);
@@ -637,7 +637,7 @@ namespace TilesEditor
 
 											//If the first part isn't a valid integer, it's probably something like PARAM1.
 											if (!isValidSpriteIndex)
-												frameSprite->spriteIndex = -1;
+												frameSprite->spriteIndex = SPRITE_INDEX_STRING;
 											
 
 											frameSprite->xoffset = parts[1].toDouble();
@@ -890,7 +890,7 @@ namespace TilesEditor
 						{
 							auto spritePart = static_cast<Ani::Frame::FramePieceSprite*>(part);
 
-							if(spritePart->spriteIndex != -1)
+							if(spritePart->spriteIndex != SPRITE_INDEX_STRING)
 								partsList.push_back(QString("%1 %2 %3").arg(QString::number(spritePart->spriteIndex), 4).arg(QString::number(int(spritePart->xoffset)), 3).arg(QString::number(int(spritePart->yoffset)), 3));
 							else partsList.push_back(QString("%1 %2 %3").arg(spritePart->spriteName).arg(QString::number(int(spritePart->xoffset)), 3).arg(QString::number(int(spritePart->yoffset)), 3));
 						}

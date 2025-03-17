@@ -16,13 +16,13 @@
 #include "IEngine.h"
 #include "AniEditor/AniInstance.h"
 
+
 namespace TilesEditor
 {
 	
 
 	class LevelNPC:
-		public AbstractLevelEntity,
-		public IFileRequester
+		public AbstractLevelEntity
 	{
 	public:
 		static QRegularExpression RegExImgPart;
@@ -68,26 +68,29 @@ namespace TilesEditor
 		virtual QString getClassName() const { return ""; }
 		LevelEntityType getEntityType() const override { return LevelEntityType::ENTITY_NPC; }
 
-		void setAniName(const QString& ani, int frame);
-		AniInstance* getAniInstance();
-		void setDir(int dir);
+		void setAniName(const QString& ani, int frame) override;
+		AniInstance* getAniInstance() override;
+
+		void setDir(int dir) override;
+		int getDir() const override { return m_dir; }
+
 		void setScriptingLanguage(ScriptingLanguage language) { m_scriptingLanguage = language; }
 		ScriptingLanguage getScriptingLanguage() const { return m_scriptingLanguage; }
-		void setImageShape(int left, int top, int width, int height);
+		void setImageShape(int left, int top, int width, int height)override;
 		void loadResources() override;
 		void releaseResources() override;
 		void draw(QPainter* painter, const QRectF& viewRect, double x, double y) override;
 
-		void setImageName(const QString& name);
+		void setImageName(const QString& name) override;
 		const QString& getImageName() const { return m_imageName; }
 		void setCode(const QString& code);
 		void setCodeRaw(const QString& code);
 
 		void setProperty(const QString& name, const QVariant& value) override;
-		void setColourEffect(double r, double g, double b, double a);
+		void setColourEffect(double r, double g, double b, double a) override;
 		const QString& getCode() const { return m_code; }
 
-		void showCharacter();
+		void showCharacter() override;
 		void resetCharacter();
 		QRectF getBoundingBox() const override;
 
@@ -130,11 +133,11 @@ namespace TilesEditor
 		public gs1::SyntaxTreeVisitor
 	{
 	private:
-		LevelNPC* m_npc = nullptr;
+		IScriptableLevelObject* m_npc = nullptr;
 		int m_blockLevel = 0;
 
 	public:
-		LevelNPCGS1Parser(const QString& code, LevelNPC* npc);
+		LevelNPCGS1Parser(const QString& code, IScriptableLevelObject* npc);
 
 	protected:
 
@@ -151,10 +154,10 @@ namespace TilesEditor
 		public gs1::SyntaxTreeVisitor
 	{
 	private:
-		LevelNPC* m_npc = nullptr;
+		IScriptableLevelObject* m_npc = nullptr;
 
 	public:
-		LevelNPCSGScriptParser(const QString& code, LevelNPC* npc);
+		LevelNPCSGScriptParser(const QString& code, IScriptableLevelObject* npc);
 		static QVariant parseTokenValue(sgs_FTNode* node);
 
 	private:

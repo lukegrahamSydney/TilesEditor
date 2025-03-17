@@ -1487,9 +1487,8 @@ bool GS1Converter::replacesetskincolor(std::vector<gs1::Expr*>& args)
 {
 	if (args.size() >= 1)
 	{
-		output() << "player.colours[BODY_SKIN] = stringColour(";
+		output() << "player.colours[BODY_SKIN] = ";
 		if (args[0]) args[0]->Accept(this);
-		output() << ")";
 		return true;
 	}
 	return false;
@@ -1499,9 +1498,8 @@ bool GS1Converter::replacesetsleevecolor(std::vector<gs1::Expr*>& args)
 {
 	if (args.size() >= 1)
 	{
-		output() << "player.colours[BODY_SLEEVE] = stringColour(";
+		output() << "player.colours[BODY_SLEEVE] = ";
 		if (args[0]) args[0]->Accept(this);
-		output() << ")";
 		return true;
 	}
 	return false;
@@ -1511,9 +1509,8 @@ bool GS1Converter::replacesetcoatcolor(std::vector<gs1::Expr*>& args)
 {
 	if (args.size() >= 1)
 	{
-		output() << "player.colours[BODY_COAT] = stringColour(";
+		output() << "player.colours[BODY_COAT] = ";
 		if (args[0]) args[0]->Accept(this);
-		output() << ")";
 		return true;
 	}
 	return false;
@@ -1523,9 +1520,8 @@ bool GS1Converter::replacesetbeltcolor(std::vector<gs1::Expr*>& args)
 {
 	if (args.size() >= 1)
 	{
-		output() << "player.colours[BODY_BELT] = stringColour(";
+		output() << "player.colours[BODY_BELT] = ";
 		if (args[0]) args[0]->Accept(this);
-		output() << ")";
 		return true;
 	}
 	return false;
@@ -1535,9 +1531,8 @@ bool GS1Converter::replacesetshoecolor(std::vector<gs1::Expr*>& args)
 {
 	if (args.size() >= 1)
 	{
-		output() << "player.colours[BODY_SHOES] = stringColour(";
+		output() << "player.colours[BODY_SHOES] = ";
 		if (args[0]) args[0]->Accept(this);
-		output() << ")";
 		return true;
 	}
 	return false;

@@ -316,6 +316,8 @@ namespace TilesEditor
 
 		applySettings(settings);
 
+		ui.spritesListWidget->setSortingEnabled(true);
+
 	}
 
 	void AniEditor::updateFrame()
@@ -450,7 +452,7 @@ namespace TilesEditor
 		this->setModified();
 		m_ani.addSprite(sprite);
 		auto pixmap = getSpritePixmap(sprite);
-		auto item = new QListWidgetItem(pixmap, QString::number(sprite->index));
+		auto item = new SpriteListWidgetItem(pixmap, QString::number(sprite->index));
 		
 		item->setData(Qt::UserRole, QVariant(sprite->index));
 		item->setData(Qt::UserRole + 1, QVariant(sprite->type));
@@ -755,7 +757,7 @@ namespace TilesEditor
 					{
 						auto spritePiece = static_cast<Ani::Frame::FramePieceSprite*>(piece);
 
-						if (spritePiece->spriteIndex != -1)
+						if (spritePiece->spriteIndex != Ani::SPRITE_INDEX_STRING)
 						{
 							auto sprite = m_ani.getAniSprite(spritePiece->spriteIndex, "");
 							if (sprite)
@@ -982,7 +984,7 @@ namespace TilesEditor
 				auto itemPieceSprite = static_cast<Ani::Frame::FramePieceSprite*>(item);
 
 				setSpriteEditor(m_ani.getAniSprite(itemPieceSprite->spriteIndex, itemPieceSprite->spriteName));
-				ui.itemSpriteIDEdit->setText(itemPieceSprite->spriteIndex == -1 ? itemPieceSprite->spriteName : QString::number(itemPieceSprite->spriteIndex));
+				ui.itemSpriteIDEdit->setText(itemPieceSprite->spriteIndex == Ani::SPRITE_INDEX_STRING ? itemPieceSprite->spriteName : QString::number(itemPieceSprite->spriteIndex));
 
 				for (qsizetype i = 0; i < ui.itemsComboWidget->count(); ++i)
 				{
@@ -2809,7 +2811,7 @@ namespace TilesEditor
 			if (piece->type == Ani::Frame::PIECE_SPRITE)
 			{
 				auto spritePiece = static_cast<Ani::Frame::FramePieceSprite*>(piece);
-				addUndoCommand(new UndoCommandSetFramePieceProperty(this, spritePiece, "spriteIndex", ui.itemSpriteIDEdit->text(), spritePiece->spriteIndex == -1 ? spritePiece->spriteName : QString::number(spritePiece->spriteIndex), nullptr));
+				addUndoCommand(new UndoCommandSetFramePieceProperty(this, spritePiece, "spriteIndex", ui.itemSpriteIDEdit->text(), spritePiece->spriteIndex == Ani::SPRITE_INDEX_STRING ? spritePiece->spriteName : QString::number(spritePiece->spriteIndex), nullptr));
 			}
 			
 		}
@@ -3220,10 +3222,11 @@ namespace TilesEditor
 		m_ani.addSprite(shadow);
 		
 		auto pixmap = getSpritePixmap(shadow);
-		auto item = new QListWidgetItem(pixmap, QString::number(shadow->index));
-		ui.spritesListWidget->addItem(item);
+		auto item = new SpriteListWidgetItem(pixmap, QString::number(shadow->index));
+		
 		item->setData(Qt::UserRole, QVariant(shadow->index));
 		item->setData(Qt::UserRole + 1, QVariant(shadow->type));
+		ui.spritesListWidget->addItem(item);
 		item->setToolTip(shadow->comment);
 
 		m_ani.insertFrame(0, new Ani::Frame());
@@ -3320,7 +3323,7 @@ namespace TilesEditor
 				{
 		
 					auto pixmap = getSpritePixmap(sprite);
-					auto item = new QListWidgetItem(pixmap, QString::number(sprite->index));
+					auto item = new SpriteListWidgetItem(pixmap, QString::number(sprite->index));
 					
 					item->setData(Qt::UserRole, QVariant(sprite->index));
 					item->setData(Qt::UserRole + 1, QVariant(sprite->type));
@@ -3360,7 +3363,7 @@ namespace TilesEditor
 				bool isValidInteger = false;
 				spritePiece->spriteIndex = spritePiece->spriteName.toInt(&isValidInteger);
 				if (!isValidInteger)
-					spritePiece->spriteIndex = -1;
+					spritePiece->spriteIndex = Ani::SPRITE_INDEX_STRING;
 
 				if (m_selectedPieces.size())
 				{
@@ -3368,7 +3371,7 @@ namespace TilesEditor
 					if (selectedPiece == piece)
 					{ 
 						const QSignalBlocker blocker(ui.itemSpriteIDEdit);
-						ui.itemSpriteIDEdit->setText(spritePiece->spriteIndex == -1 ? spritePiece->spriteName : QString::number(spritePiece->spriteIndex));
+						ui.itemSpriteIDEdit->setText(spritePiece->spriteIndex == Ani::SPRITE_INDEX_STRING ? spritePiece->spriteName : QString::number(spritePiece->spriteIndex));
 					}
 				}
 			}
