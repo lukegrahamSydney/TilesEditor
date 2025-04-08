@@ -772,76 +772,82 @@
                              </widget>
                             </item>
                             <item row="6" column="0">
-                             <widget class="QLabel" name="rotationLabel">
-                              <property name="text">
-                               <string>Rotation:</string>
-                              </property>
-                             </widget>
+                                <widget class="QLabel" name="rotationLabel">
+                                    <property name="text">
+                                        <string>Rotation:</string>
+                                    </property>
+                                </widget>
                             </item>
                             <item row="6" column="1">
-                             <widget class="QWidget" name="widget_19" native="true">
-                              <layout class="QHBoxLayout" name="horizontalLayout_14">
-                               <property name="spacing">
-                                <number>2</number>
-                               </property>
-                               <property name="leftMargin">
-                                <number>0</number>
-                               </property>
-                               <property name="topMargin">
-                                <number>0</number>
-                               </property>
-                               <property name="rightMargin">
-                                <number>0</number>
-                               </property>
-                               <property name="bottomMargin">
-                                <number>0</number>
-                               </property>
-                               <item>
-                                <widget class="QDoubleSpinBox" name="rotationDoubleSpinBox">
-                                 <property name="sizePolicy">
-                                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                                   <horstretch>0</horstretch>
-                                   <verstretch>0</verstretch>
-                                  </sizepolicy>
-                                 </property>
-                                 <property name="minimumSize">
-                                  <size>
-                                   <width>80</width>
-                                   <height>0</height>
-                                  </size>
-                                 </property>
-                                 <property name="buttonSymbols">
-                                  <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
-                                 </property>
-                                 <property name="decimals">
-                                  <number>3</number>
-                                 </property>
-                                 <property name="maximum">
-                                  <double>360.000000000000000</double>
-                                 </property>
-                                 <property name="stepType">
-                                  <enum>QAbstractSpinBox::StepType::DefaultStepType</enum>
-                                 </property>
+                                <widget class="QWidget" name="widget_19" native="true">
+                                    <layout class="QHBoxLayout" name="horizontalLayout_14">
+                                        <property name="spacing">
+                                            <number>2</number>
+                                        </property>
+                                        <property name="leftMargin">
+                                            <number>0</number>
+                                        </property>
+                                        <property name="topMargin">
+                                            <number>0</number>
+                                        </property>
+                                        <property name="rightMargin">
+                                            <number>0</number>
+                                        </property>
+                                        <property name="bottomMargin">
+                                            <number>0</number>
+                                        </property>
+                                        <item>
+                                            <widget class="QDoubleSpinBox" name="rotationDoubleSpinBox">
+                                                <property name="sizePolicy">
+                                                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                                <property name="minimumSize">
+                                                    <size>
+                                                        <width>80</width>
+                                                        <height>0</height>
+                                                    </size>
+                                                </property>
+                                                <property name="buttonSymbols">
+                                                    <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+                                                </property>
+                                                <property name="decimals">
+                                                    <number>3</number>
+                                                </property>
+                                                <property name="minimum">  
+                                                    <double>-360.0</double>
+                                                </property>
+                                                <property name="maximum">
+                                                    <double>360.0</double>
+                                                </property>
+                                                <property name="stepType">
+                                                    <enum>QAbstractSpinBox::StepType::DefaultStepType</enum>
+                                                </property>
+                                            </widget>
+                                        </item>
+                                        <item>
+                                            <widget class="QSlider" name="rotationSlider">
+                                                <property name="sizePolicy">
+                                                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                                <property name="minimum">  
+                                                    <number>-360</number>
+                                                </property>
+                                                <property name="maximum">
+                                                    <number>360</number>
+                                                </property>
+                                                <property name="orientation">
+                                                    <enum>Qt::Orientation::Horizontal</enum>
+                                                </property>
+                                            </widget>
+                                        </item>
+                                    </layout>
                                 </widget>
-                               </item>
-                               <item>
-                                <widget class="QSlider" name="rotationSlider">
-                                 <property name="sizePolicy">
-                                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                                   <horstretch>0</horstretch>
-                                   <verstretch>0</verstretch>
-                                  </sizepolicy>
-                                 </property>
-                                 <property name="maximum">
-                                  <number>360</number>
-                                 </property>
-                                 <property name="orientation">
-                                  <enum>Qt::Orientation::Horizontal</enum>
-                                 </property>
-                                </widget>
-                               </item>
-                              </layout>
-                             </widget>
                             </item>
                             <item row="7" column="0">
                              <widget class="QLabel" name="rectLabel">
