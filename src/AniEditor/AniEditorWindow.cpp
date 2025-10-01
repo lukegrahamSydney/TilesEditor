@@ -98,19 +98,7 @@ namespace TilesEditor
 		AniEditor* lastTab = nullptr;
 		for (auto& fullPath : fileNames)
 		{
-			QFileInfo fi(fullPath);
-
-			m_openFileDirectory = fi.absolutePath();
-
-
-			auto currentEditorTab = static_cast<AniEditor*>(ui.tabWidgetMain->currentWidget());
-			lastTab = new AniEditor(fi.fileName(), m_resourceManager, m_settings, currentEditorTab);
-			lastTab->setBackgroundColour(m_backgroundColor);
-			connect(lastTab, &AniEditor::changeTabText, this, &AniEditorWindow::changeTabText);
-			connect(lastTab, &AniEditor::setStatusText, this, &AniEditorWindow::setStatusText);
-
-			lastTab->loadFile(fi.fileName(), fullPath);
-			ui.tabWidgetMain->addTab(lastTab, fi.fileName());
+			lastTab = openGaniFilename(fullPath);
 			
 		}
 
@@ -269,6 +257,25 @@ namespace TilesEditor
 		m_menuThemesGroup->addAction(theme);
 		connect(theme, &QAction::triggered, this, &AniEditorWindow::themeTriggered);
 
+	}
+
+	AniEditor* AniEditorWindow::openGaniFilename(const QString& fileName)
+	{
+
+		QFileInfo fi(fileName);
+
+		m_openFileDirectory = fi.absolutePath();
+
+
+		auto currentEditorTab = static_cast<AniEditor*>(ui.tabWidgetMain->currentWidget());
+		auto retval = new AniEditor(fi.fileName(), m_resourceManager, m_settings, currentEditorTab);
+		retval->setBackgroundColour(m_backgroundColor);
+		connect(retval, &AniEditor::changeTabText, this, &AniEditorWindow::changeTabText);
+		connect(retval, &AniEditor::setStatusText, this, &AniEditorWindow::setStatusText);
+
+		retval->loadFile(fi.fileName(), fileName);
+		ui.tabWidgetMain->addTab(retval, fi.fileName());
+		return retval;
 	}
 
 	void AniEditorWindow::saveTab(AniEditor * editor, bool forceSaveAs)

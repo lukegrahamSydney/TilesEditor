@@ -67,11 +67,17 @@ int main(int argc, char *argv[])
      
     auto launchAniEditor = QFileInfo(QCoreApplication::applicationFilePath()).baseName().toLower() == "ganieditor";
 
+    QStringList launchFiles;
     //launchAniEditor = true;
-    for (int i = 0; i < argc; ++i)
+    for (int i = 1; i < argc; ++i)
     {
         if (QString(argv[i]) == "-g")
             launchAniEditor = true;
+
+        else if (i > 0)
+        {
+            launchFiles.append(argv[i]);
+        }
     }
 
     if (launchAniEditor)
@@ -87,8 +93,17 @@ int main(int argc, char *argv[])
                 theme->trigger();
             }
         }
+        if (launchFiles.size())
+        {
+            for (auto& fullPath : launchFiles)
+            {
+                w.openGaniFilename(fullPath);
+            }
+        }
 
         w.show();
+
+
         return app.exec();
     }
 
@@ -101,9 +116,17 @@ int main(int argc, char *argv[])
             theme->trigger();
         }
     }
+
+    if (launchFiles.size())
+    {
+        for (auto& fullPath: launchFiles)
+        {
+            w.openLevelFilename(fullPath);
+        }
+    }
     w.show();
 
-   
+
     
     return app.exec();
 }

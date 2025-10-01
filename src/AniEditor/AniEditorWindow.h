@@ -37,6 +37,7 @@ namespace TilesEditor
 
 		void addThemesButton();
 		void addTheme(AbstractTheme* theme);
+		AniEditor* openGaniFilename(const QString& fileName);
 
 	protected:
 		bool eventFilter(QObject* object, QEvent* event) override;
