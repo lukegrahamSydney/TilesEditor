@@ -8,8 +8,56 @@
 
 namespace TilesEditor
 {
+    static bool isNumeric(const QString& s) {
+        bool ok;
+        s.toDouble(&ok); // or toInt(&ok), depending on what you expect
+        return ok;
+    }
+
 	bool LevelFormatNW::loadLevel(Level* level, QIODevice* stream)
 	{
+        static QStringList itemNames = {
+            "greenrupee",        // 0
+            "bluerupee",        // 1
+            "redrupee",            // 2
+            "bombs",            // 3
+            "darts",            // 4
+            "heart",            // 5
+            "glove1",            // 6
+            "bow",                // 7
+            "bomb",                // 8
+            "shield",            // 9
+            "sword",            // 10
+            "fullheart",        // 11
+            "superbomb",        // 12
+            "battleaxe",        // 13
+            "goldensword",        // 14
+            "mirrorshield",        // 15
+            "glove2",            // 16
+            "lizardshield",        // 17
+            "lizardsword",        // 18
+            "goldrupee",        // 19
+            "fireball",            // 20
+            "fireblast",        // 21
+            "nukeshot",            // 22
+            "joltbomb",            // 23
+            "spinattack"        // 24
+
+        };
+
+        static QStringList baddyNames = {
+            "graysoldier",
+            "bluesoldier",
+            "redsoldier",
+            "shootingsoldier",
+            "swampsoldier",
+            "frog",
+            "octopus",
+            "goldenwarrior",
+            "lizardon",
+            "dragon"
+        };
+
         QStringList lines;
 
         QTextStream textStream(stream);
@@ -125,6 +173,14 @@ namespace TilesEditor
                         {
                             auto& itemName = words[3];
 
+                            if (isNumeric(itemName)) {
+                                auto index = itemName.toInt();
+                                if (index >= 0 && index < int(itemNames.size()))
+                                {
+                                    itemName = itemNames[index];
+                                }
+                            }
+
                             auto x = words[1].toDouble() * 16;
                             auto y = words[2].toDouble() * 16;
 
@@ -142,10 +198,20 @@ namespace TilesEditor
                         {
                             auto x = words[1].toDouble() * 16;
                             auto y = words[2].toDouble() * 16;
-                            auto type = words[3].toInt();
+                            auto baddyName = words[3];
+
+                            int baddyIndex = 0;
+                            if (!isNumeric(baddyName))
+                            {
+                                auto index = baddyNames.indexOf(baddyName);
+                                if (index >= 0)
+                                    baddyIndex = index;
+                            }
+                            else baddyIndex = baddyName.toInt();
+
                             auto layerIndex = wordCount >= 5 ? words[4].toInt() : 0;
 
-                            auto baddy = new LevelGraalBaddy(level->getWorld(), x + level->getX(), y + level->getY(), type);
+                            auto baddy = new LevelGraalBaddy(level->getWorld(), x + level->getX(), y + level->getY(), baddyIndex);
                             baddy->setLayerIndex(layerIndex);
                             baddy->setLevel(level);
 

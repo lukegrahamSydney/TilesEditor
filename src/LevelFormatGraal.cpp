@@ -21,6 +21,8 @@ namespace TilesEditor
         else if (fileVersion == "GR-V1.01") v = 1;
         else if (fileVersion == "GR-V1.02") v = 2;
         else if (fileVersion == "GR-V1.03") v = 3;
+        else if (fileVersion == "GR-V1.05") v = 5;
+
         if (v == -1) return false;
 
         auto readString = [](QIODevice* base, char end) -> QString {
@@ -37,99 +39,109 @@ namespace TilesEditor
             applyFormat(level);
             level->setSize(64 * 16, 64 * 16);
 
-            int bits = (v > 1 ? 13 : 12);
-            int read = 0;
-            unsigned int buffer = 0;
-            unsigned short code = 0;
-            short tiles[2] = { -1,-1 };
-            int boardIndex = 0;
-            int count = 1;
-            bool doubleMode = false;
-
-            auto tilemap = level->getOrMakeTilemap(0);
-
             auto setTileIndex = [](Tilemap* tilemap, int boardIndex, int graalTile, Tileset* defaultTileset) {
                 auto tileX = boardIndex % 64;
                 auto tileY = boardIndex / 64;
 
-                auto tile = Level::convertFromGraalTile(graalTile, defaultTileset);
+                auto tile = graalTile == 0xFFF ? Tilemap::MakeInvisibleTile(0) : Level::convertFromGraalTile(graalTile, defaultTileset);
 
                 tilemap->setTile(tileX, tileY, tile);
             };
 
-
-
-            // Read the tiles.
-            while (boardIndex < 64 * 64 && !stream->atEnd())
+            int layers = 1;
+            if (v >= 5)
             {
-                // Every control code/tile is either 12 or 13 bits.  WTF.
-                // Read in the bits.
-                while (read < bits)
+                unsigned char byte;
+                stream->read((char*)&byte, 1);
+                layers = int(byte - 32);
+            }
+
+            int bits = (v > 1 ? 13 : 12);
+            for (int currentLayer = 0; currentLayer < layers; ++currentLayer)
+            {
+                int read = 0;
+                unsigned int buffer = 0;
+                unsigned short code = 0;
+                short tiles[2] = { -1,-1 };
+                int boardIndex = 0;
+                int count = 1;
+                bool doubleMode = false;
+
+                auto tilemap = level->getOrMakeTilemap(currentLayer);
+
+
+                // Read the tiles.
+                while (boardIndex < 64 * 64 && !stream->atEnd())
                 {
-                    unsigned char byte;
-                    stream->read((char*)&byte, 1);
-
-                    buffer += byte << read;
-                    read += 8;
-                }
-
-                // Pull out a single 12/13 bit code from the buffer.
-                code = buffer & (bits == 12 ? 0xFFF : 0x1FFF);
-                buffer >>= bits;
-                read -= bits;
-
-                // See if we have an RLE control code.
-                // Control codes determine how the RLE scheme works.
-                if (code & ((bits == 12) ? 0x800 : 0x1000))
-                {
-                    // If the 0x100 bit is set, we are in a double repeat mode.
-                    // {double 4}56 = 56565656
-                    if (code & 0x100) doubleMode = true;
-
-                    // How many tiles do we count?
-                    count = code & 0xFF;
-                    continue;
-                }
-
-                // If our count is 1, just read in a tile.  This is the default mode.
-                if (count == 1)
-                {
-                    setTileIndex(tilemap, boardIndex++, code, level->getDefaultTileset());
-                    continue;
-                }
-
-                // If we reach here, we have an RLE scheme.
-                // See if we are in double repeat mode or not.
-                if (doubleMode)
-                {
-                    // Read in our first tile.
-                    if (tiles[0] == -1)
+                    // Every control code/tile is either 12 or 13 bits.  WTF.
+                    // Read in the bits.
+                    while (read < bits)
                     {
-                        tiles[0] = (short)code;
+                        unsigned char byte;
+                        stream->read((char*)&byte, 1);
+
+                        buffer += byte << read;
+                        read += 8;
+                    }
+
+                    // Pull out a single 12/13 bit code from the buffer.
+                    code = buffer & (bits == 12 ? 0xFFF : 0x1FFF);
+                    buffer >>= bits;
+                    read -= bits;
+
+                    // See if we have an RLE control code.
+                    // Control codes determine how the RLE scheme works.
+                    if (code & ((bits == 12) ? 0x800 : 0x1000))
+                    {
+                        // If the 0x100 bit is set, we are in a double repeat mode.
+                        // {double 4}56 = 56565656
+                        if (code & 0x100) doubleMode = true;
+
+                        // How many tiles do we count?
+                        count = code & 0xFF;
                         continue;
                     }
 
-                    // Read in our second tile.
-                    tiles[1] = (short)code;
-
-                    // Add the tiles now.
-                    for (int i = 0; i < count && boardIndex < 64 * 64 - 1; ++i)
+                    // If our count is 1, just read in a tile.  This is the default mode.
+                    if (count == 1)
                     {
-                        setTileIndex(tilemap, boardIndex++, tiles[0], level->getDefaultTileset());
-                        setTileIndex(tilemap, boardIndex++, tiles[1], level->getDefaultTileset());
+                        setTileIndex(tilemap, boardIndex++, code, level->getDefaultTileset());
+                        continue;
                     }
 
-                    // Clean up.
-                    tiles[0] = tiles[1] = -1;
-                    doubleMode = false;
-                    count = 1;
-                }
-                // Regular RLE scheme.
-                else
-                {
-                    for (int i = 0; i < count && boardIndex < 64 * 64; ++i)
-                        setTileIndex(tilemap, boardIndex++, code, level->getDefaultTileset());
-                    count = 1;
+                    // If we reach here, we have an RLE scheme.
+                    // See if we are in double repeat mode or not.
+                    if (doubleMode)
+                    {
+                        // Read in our first tile.
+                        if (tiles[0] == -1)
+                        {
+                            tiles[0] = (short)code;
+                            continue;
+                        }
+
+                        // Read in our second tile.
+                        tiles[1] = (short)code;
+
+                        // Add the tiles now.
+                        for (int i = 0; i < count && boardIndex < 64 * 64 - 1; ++i)
+                        {
+                            setTileIndex(tilemap, boardIndex++, tiles[0], level->getDefaultTileset());
+                            setTileIndex(tilemap, boardIndex++, tiles[1], level->getDefaultTileset());
+                        }
+
+                        // Clean up.
+                        tiles[0] = tiles[1] = -1;
+                        doubleMode = false;
+                        count = 1;
+                    }
+                    // Regular RLE scheme.
+                    else
+                    {
+                        for (int i = 0; i < count && boardIndex < 64 * 64; ++i)
+                            setTileIndex(tilemap, boardIndex++, code, level->getDefaultTileset());
+                        count = 1;
+                    }
                 }
             }
         }
@@ -358,49 +370,93 @@ namespace TilesEditor
 
         if (tilemap)
         {
-            int buffer = 0;
-            int bitCount = 0;
-            stream->write("GR-V1.03", 8);
+            QList<Tilemap*> layers;
 
-            for (int y = 0; y < 64; ++y)
+            int v = 3;
+            if (level->getTileLayers().size() > 1)
+                v = 5;
+
+            if (v == 5)
             {
-                for (int x = 0; x < 64; ++x)
+                //Add all layers that are bigger than or equal to 0, sort them, then write the layer count
+                for (auto& layer : level->getTileLayers())
                 {
-                    while (bitCount >= 8)
+                    if (layer->getLayerIndex() >= 0)
                     {
-                        unsigned char byte = buffer & 0xFF;
-                        buffer >>= 8;
-                        stream->write((char*)&byte, 1);
-                        bitCount -= 8;
+                        layers.push_back(layer);
                     }
+                }
 
-                    auto tile = tilemap->getTile(x, y);
-                    auto tileLeft = Tilemap::GetTileX(tile);
-                    auto tileTop = Tilemap::GetTileY(tile);
+                std::sort(layers.begin(), layers.end(), [](Tilemap* a, Tilemap* b) {
+                    return a->getLayerIndex() <= b->getLayerIndex();
+                });
 
-                    //Gonstruct: Converts tile positions (lef/top) to graal tile index
-                    auto graalTileIndex = tileLeft / 16 * 512 + tileLeft % 16 + tileTop * 16;
+                stream->write("GR-V1.05", 8);
+                //Write layer count
+                unsigned char byte = layers.size() + 32;
+                stream->write((char*)&byte, 1);
 
-                    buffer = (graalTileIndex << bitCount) | buffer;
-                    bitCount += 13;
+            }
+            else {
+                stream->write("GR-V1.03", 8);
+                layers.push_back(tilemap);
+            }
+
+            for (auto& layer : layers)
+            {
+                int buffer = 0;
+                int bitCount = 0;
+                for (int y = 0; y < 64; ++y)
+                {
+                    for (int x = 0; x < 64; ++x)
+                    {
+                        while (bitCount >= 8)
+                        {
+                            unsigned char byte = buffer & 0xFF;
+                            buffer >>= 8;
+                            stream->write((char*)&byte, 1);
+                            bitCount -= 8;
+                        }
+
+                        auto tile = layer->getTile(x, y);
+                        auto tileLeft = Tilemap::GetTileX(tile);
+                        auto tileTop = Tilemap::GetTileY(tile);
+
+                        //Gonstruct: Converts tile positions (lef/top) to graal tile index
+                        auto graalTileIndex = Tilemap::IsInvisibleTile(tile) ? 0xFFF : (tileLeft / 16 * 512 + tileLeft % 16 + tileTop * 16);
+
+                        buffer = (graalTileIndex << bitCount) | buffer;
+                        bitCount += 13;
+                    }
+                }
+
+
+                //Write remaining bits.
+                while (bitCount > 0)
+                {
+                    unsigned char byte = buffer & 0xFF;
+                    buffer >>= 8;
+                    stream->write((char*)&byte, 1);
+                    bitCount -= 8;
                 }
             }
 
-
-            //Write remaining bits.
-            while (bitCount > 0)
-            {
-                unsigned char byte = buffer & 0xFF;
-                buffer >>= 8;
-                stream->write((char*)&byte, 1);
-                bitCount -= 8;
-            }
+            
 
             //links
             {
                 for (auto link : level->getLinks())
                 {
-                    auto linkString = QString("%1 %2 %3 %4 %5 %6 %7\n").arg(link->getNextLevel()).arg(int((link->getX() - level->getX()) / 16.0)).arg(int((link->getY() - level->getY()) / 16.0)).arg(link->getWidth() / 16).arg(link->getHeight() / 16).arg(link->getNextX()).arg(link->getNextY());
+                    auto nextX = link->getNextX();
+                    auto nextY = link->getNextY();
+
+                    if (nextX == "-1")
+                        nextX = "playerx";
+
+                    if (nextY == "-1")
+                        nextY = "playery";
+
+                    auto linkString = QString("%1 %2 %3 %4 %5 %6 %7\n").arg(link->getNextLevel()).arg(int((link->getX() - level->getX()) / 16.0)).arg(int((link->getY() - level->getY()) / 16.0)).arg(link->getWidth() / 16).arg(link->getHeight() / 16).arg(nextX).arg(nextY);
                     stream->write(linkString.toLocal8Bit().data());
                 }
                 stream->write("#\n");
@@ -625,14 +681,7 @@ namespace TilesEditor
         level->getLevelFlags().canLayAnonymousNPC = true;
         level->getLevelFlags().autoEmbedCodeForNewObjectClass = true;
         level->setDefaultObjectLanguage(ScriptingLanguage::SCRIPT_GS1);
-        auto layers = level->getTileLayers();
 
-        //Delete all layers other than 0
-        for (auto layer : layers)
-        {
-            if(layer->getLayerIndex() != 0)
-                level->deleteTileLayer(layer->getLayerIndex());
-        }
 
         auto& objects = level->getObjects();
         for (auto object : objects)

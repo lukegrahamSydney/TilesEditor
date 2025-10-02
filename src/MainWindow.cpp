@@ -46,6 +46,7 @@ namespace TilesEditor
 
         m_objectManager = new ObjectManager(ui.objectTree, objectsFolder);
         m_resourceManager = new ResourceManagerFileSystem("./", m_objectManager);
+       
         m_resourceManager->incrementRef();
 
         m_defaultPalette = app.palette();
@@ -72,7 +73,7 @@ namespace TilesEditor
         EditAnonymousNPC::savedGeometry = settings.value("anonymousNPCGeometry").toByteArray();
         EditorObject::savedGeometry = settings.value("editorObjectGeometry").toByteArray();
 
-        m_resourceManager->addSearchDirRecursive("./", 6);
+        m_resourceManager->addSearchDirRecursive("./", 4);
 
         auto tilesets = settings.value("tilesets").toStringList();
         for (auto& tilesetName : tilesets)
@@ -549,6 +550,11 @@ namespace TilesEditor
         }
 
         return expression;
+    }
+
+    void MainWindow::addSearchDir(const QString& dir)
+    {
+        m_resourceManager->addSearchDirRecursive(dir, 3);
     }
 
     bool MainWindow::testCodeForErrors(const QString& code, QString* errorOutput, ScriptingLanguage language)

@@ -51,7 +51,7 @@ namespace TilesEditor
 
 
 			m_resourceManager->addSearchDir("./sounds/");
-			m_resourceManager->addSearchDirRecursive(m_resourceManager->getConnectionString(), 6);
+			m_resourceManager->addSearchDirRecursive(m_resourceManager->getConnectionString(), 4);
 
 
 
@@ -276,6 +276,11 @@ namespace TilesEditor
 		retval->loadFile(fi.fileName(), fileName);
 		ui.tabWidgetMain->addTab(retval, fi.fileName());
 		return retval;
+	}
+
+	void AniEditorWindow::addSearchDir(const QString& dir)
+	{
+		m_resourceManager->addSearchDirRecursive(dir, 2);
 	}
 
 	void AniEditorWindow::saveTab(AniEditor * editor, bool forceSaveAs)

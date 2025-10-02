@@ -103,6 +103,7 @@ namespace TilesEditor
         QString parseInlineString(const QString& expression) override;
         QString parseExpression(const QString& expression) override;
         AbstractResourceManager* getResourceManager() override { return m_resourceManager; }
+        void addSearchDir(const QString& dir);
         ObjectManager* getObjectManager() override { return m_objectManager; }
         bool testCodeForErrors(const QString& code, QString* errorOutput, ScriptingLanguage language) override;
         QString escapeString(const QString& text, ScriptingLanguage language) override;
