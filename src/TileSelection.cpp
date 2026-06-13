@@ -27,6 +27,7 @@ namespace TilesEditor
 
 		m_hasInserted = false;
 		m_clearSelection = true;
+		m_insertWhileDragging = true;
 		m_lastInsertX = 0.0;
 		m_lastInsertY = 0.0;
 
@@ -42,10 +43,10 @@ namespace TilesEditor
 		Selector::draw(painter, viewRect, getX(), getY(), m_width, m_height, QColorConstants::White, QColor(255, 255, 255, 60));
 	}
 
-	void TileSelection::draw(Level* level, Image* tilesetImage, QPainter* painter, const QRectF& viewRect)
+	void TileSelection::draw(Level* level, Image* tilesetImage, QPainter* painter, const QRectF& viewRect, bool fillSelection)
 	{
 		level->drawTilemap(m_tilemap, tilesetImage, getX(), getY(), painter, viewRect);
-		draw(painter, viewRect);
+		Selector::draw(painter, viewRect, getX(), getY(), m_width, m_height, QColorConstants::White, fillSelection ? QColor(255, 255, 255, 60) : Qt::transparent);
 	}
 
 	bool TileSelection::pointInSelection(double x, double y)
@@ -361,4 +362,3 @@ namespace TilesEditor
 
 	}
 };
-

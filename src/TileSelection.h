@@ -19,6 +19,7 @@ namespace TilesEditor
 		int m_selectionLayer;
 		bool m_clearSelection;
 		bool m_hasInserted;
+		bool m_insertWhileDragging;
 		double m_lastInsertX;
 		double m_lastInsertY;
 		Tilemap* m_tilemap;
@@ -42,7 +43,7 @@ namespace TilesEditor
 		double getRight() const { return getX() + m_width; }
 		double getBottom() const { return getY() + m_height; }
 		void draw(QPainter* painter, const QRectF& viewRect) override;
-		void draw(Level* level, Image* tilesetImage, QPainter* painter, const QRectF& viewRect);
+		void draw(Level* level, Image* tilesetImage, QPainter* painter, const QRectF& viewRect, bool fillSelection = true);
 		bool pointInSelection(double x, double y) override;
 		void release(AbstractResourceManager* resourceManager) override;
 		void reinsertIntoWorld(IWorld* world, bool clearSelection = true) override;
@@ -55,6 +56,8 @@ namespace TilesEditor
 		int getVCount() const;
 
 		void setClearSelection(bool value) { m_clearSelection = value; }
+		void setInsertWhileDragging(bool value) { m_insertWhileDragging = value; }
+		bool insertWhileDragging() const { return m_insertWhileDragging; }
 		AbstractSelection* duplicate() override;
 		bool clipboardCopy() override;
 		void clearSelection(IWorld* world) override;

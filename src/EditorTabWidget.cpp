@@ -506,7 +506,7 @@ namespace TilesEditor
 					{
 						painter->setClipping(true);
 						painter->setClipRect(level->getRect());
-						tileSelection->draw(level, m_tilesetImage, painter, viewRect);
+						tileSelection->draw(level, m_tilesetImage, painter, viewRect, !tileSelection->getAlternateSelectionMethod());
 						painter->setClipping(false);
 					}
 				}
@@ -2231,26 +2231,33 @@ namespace TilesEditor
 				return;
 			}
 
-			//Copy-paste via right click
-			if (m_selection && !m_selection->getAlternateSelectionMethod() && m_selection->pointInSelection(pos.x(), pos.y()))
+			//Copy-paste via right click for that lil bih kalzor
+			if (m_selection && m_selection->getSelectionType() == SelectionType::SELECTION_TILES && !m_selection->getAlternateSelectionMethod() && m_selection->pointInSelection(pos.x(), pos.y()))
 			{
-				
-				
-				/*
-				if (QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ShiftModifier))
-				{
-					
-				}*/
+				auto oldTileSelection = static_cast<TileSelection*>(m_selection);
+				auto newSelection = static_cast<TileSelection*>(oldTileSelection->duplicate());
+				newSelection->setClearSelection(false);
+				newSelection->setInsertWhileDragging(false);
+				newSelection->setAlternateSelectionMethod(true);
+				newSelection->setMouseDragButton(Qt::MouseButton::LeftButton);
+				newSelection->setDragOffset(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier), getSnapX(), getSnapY());
 
+				auto oldRect = oldTileSelection->getBoundingBox();
+				oldTileSelection->reinsertIntoWorld(this);
+				oldTileSelection->release(m_resourceManager);
+				delete oldTileSelection;
+				m_selection = newSelection;
+				ui.floodFillButton->setChecked(false);
+				m_selection->drag(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier), getSnapX(), getSnapY(), this);
 
-				{
-					m_selection->setDragOffset(pos.x(), pos.y(), !QGuiApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ControlModifier), getSnapX(), getSnapY());
-					m_selection->setCopy(true);
-					m_selection->setMouseDragButton(Qt::MouseButton::RightButton);
-					m_lastMousePos = pos;
-				}
+				auto newRect = m_selection->getBoundingBox();
+				auto left = std::min(oldRect.x(), newRect.x()) - 4;
+				auto top = std::min(oldRect.y(), newRect.y()) - 4;
+				auto right = std::max(oldRect.right(), newRect.right()) + 4;
+				auto bottom = std::max(oldRect.bottom(), newRect.bottom()) + 4;
+				m_graphicsView->scene()->update(left, top, right - left, bottom - top);
+				m_graphicsView->redraw();
 				return;
-
 			}
 			setSelection(nullptr);
 
@@ -2601,7 +2608,9 @@ namespace TilesEditor
 			{
 				if (m_selection->getSelectionType() == SelectionType::SELECTION_TILES)
 				{
-					m_selection->reinsertIntoWorld(this);
+					auto tileSelection = static_cast<TileSelection*>(m_selection);
+					if (tileSelection->insertWhileDragging())
+						tileSelection->reinsertIntoWorld(this);
 				}
 			}
 			else {
